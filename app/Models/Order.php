@@ -3,29 +3,37 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
-    protected $fillable = ["user_id","total_price","status","shipping_address_id"];
+    use HasFactory;
 
-    
-     public function orderItems(){
-        return $this->hasMany(OrderItem::class); //Mot order se co nhieu Items
+    protected $fillable = [
+        'user_id', 'coupon_id', 'shipping_address_id', 'total_price', 'status'
+    ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 
-    public function user(){
-        return $this->belongsTo(User::class); //Mot user co the co nhieu order nen order se thuoc ve 1 user
+    public function coupon() {
+        return $this->belongsTo(Coupon::class);
     }
 
-    public function shippingAddresses(){
-        return $this->belongsTo(ShippingAddress::class); //Thuoc ve mot dia chi
+    public function shippingAddress() {
+        return $this->belongsTo(ShippingAddress::class);
     }
 
-    public function payment(){
+    public function items() {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function payment() {
         return $this->hasOne(Payment::class);
     }
 
-        public function orderStatusHistory(){
+    public function histories() {
         return $this->hasMany(OrderStatusHistory::class);
     }
 }

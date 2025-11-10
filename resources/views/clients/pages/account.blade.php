@@ -97,7 +97,7 @@
                                                                     <td>{{ $address->city }}</td>
                                                                     <td>{{ $address->phone }}</td>
                                                                     <td>
-                                                                        @if ($address->default)
+                                                                        @if ($address->is_default)
                                                                             <span class="badge bg-success"> Mặc định </span>
                                                                         @else
                                                                             <form action="{{route('account.addresses.update',$address->id)}}" method="POST"

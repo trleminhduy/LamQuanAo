@@ -117,9 +117,9 @@ class AccountController extends Controller
 
         ]);
 
-        //nếu người dùng set địa chỉ mặc định mới thì địa chỉ khác sẽ default=0
+        // nếu người dùng set địa chỉ mặc định mới thì địa chỉ khác sẽ is_default = 0
         if ($request->has('default')) {
-            ShippingAddress::where('user_id', Auth::id())->update(['default' => 0]);
+            ShippingAddress::where('user_id', Auth::id())->update(['is_default' => 0]);
         }
 
 
@@ -129,7 +129,7 @@ class AccountController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'city' => $request->city,
-            'default' => $request->has('default') ? 1 : 0
+            'is_default' => $request->has('default') ? 1 : 0
 
         ]);
 
@@ -142,11 +142,11 @@ class AccountController extends Controller
         //Tìm địa chỉ cần update
         $address = ShippingAddress::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
-        //Sau khi update thì set tất cả địa chỉ còn lại bằng 0
-        ShippingAddress::where('user_id', Auth::id())->update(['default' => 0]);
+    // Sau khi update thì set tất cả địa chỉ còn lại bằng is_default = 0
+    ShippingAddress::where('user_id', Auth::id())->update(['is_default' => 0]);
 
-        //Update địa chỉ chọn bằng 1 (mặc định)
-        $address->update(['default' => 1]);
+    // Update địa chỉ chọn bằng 1 (mặc định)
+    $address->update(['is_default' => 1]);
 
         toastr()->success('Địa chỉ mặc định đã được cập nhật');
         return back();
