@@ -34,12 +34,19 @@
 
                         </ul>
                     </div>
+                    {{-- Custom vòng xoay loading --}}
                     <div class="tab-content">
+                        <div id="loading-spinner">   
+                            <div class="loader">
+
+                            </div>
+                        </div>
                         <div class="tab-pane fade active show" id="liton_product_grid">
                             @include('clients.components.products_grid',['products'=>$products  ])
                         </div>
 
                     </div>
+                    {{-- Phân trang --}}
                     <div class="ltn__pagination-area text-center">
                         <div class="ltn__pagination">
                             <ul>
@@ -60,11 +67,13 @@
                         <div class="widget ltn__menu-widget">
                             <h4 class="ltn__widget-title ltn__widget-title-border">Danh mục sản phẩm</h4>
                             <ul>
+                                <li><a href="javascript:void(0)" class="category-filter active" data-id="">
+                                    <strong>Tất cả sản phẩm</strong>
+                                </a></li>
                                 @foreach ($categories as $category)
                                     <li><a href="javascript:void(0)" class="category-filter"
                                             data-id="{{ $category->id }}">{{ $category->name }}
-
-                                    </li>
+                                    </a></li>
                                 @endforeach
                             </ul>
                         </div>

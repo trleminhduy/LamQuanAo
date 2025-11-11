@@ -250,4 +250,93 @@ $(document).ready(function () {
             this.submit();
         }
     });
+
+    //////////// PAGE PRODUCTS /////////////////
+    //////////// **************** /////////////////
+
+    function fetchProducts() {
+        let category_id = $(".category-filter.active").data("id") || "";
+        let min_price = $(".slider-range").slider("values", 0);
+        let max_price = $(".slider-range").slider("values", 1);
+        let sort_by = $("#sort-by").val();
+        
+        console.log("Filter params:", {
+            category_id: category_id,
+            min_price: min_price,
+            max_price: max_price,
+            sort_by: sort_by
+        });
+        
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+
+        $.ajax({
+            url: '/product/filter',
+            type: "GET",
+            data: {
+                category_id: category_id,
+                min_price: min_price,
+                max_price: max_price,
+                sort_by: sort_by,
+            },
+            beforeSend: function () {
+                $("#loading-spinner").show();
+                $("#liton_product_grid").hide();
+            },
+
+            success: function (response) {
+                 $("#liton_product_grid").html(response.products);
+                 console.log("Filter success");
+            },
+
+           
+            complete: function () {
+                $("#loading-spinner").hide();
+                $("#liton_product_grid").show();
+            },
+             error: function (xhr) {
+                console.error("Filter error:", xhr);
+                alert("Đã có lỗi xảy ra khi lọc sản phẩm (ajax Fetchproduct)."); 
+            }
+
+        });
+    }
+
+    $(".category-filter").click(function () {
+        $(".category-filter").removeClass("active");
+        $(this).addClass("active");
+        fetchProducts();
+    });
+
+    $("#sort-by").change(function () {
+        fetchProducts();
+    });
+
+    $(".slider-range").slider({
+        range: true,
+        min: 0,
+        max: 1000000,
+        values: [0, 1000000],
+        slide: function (event, ui) {
+            $(".amount").val(number_format(ui.values[0]) + " - " + number_format(ui.values[1]) + " vnđ");
+        },
+        change: function (event, ui) {
+            fetchProducts();
+        },
+    });
+    
+    // Hàm format số thành dạng 100,000
+    function number_format(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+    $(".amount").val(
+        number_format($(".slider-range").slider("values", 0)) +
+            " - " +
+            number_format($(".slider-range").slider("values", 1)) +
+            " vnđ"
+    );
 });
