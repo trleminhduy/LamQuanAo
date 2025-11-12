@@ -17,6 +17,8 @@ class ProductController extends Controller
 
 
         //Thêm ảnh nếu ảnh chưa có thì lấy ảnh default trong thư mục
+       
+        /** @var Product $product */
         foreach ($products as $product) {
             $product->image_url = $product->firstImage?->image ? asset('storage/uploads/products/' . $product->firstImage->image)
                 : asset('storage/uploads/products/default-product.png');
@@ -61,13 +63,15 @@ class ProductController extends Controller
         $products = $query->paginate(9);
         
         //Thêm ảnh cho mỗi sản phẩm
+        /** @var Product $product */
         foreach ($products as $product) {
             $product->image_url = $product->firstImage?->image ? asset('storage/uploads/products/' . $product->firstImage->image)
                 : asset('storage/uploads/products/default-product.png');
         }
         
         return response()->json([
-            'products' => view('clients.components.products_grid',compact('products'))->render()
+            'products' => view('clients.components.products_grid', compact('products'))->render(),
+            'pagination' => $products->links('clients.components.pagination.pagination_custom')->toHtml()
         ]);
     }
 }

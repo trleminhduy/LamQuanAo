@@ -253,7 +253,20 @@ $(document).ready(function () {
 
     //////////// PAGE PRODUCTS /////////////////
     //////////// **************** /////////////////
+    //Phân trang sản phẩm
+    let currentPage = 1;
+    $(document).on("click", ".pagination-link", function (e) {
+        e.preventDefault();
+       let pageUrl = $(this).attr("href");
+       let page = pageUrl.split("page=")[1];
+        currentPage = page;
+        fetchProducts();
+    });
+    
+    
 
+
+    //Hàm ajax load sản phẩm (kết hợp fiter + phân trang)
     function fetchProducts() {
         let category_id = $(".category-filter.active").data("id") || "";
         let min_price = $(".slider-range").slider("values", 0);
@@ -264,7 +277,8 @@ $(document).ready(function () {
             category_id: category_id,
             min_price: min_price,
             max_price: max_price,
-            sort_by: sort_by
+            sort_by: sort_by,
+            page: currentPage
         });
         
         $.ajaxSetup({
@@ -274,7 +288,7 @@ $(document).ready(function () {
         });
 
         $.ajax({
-            url: '/product/filter',
+            url: '/product/filter?page=' + currentPage,
             type: "GET",
             data: {
                 category_id: category_id,
@@ -289,6 +303,7 @@ $(document).ready(function () {
 
             success: function (response) {
                  $("#liton_product_grid").html(response.products);
+                 $(".ltn__pagination").html(response.pagination);
                  console.log("Filter success");
             },
 
@@ -308,10 +323,12 @@ $(document).ready(function () {
     $(".category-filter").click(function () {
         $(".category-filter").removeClass("active");
         $(this).addClass("active");
+        currentPage = 1; // Reset về trang đầu khi thay đổi bộ lọc
         fetchProducts();
     });
 
     $("#sort-by").change(function () {
+        currentPage = 1; // Reset về trang đầu khi thay đổi bộ lọc
         fetchProducts();
     });
 
@@ -324,6 +341,7 @@ $(document).ready(function () {
             $(".amount").val(number_format(ui.values[0]) + " - " + number_format(ui.values[1]) + " vnđ");
         },
         change: function (event, ui) {
+            currentPage = 1; // Reset về trang đầu khi thay đổi bộ lọc
             fetchProducts();
         },
     });
