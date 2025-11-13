@@ -71,8 +71,12 @@ Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']
         
     });
 
-//Trang chi tiết sản phẩm
+//Trang sản phẩm
 Route::get('/product',[ProductController::class,'index'])->name('products.index');
 
 //Route bộ lọc sản phẩm theo giá trị (mặc địh, mới nhất, giá tiền tăn.....)
 Route::get('/product/filter',[ProductController::class,'filter'])->name('products.filter');
+
+//ROute chi tiết sản phẩm
+Route::get('/product/{slug}', [ProductController::class, 'detail'])->name('products.detail');
+

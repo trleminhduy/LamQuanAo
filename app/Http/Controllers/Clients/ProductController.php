@@ -74,4 +74,34 @@ class ProductController extends Controller
             'pagination' => $products->links('clients.components.pagination.pagination_custom')->toHtml()
         ]);
     }
+
+    //Trang chi tiết sản phẩm
+    public function detail($slug){
+        $product = Product::with(['category','images','variants.size','variants.color'])
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        //Lấy sản phẩm liên quan cùng danh mục (trừ cái đang xem)
+        $relatedProducts = Product::with('firstImage')
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->where('status', 'in_stock')
+            ->limit(4)
+            ->get();
+        
+        //Thêm image_url cho related products
+        /** @var Product $relatedProduct */
+        foreach ($relatedProducts as $relatedProduct) {
+            $relatedProduct->image_url = $relatedProduct->firstImage?->image 
+                ? asset('storage/uploads/products/' . $relatedProduct->firstImage->image)
+                : asset('storage/uploads/products/default-product.png');
+        }
+        
+        return view('clients.pages.product-detail', compact('product', 'relatedProducts'));
+    }
+
+    //Trang chi tiết sản phẩm altenative
+//     Product::with(['category','images','variants.size','variants.color'])
+// ->where('slug', $slug)
+// ->firstOrFail();
 }
