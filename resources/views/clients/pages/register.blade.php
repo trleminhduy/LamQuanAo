@@ -13,7 +13,7 @@
                     <div class="col-lg-12">
                         <div class="section-title-area text-center">
                             <h1 class="section-title">Đăng ký <br>Tài khoản của bạn</h1>
-                            <p>Hãy tạo tài khoản để trải nghiệm mua sắm rau củ tươi ngon, nhanh chóng và tiện lợi.</p>
+                       
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
 
                                 <label class="checkbox-inline">
                                     <input type="checkbox" name="checkbox1" value="" required>
-                                   Tôi đồng ý cho Veggie xử lý dữ liệu cá nhân của tôi để gửi tài liệu tiếp thị được cá nhân hoá theo mẫu đồng ý và chính sách bảo mật
+                                   Tôi đồng ý cho CLOTHES STORE xử lý dữ liệu cá nhân của tôi để gửi tài liệu tiếp thị được cá nhân hoá theo mẫu đồng ý và chính sách bảo mật
                                 </label>
                                  @error('checkbox1')
                                     <div class="alert alert-danger">{{$message}}</div>
@@ -53,7 +53,7 @@
 
                                 <label class="checkbox-inline">
                                     <input type="checkbox" name="checkbox2" value="" required>
-                                    Khi nhấp vào "tạo tài khoản", tôi đồng ý với chính sách bảo mật
+                                    Khi nhấp vào "TẠO TÀI KHOẢN", tôi đồng ý với chính sách bảo mật
                                 </label>
                                  @error('checkbox2')
                                     <div class="alert alert-danger">{{$message}}</div>

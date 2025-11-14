@@ -10,10 +10,7 @@ use App\Models\Color;
 
 class ProductVariantSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     * Tạo variants cho sản phẩm ID 1 (Áo thun nam basic)
-     */
+    
     public function run(): void
     {
         // Kiểm tra product tồn tại
@@ -23,7 +20,7 @@ class ProductVariantSeeder extends Seeder
             return;
         }
 
-        // Lấy sizes và colors
+        // Lấy size với màu 
         $sizes = Size::all();
         $colors = Color::all();
 
@@ -35,29 +32,29 @@ class ProductVariantSeeder extends Seeder
         $now = now();
         $variants = [];
 
-        // Tạo variants cho các size phổ biến (S, M, L, XL) × 5 màu đầu
-        $selectedSizes = $sizes->whereIn('name', ['S', 'M', 'L', 'XL']); // 4 sizes
-        $selectedColors = $colors->take(5); // 5 màu đầu: Black, White, Red, Blue, Green
+        // Tạo biến thể cho các size SMLXL (size thường dùng) cộng thêm 5 màu đầu
+        $selectedSizes = $sizes->whereIn('name', ['S', 'M', 'L', 'XL']); 
+        $selectedColors = $colors->take(5); // 5 màu đầu trong color seeder
 
-        $basePrice = $product->price; // Giá gốc của sản phẩm
+        $basePrice = $product->price; // Giá gốc 
 
         foreach ($selectedSizes as $size) {
             foreach ($selectedColors as $color) {
-                // Giá biến thể: một số giống product, một số khác để test
+                // Giá biến thể 
                 $variantPrice = match($size->name) {
-                    'S' => $basePrice - 10000,  // Rẻ hơn 10k
-                    'M' => 0,                    // 0 = dùng giá product
-                    'L' => $basePrice,           // Bằng giá product
-                    'XL' => $basePrice + 20000,  // Đắt hơn 20k
+                    'S' => $basePrice - 10000,  
+                    'M' => 0,                    
+                    'L' => $basePrice,           
+                    'XL' => $basePrice + 20000,  
                     default => $basePrice
                 };
 
                 // Stock khác nhau để test
                 $stock = match($color->name) {
-                    'Black' => 50,   // Nhiều
-                    'White' => 30,   // Trung bình
-                    'Red' => 10,     // Ít
-                    'Blue' => 0,     // Hết hàng để test
+                    'Black' => 50,   
+                    'White' => 30,   
+                    'Red' => 10,     
+                    'Blue' => 0,     
                     default => 20
                 };
 
@@ -73,7 +70,7 @@ class ProductVariantSeeder extends Seeder
             }
         }
 
-        // Sử dụng upsert để idempotent (có thể chạy lại)
+        // Sử dụng upsert để có thể chạy lại bao nhiu lần cũm được 
         DB::table('product_variants')->upsert(
             $variants,
             ['product_id', 'size_id', 'color_id'], // Unique keys

@@ -44,8 +44,7 @@
                     <div class="col-lg-6">
                         <div class="account-create text-center pt-50">
                             <h4>CHƯA CÓ TÀI KHOẢN?</h4>
-                            <p>Add items to your wishlistget personalised recommendations <br>
-                                check out more quickly track your orders register</p>
+                            
                             <div class="btn-wrapper">
                                 <a href="{{route ('register')}}" class="theme-btn-1 btn black-btn">TẠO TÀI KHOẢN</a>
                             </div>

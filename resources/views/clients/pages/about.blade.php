@@ -1,22 +1,19 @@
 @extends('layouts.client')
 
-@section('title', 'TÀI KHOẢN')
-@section('breadcrumb', 'TÀI KHOẢN')
+@section('title', 'VỀ CHÚNG TÔI')
+@section('breadcrumb', 'VỀ CHÚNG TÔI')
 
 @section('content')
 <section class="about-us">
     <div class="container">
-        <div class="row">
-            <div class="col-md-6 image">
-                <img src="{{ asset('assets/clients/img/others/6.png') }}" alt="Ảnh giới thiệu">
-            </div>
-            <div class="col-md-6 content">
-                <h2>Cửa Hàng Thực Phẩm Hữu Cơ Uy Tín</h2>
-                <p>Chúng tôi cam kết mang đến sản phẩm chất lượng cao, tốt cho sức khỏe.</p>
-                <p>We are a store that connects people who aspire to do good and spread goodness. Our mission is to provide access to high-quality organic food in a trustworthy and sustainable environment.</p>
+        <div class="row justify-content-center">
+            <div class="col-md-8 content" style="text-align: center;">
+                <h2>Cửa Hàng Thời Trang Uy Tín</h2>
+                <p>Chúng tôi cam kết mang đến những sản phẩm thời trang chất lượng cao, phong cách và hợp xu hướng.</p>
+                <p>Chúng tôi là cửa hàng kết nối những người yêu thích thời trang, luôn cập nhật xu hướng mới nhất và mang đến trải nghiệm mua sắm tuyệt vời. Sứ mệnh của chúng tôi là cung cấp trang phục chất lượng với giá cả hợp lý trong môi trường mua sắm tin cậy và bền vững.</p>
                 <div class="author">
                     <strong>MinhDuy</strong>
-                    <small>/ Founder</small>
+                    <small>/ Nhà sáng lập</small>
                 </div>
             </div>
         </div>

@@ -8,9 +8,7 @@ use Illuminate\Support\Carbon;
 
 class SizeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    
     public function run(): void
     {
         $now = now();
@@ -22,7 +20,7 @@ class SizeSeeder extends Seeder
             ['name' => 'XXL', 'created_at' => $now, 'updated_at' => $now],
         ];
 
-        // Use upsert to be idempotent
+        
         DB::table('sizes')->upsert($sizes, ['name']);
     }
 }
