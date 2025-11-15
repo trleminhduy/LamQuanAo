@@ -43,3 +43,9 @@ display: inline-block;
         transform: rotate(360deg);
     }
 }
+
+/* Remove plus icon from top menu items */
+.menu-icon > a::before {
+    content: none !important;
+    display: none !important;
+}

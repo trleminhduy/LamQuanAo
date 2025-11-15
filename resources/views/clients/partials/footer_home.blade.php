@@ -10,8 +10,7 @@
                                         <img src="{{asset ('assets/clients/img/24.png')}}" alt="Logo">
                                     </div>
                                 </div>
-                                <p>Lorem Ipsum is simply dummy text of the and typesetting industry. Lorem Ipsum is
-                                    dummy text of the printing.</p>
+                                <p>Chúng tôi cam kết mang đến những sản phẩm chất lượng và dịch vụ tốt nhất cho khách hàng.</p>
                                 <div class="footer-address">
                                     <ul>
                                         <li>
@@ -27,7 +26,7 @@
                                                 <i class="icon-call"></i>
                                             </div>
                                             <div class="footer-address-info">
-                                                <p><a href="tel:+0123-456789">+0123-456789</a></p>
+                                                <p><a href="tel:+0123-456789">0838567807</a></p>
                                             </div>
                                         </li>
                                         <li>
@@ -117,7 +116,7 @@
                                                     <div class="response" id="mce-success-response"
                                                         style="display:none"></div>
                                                 </div>
-                                                <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                                               
                                                 <div style="position: absolute; left: -5000px;" aria-hidden="true">
                                                     <input type="text" name="b_dde0a42ff09e8d43cad40dc82_72d274d15d"
                                                         tabindex="-1" value="">
@@ -134,7 +133,7 @@
                                     </div>
                                 </div>
                                 <h5 class="mt-30">Chúng tôi chấp nhận</h5>
-                                <img src="img/icons/payment-4.png" alt="Payment Image">
+                                <img src="{{asset('assets/clients/img/icons/MoMo_Logo.png')}}" alt="Payment Image" style="width: 20%">
                             </div>
                         </div>
                     </div>
@@ -145,15 +144,14 @@
                     <div class="row">
                         <div class="col-md-6 col-12">
                             <div class="ltn__copyright-design clearfix">
-                                <p>All Rights Reserved @ Company <span class="current-year"></span></p>
+                                <p> <span class="current-year"></span></p>
                             </div>
                         </div>
                         <div class="col-md-6 col-12 align-self-center">
                             <div class="ltn__copyright-menu text-right text-end">
                                 <ul>
-                                    <li><a href="#">Terms & Conditions</a></li>
-                                    <li><a href="#">Claim</a></li>
-                                    <li><a href="#">Privacy & Policy</a></li>
+                                    <li><a href="#">Chính sách và điều khoản</a></li>
+                                    
                                 </ul>
                             </div>
                         </div>

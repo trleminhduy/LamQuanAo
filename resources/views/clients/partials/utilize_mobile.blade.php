@@ -24,8 +24,8 @@
                         <li><a href="{{ route('faq') }}">FAQ</a></li>
                     </ul>
                 </li>
-                <li><a href="{{ route('about') }}">Cửa hàng</a></li>
-                <li><a href="{{ route('about') }}">Liên hệ</a></li>
+                <li><a href="{{ route('products.index') }}">Sản phẩm</a></li>
+                <li><a href="{{ route('products.index') }}">Liên hệ</a></li>
             </ul>
         </div>
         <div class="ltn__utilize-buttons ltn__utilize-buttons-2">

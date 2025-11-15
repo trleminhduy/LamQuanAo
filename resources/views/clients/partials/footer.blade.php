@@ -11,8 +11,7 @@
 
                                </div>
                            </div>
-                           <p>Lorem Ipsum is simply dummy text of the and typesetting industry. Lorem Ipsum is
-                               dummy text of the printing.</p>
+                           <p>Chúng tôi cam kết mang đến những sản phẩm chất lượng và dịch vụ tốt nhất cho khách hàng.</p>
                            <div class="footer-address">
                                <ul>
                                    <li>
@@ -28,7 +27,7 @@
                                            <i class="icon-call"></i>
                                        </div>
                                        <div class="footer-address-info">
-                                           <p><a href="tel:+0123-456789">+0123-456789</a></p>
+                                           <p><a href="tel:+0123-456789">0838567807</a></p>
                                        </div>
                                    </li>
                                    <li>
@@ -110,7 +109,7 @@
                                </form>
                            </div>
                            <h5 class="mt-30">Chúng tôi chấp nhận</h5>
-                           <img src="{{ asset('assets/clients/img/icons/payment-4.png') }}" alt="Payment Image">
+                           <img src="{{asset('assets/clients/img/icons/MoMo_Logo.png')}}" alt="Payment Image" style="width:20%">
                        </div>
                    </div>
                </div>
@@ -121,15 +120,14 @@
                <div class="row">
                    <div class="col-md-6 col-12">
                        <div class="ltn__copyright-design clearfix">
-                           <p>All Rights Reserved @ Company <span class="current-year"></span></p>
+                           <p><span class="current-year"></span></p>
                        </div>
                    </div>
                    <div class="col-md-6 col-12 align-self-center">
                        <div class="ltn__copyright-menu text-right text-end">
                            <ul>
-                               <li><a href="#">Terms & Conditions</a></li>
-                               <li><a href="#">Claim</a></li>
-                               <li><a href="#">Privacy & Policy</a></li>
+                               <li><a href="#">Chính sách và điều khoản</a></li>
+                           
                            </ul>
                        </div>
                    </div>

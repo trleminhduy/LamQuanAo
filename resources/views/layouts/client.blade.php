@@ -24,6 +24,9 @@
 
     {{-- Custom css --}}
     <link rel="stylesheet" href="{{asset('assets/clients/css/custom.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/clients/css/product-detail-custom.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/clients/css/products-custom.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/clients/css/service-custom.css')}}">
 </head>
 
 <body>
