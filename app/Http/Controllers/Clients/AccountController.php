@@ -63,11 +63,7 @@ class AccountController extends Controller
 
         $user = User::find($userId);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cập nhật thành công',
-            'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null
-        ]);
+        return redirect()->route('account')->with('success', 'Cập nhật thông tin thành công!');
     }
 
     //Change password
@@ -93,18 +89,13 @@ class AccountController extends Controller
 
         //Check mật khẩu hiện tại không trùng khớp với mật khẩu 
         if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json(['errors' => ['current_password' => ['Mật khẩu hiện tại không đúng!']]], 422);
+            return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng!']);
         }
 
         //Nếu đúng mật khẩu
         $user->update(['password' => Hash::make($request->new_password)]);
 
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Đổi mật khẩu thành công',
-
-        ]);
+        return redirect()->route('account')->with('success', 'Đổi mật khẩu thành công!');
     }
 
     public function addAddress(Request $request)

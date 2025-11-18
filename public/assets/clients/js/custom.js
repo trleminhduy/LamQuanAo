@@ -1,5 +1,102 @@
 //ĐÂY LÀ NƠI ĐỂ VALIDATE
 $(document).ready(function () {
+    
+    //////////// MINI CART /////////////////
+    //////////// **************** /////////////////
+    
+    // Load mini cart khi trang vừa load
+    loadMiniCart();
+    
+    // Hàm load mini cart
+    function loadMiniCart() {
+        $.ajax({
+            url: '/cart/mini',
+            type: 'GET',
+            success: function(data) {
+                console.log('Mini cart data:', data); // Debug
+                
+                // Update số lượng badge
+                $('.cart-count').text(data.count);
+                
+                // Nếu giỏ hàng trống
+                if (data.count === 0) {
+                    $('#mini-cart-items').html('');
+                    $('#mini-cart-footer').hide();
+                    $('#mini-cart-empty').show();
+                    return;
+                }
+                
+                // Hiển thị danh sách sản phẩm
+                $('#mini-cart-empty').hide();
+                $('#mini-cart-footer').show();
+                
+                let html = '';
+                data.items.forEach(function(item) {
+                    html += `
+                        <div class="mini-cart-item clearfix">
+                            <div class="mini-cart-img">
+                                <a href="#"><img src="${item.image}" alt="${item.name}"></a>
+                                <span class="mini-cart-item-delete" data-id="${item.id}">
+                                    <i class="icon-cancel"></i>
+                                </span>
+                            </div>
+                            <div class="mini-cart-info">
+                                <h6><a href="#" title="${item.name}">${item.name.substring(0, 30)}${item.name.length > 30 ? '...' : ''}</a></h6>
+                                <span class="mini-cart-quantity">${item.quantity} x ${formatPrice(item.price)} VNĐ</span>
+                                <p style="font-size: 12px; color: #999; margin: 5px 0 0 0;">
+                                    Size: ${item.size} | Màu: ${item.color}
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                $('#mini-cart-items').html(html);
+                $('#mini-cart-total').text(data.formatted_total);
+                
+                // Bind event xóa sản phẩm
+                bindMiniCartDelete();
+            },
+            error: function() {
+                console.log('Không thể tải mini cart');
+            }
+        });
+    }
+    
+    // Format giá tiền
+    function formatPrice(price) {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+    
+    // Xóa sản phẩm từ mini cart
+    function bindMiniCartDelete() {
+        $('.mini-cart-item-delete').off('click').on('click', function() {
+            let itemId = $(this).data('id');
+            
+            if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
+            
+            $.ajax({
+                url: `/cart/remove/${itemId}`,
+                type: 'DELETE',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        loadMiniCart(); // Reload mini cart
+                    }
+                },
+                error: function() {
+                    toastr.error('Có lỗi xảy ra!');
+                }
+            });
+        });
+    }
+    
+    // Export function để các file khác có thể gọi
+    window.loadMiniCart = loadMiniCart;
+    
     // ************ PAGE LOGIN/REGISTER *******************
     // **************             ************************
 
@@ -298,19 +395,19 @@ $(document).ready(function () {
             },
             beforeSend: function () {
                 $("#loading-spinner").show();
-                $("#liton_product_grid").hide();
+                $("#products-container").css("opacity", "0.5");
             },
 
             success: function (response) {
-                 $("#liton_product_grid").html(response.products);
-                 $(".ltn__pagination").html(response.pagination);
+                 $("#products-container").html(response.products);
+                 $(".products-pagination").html(response.pagination);
                  console.log("Filter success");
             },
 
            
             complete: function () {
                 $("#loading-spinner").hide();
-                $("#liton_product_grid").show();
+                $("#products-container").css("opacity", "1");
             },
              error: function (xhr) {
                 console.error("Filter error:", xhr);
@@ -357,4 +454,87 @@ $(document).ready(function () {
             number_format($(".slider-range").slider("values", 1)) +
             " vnđ"
     );
+
+    //////////// PAGE PRODUCT DETAIL /////////////////
+    //////////// **************** /////////////////
+    
+    // Thêm vào giỏ hàng
+    $(".btn-add-cart").click(function () {
+        var colorId = $(".color-item.selected").data("color-id");
+        var sizeId = $("#product-size").val();
+        var quantity = $("#quantity").val();
+
+        // TẠM THỜI BỎ KIỂM TRA MÀU ĐỂ TEST
+        // if (!colorId) {
+        //     toastr.warning("Vui lòng chọn màu sắc!");
+        //     return;
+        // }
+
+        // Tìm variant phù hợp từ window.productVariants
+        if (!window.productVariants) {
+            toastr.error("Không tìm thấy thông tin sản phẩm!");
+            return;
+        }
+
+        // Nếu không chọn màu, lấy màu đầu tiên
+        if (!colorId) {
+            colorId = window.productVariants[0].color_id;
+            console.log("Tự động chọn màu:", colorId);
+        }
+
+        var selectedVariant = window.productVariants.find(
+            (v) => v.color_id == colorId && v.size_id == sizeId
+        );
+
+        if (!selectedVariant) {
+            toastr.error("Không tìm thấy sản phẩm với màu và size này!");
+            console.log("Không tìm thấy variant với colorId:", colorId, "sizeId:", sizeId);
+            console.log("Danh sách variants:", window.productVariants);
+            return;
+        }
+
+        console.log("Đang thêm variant:", selectedVariant);
+
+        $.ajax({
+            url: window.cartAddUrl || "/cart/add",
+            type: "POST",
+            data: {
+                product_variant_id: selectedVariant.id,
+                quantity: quantity,
+                _token: $('meta[name="csrf-token"]').attr("content"),
+            },
+            beforeSend: function() {
+                console.log("Gửi request thêm giỏ hàng...");
+            },
+            success: function (response) {
+                console.log("Response:", response);
+                if (response.success) {
+                    toastr.success(response.message);
+                    // Reload mini cart
+                    if (typeof window.loadMiniCart === 'function') {
+                        window.loadMiniCart();
+                    }
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function (xhr) {
+                console.log("Lỗi:", xhr);
+                console.log("Status:", xhr.status);
+                console.log("Response:", xhr.responseText);
+                
+                if (xhr.status === 401) {
+                    toastr.warning("Bạn chưa đăng nhập, giỏ hàng đang lưu tạm!");
+                } else {
+                    toastr.error("Có lỗi xảy ra!");
+                }
+            },
+        });
+    });
+
+        //////////// MINI CART Ở TRÊN HEADER /////////////////
+    //////////// **************** /////////////////
+
+    // Không cần nữa - đã xử lý bằng template có sẵn
+
 });

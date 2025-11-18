@@ -75,7 +75,7 @@
     </div>
 </div>
 
-<!-- Tin tức -->
+{{-- <!-- Tin tức -->
 <div class="home-container">
     <div class="home-section-title">
         <h2>Tin tức mới nhất</h2>
@@ -109,7 +109,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 <script>
 // JavaScript đơn giản cho tabs

@@ -27,6 +27,11 @@
     <link rel="stylesheet" href="{{asset('assets/clients/css/product-detail-custom.css')}}">
     <link rel="stylesheet" href="{{asset('assets/clients/css/products-custom.css')}}">
     <link rel="stylesheet" href="{{asset('assets/clients/css/service-custom.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/clients/css/cart-custom.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/clients/css/account-custom.css')}}">
+
+    <!-- OPTIONAL: Bootstrap 5 CSS (only if your theme does not already include it) -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 </head>
 
 <body>
@@ -66,6 +71,13 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"> </script>
     <!-- All JS Plugins -->
     <script src="{{asset ('assets/clients/js/plugins.js')}}"></script>
+
+    <!-- If your `plugins.js` already contains Bootstrap JS (bundle), DO NOT load Bootstrap again. 
+         If you're unsure or tabs/modals with `data-bs-*` are not working, uncomment the bootstrap bundle line below.
+    -->
+    <!-- Bootstrap 5 bundle (includes Popper) - uncomment if needed -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
+
     <!-- Main JS -->
     <script src="{{asset ('assets/clients/js/main.js')}}"></script>
 
@@ -75,6 +87,21 @@
     {{-- MY JS --}}
 
     <script src="{{asset ('assets/clients/js/custom.js')}}">  </script>
+
+    <!-- Helpful debug helper (dev-only): logs bootstrap version if available -->
+    <script>
+        (function(){
+            try{
+                if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                    console.log('Bootstrap JS is loaded.');
+                } else {
+                    console.log('Bootstrap JS not detected in global `bootstrap`. If tabs/modals using data-bs-* do not work, ensure bootstrap.bundle.js is loaded.');
+                }
+            }catch(e){
+                console.log('Bootstrap detection skipped.');
+            }
+        })();
+    </script>
 
 </body>
 

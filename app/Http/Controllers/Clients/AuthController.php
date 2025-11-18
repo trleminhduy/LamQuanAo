@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Clients;
 
 use App\Http\Controllers\Controller;
 use App\Mail\ActivationMail;
+use App\Models\CartItem;
+use App\Models\ProductVariant;
 use App\Models\User;
 
 use Illuminate\Http\Request;
@@ -115,6 +117,10 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 'active'])) {
             if (in_array(Auth::user()->role->name, ['customer'])) {
                 $request->session()->regenerate();
+                
+                // Chuyển giỏ hàng từ session sang database
+                $this->mergeSessionCartToDatabase();
+                
                 toastr()->success('Đăng nhập thành công');
 
                 return redirect()->route('home');
@@ -128,6 +134,54 @@ class AuthController extends Controller
         toastr()->error('Thông tin đăng nhập không chính xác hoặc tài khoản chưa được kích hoạt');
         return redirect()->back();
     }
+    
+    // Chuyển giỏ hàng từ session sang database khi đăng nhập
+    private function mergeSessionCartToDatabase()
+    {
+        // Lấy giỏ hàng từ session
+        $sessionCart = session()->get('cart', []);
+        
+        if (empty($sessionCart)) {
+            return; // Không có gì trong session thì thôi
+        }
+        
+        $userId = Auth::id();
+        
+        foreach ($sessionCart as $variantId => $cartData) {
+            // Kiểm tra variant còn tồn tại không
+            $variant = ProductVariant::find($variantId);
+            if (!$variant) continue;
+            
+            // Kiểm tra sản phẩm đã có trong giỏ database chưa
+            $cartItem = CartItem::where('user_id', $userId)
+                ->where('product_variant_id', $variantId)
+                ->first();
+            
+            if ($cartItem) {
+                // Nếu đã có - cộng thêm số lượng
+                $newQuantity = $cartItem->quantity + $cartData['quantity'];
+                
+                // Kiểm tra tồn kho
+                if ($newQuantity <= $variant->stock) {
+                    $cartItem->quantity = $newQuantity;
+                    $cartItem->save();
+                }
+            } else {
+                // Nếu chưa có - tạo mới
+                if ($cartData['quantity'] <= $variant->stock) {
+                    CartItem::create([
+                        'user_id' => $userId,
+                        'product_variant_id' => $variantId,
+                        'quantity' => $cartData['quantity']
+                    ]);
+                }
+            }
+        }
+        
+        // Xóa giỏ hàng trong session sau khi đã chuyển
+        session()->forget('cart');
+    }
+    
     public function logout(Request $request)
     {
         Auth::logout();

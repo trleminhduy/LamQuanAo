@@ -9,7 +9,7 @@
         <p class="product-card-price">{{ number_format($product->price, 0, ',', '.') }} VNĐ</p>
         <div class="product-card-actions">
             <button class="btn-quick-view" title="Xem nhanh">👁️</button>
-            <button class="btn-add-to-cart" title="Thêm vào giỏ">🛒</button>
+            <a href="{{ route('products.detail', $product->slug) }}" class="btn-add-to-cart" title="Thêm vào giỏ">🛒</a>
             <button class="btn-add-wishlist" title="Yêu thích">♡</button>
         </div>
     </div>

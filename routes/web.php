@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Clients\AccountController;
 use App\Http\Controllers\Clients\AuthController;
+use App\Http\Controllers\Clients\CartController;
 use App\Http\Controllers\Clients\ForgotPasswordController;
 use App\Http\Controllers\Clients\HomeController;
 use App\Http\Controllers\Clients\ProductController;
@@ -68,8 +69,20 @@ Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']
             Route::delete('/addresses/{id}', [AccountController::class, 'deleteAddress'])->name('account.addresses.delete');
 
         });
+
+        // Giỏ hàng - CHỈ cần đăng nhập cho view, update
+        Route::prefix('cart')->group(function () {
+            Route::get('/', [CartController::class, 'index'])->name('cart.index');
+            Route::put('/update/{id}', [CartController::class, 'update'])->name('cart.update');
+        });
         
     });
+
+// Giỏ hàng - KHÔNG cần đăng nhập (lưu vào session nếu chưa login)
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::get('/cart/mini', [CartController::class, 'miniCart'])->name('cart.mini');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
 //Trang sản phẩm
 Route::get('/product',[ProductController::class,'index'])->name('products.index');
@@ -79,4 +92,6 @@ Route::get('/product/filter',[ProductController::class,'filter'])->name('product
 
 //ROute chi tiết sản phẩm
 Route::get('/product/{slug}', [ProductController::class, 'detail'])->name('products.detail');
+
+
 

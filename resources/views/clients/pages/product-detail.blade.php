@@ -34,8 +34,8 @@
             <h1>{{ $product->name }}</h1>
             
             <div class="product-rating">
-                <span>⭐⭐⭐⭐⭐</span>
-                <span>(95 Đánh giá)</span>
+                {{-- <span>⭐⭐⭐⭐⭐</span>
+                <span>(95 Đánh giá)</span> --}}
             </div>
             
             <div class="product-price-detail">
@@ -227,6 +227,13 @@ function showTab(tabName) {
 if (colorItems.length > 0) {
     colorItems[0].classList.add('selected');
 }
+</script>
+
+<script>
+// Truyền data từ PHP sang JS
+window.productVariants = @json($product->variants);
+window.cartAddUrl = '{{ route("cart.add") }}';
+window.loginUrl = '{{ route("login") }}';
 </script>
 
 @endsection

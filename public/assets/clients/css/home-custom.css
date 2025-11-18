@@ -31,14 +31,12 @@
 
 /* Danh mục */
 .home-categories {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
-    flex-wrap: wrap;
     margin-bottom: 60px;
 }
 .home-category-item {
-    flex: 1;
-    min-width: 200px;
     text-align: center;
     background: #fff;
     padding: 20px;
