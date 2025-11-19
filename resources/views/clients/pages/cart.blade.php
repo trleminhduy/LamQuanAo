@@ -68,13 +68,13 @@
             </div>
             <div class="summary-row">
                 <span>Phí vận chuyển:</span>
-                <span>Miễn phí</span>
+                <span>30.000đ</span>
             </div>
             <div class="summary-row total">
                 <span>Tổng cộng:</span>
-                <span class="grand-total">{{ number_format($total, 0, ',', '.') }} VNĐ</span>
+                <span class="grand-total">{{ number_format($total + 30000, 0, ',', '.') }} VNĐ</span>
             </div>
-            <a href="#" class="btn-checkout">Tiến hành thanh toán →</a>
+            <a href="{{ route('checkout.index') }}" class="btn-checkout">Tiến hành thanh toán →</a>
         </div>
     </div>
     @else

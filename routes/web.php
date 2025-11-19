@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Clients\AccountController;
 use App\Http\Controllers\Clients\AuthController;
 use App\Http\Controllers\Clients\CartController;
@@ -9,7 +10,7 @@ use App\Http\Controllers\Clients\ProductController;
 use App\Http\Controllers\Clients\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/',[HomeController::class,'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/about', function () {
     return view('clients.pages.about');
@@ -50,48 +51,50 @@ Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showRese
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('password.update');
 
 
-    //Custom middleware
-    Route::middleware(['auth.custom'])->group(function () {
-        //middleware check người dùng nếu chưa đăng nhập thì sẽ không đi luồng đăng xuất thành công 
-        //vì nó không hợp lý thay vào đó sẽ bắt người dùng đăng nhập mới thực hiện chức năng
-        Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+//Custom middleware
+Route::middleware(['auth.custom'])->group(function () {
+    //middleware check người dùng nếu chưa đăng nhập thì sẽ không đi luồng đăng xuất thành công 
+    //vì nó không hợp lý thay vào đó sẽ bắt người dùng đăng nhập mới thực hiện chức năng
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-        //update account,.....
-        Route::prefix('account')->group(function () {
-            Route::get('/', [AccountController::class, 'index'])->name('account');
-            Route::post('/account/update', [AccountController::class, 'update'])->name('account.update');
-            Route::post('/change-password', [AccountController::class, 'changePassword'])->name('account.password-change');
+    //update account,.....
+    Route::prefix('account')->group(function () {
+        Route::get('/', [AccountController::class, 'index'])->name('account');
+        Route::post('/account/update', [AccountController::class, 'update'])->name('account.update');
+        Route::post('/change-password', [AccountController::class, 'changePassword'])->name('account.password-change');
 
-            Route::post('/addresses', [AccountController::class, 'addAddress'])->name('account.addresses.add');
+        Route::post('/addresses', [AccountController::class, 'addAddress'])->name('account.addresses.add');
 
-            //Xoá địa chỉ, update địa chỉ mặc định
-            Route::put('/addresses/{id}', [AccountController::class, 'updatePrimaryAddress'])->name('account.addresses.update');
-            Route::delete('/addresses/{id}', [AccountController::class, 'deleteAddress'])->name('account.addresses.delete');
-
-        });
-
-        // Giỏ hàng - CHỈ cần đăng nhập cho view, update
-        Route::prefix('cart')->group(function () {
-            Route::get('/', [CartController::class, 'index'])->name('cart.index');
-            Route::put('/update/{id}', [CartController::class, 'update'])->name('cart.update');
-        });
-        
+        //Xoá địa chỉ, update địa chỉ mặc định
+        Route::put('/addresses/{id}', [AccountController::class, 'updatePrimaryAddress'])->name('account.addresses.update');
+        Route::delete('/addresses/{id}', [AccountController::class, 'deleteAddress'])->name('account.addresses.delete');
     });
 
-// Giỏ hàng - KHÔNG cần đăng nhập (lưu vào session nếu chưa login)
+    // Giỏ hàng cart phải đăng nhập
+    Route::prefix('cart')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('cart.index');
+
+        Route::put('/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    });
+
+    //Checkout
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::get('/checkout/get-address', [CheckoutController::class, 'getAddress'])->name('checkout');
+
+
+});
+
+// Giỏ hàng - ko cần đăng nhập (lưu vào session nếu chưa login)
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::get('/cart/mini', [CartController::class, 'miniCart'])->name('cart.mini');
 Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
 //Trang sản phẩm
-Route::get('/product',[ProductController::class,'index'])->name('products.index');
+Route::get('/product', [ProductController::class, 'index'])->name('products.index');
 
 //Route bộ lọc sản phẩm theo giá trị (mặc địh, mới nhất, giá tiền tăn.....)
-Route::get('/product/filter',[ProductController::class,'filter'])->name('products.filter');
+Route::get('/product/filter', [ProductController::class, 'filter'])->name('products.filter');
 
 //ROute chi tiết sản phẩm
 Route::get('/product/{slug}', [ProductController::class, 'detail'])->name('products.detail');
-
-
-

@@ -1,9 +1,8 @@
-.profile-pic-container{
-position: relative;
-display: inline-block;
-
+.profile-pic-container {
+    position: relative;
+    display: inline-block;
 }
-.profile-pic{
+.profile-pic {
     width: 160px;
     height: 160px;
     border-radius: 100%;
@@ -11,7 +10,7 @@ display: inline-block;
     border: 4px solid #ddd;
     cursor: pointer;
 }
-.category-filter.active{
+.category-filter.active {
     color: var(--ltn__secondary-color);
     font-weight: bold;
     text-decoration: underline;
@@ -19,7 +18,7 @@ display: inline-block;
 
 /* CUSTOM CON XOAY */
 
-#loading-spinner{
+#loading-spinner {
     display: flex;
     align-items: center;
     justify-self: center;
@@ -31,9 +30,10 @@ display: inline-block;
     width: 60px;
     height: 60px;
     animation: rotataion 1s linear infinite;
-    display: inline-block   ;
+    display: inline-block;
     box-sizing: border-box;
-    border-color:   var(--ltn__secondary-color) transparent var(--ltn__secondary-color) transparent;
+    border-color: var(--ltn__secondary-color) transparent
+        var(--ltn__secondary-color) transparent;
 }
 @keyframes rotataion {
     0% {
@@ -48,4 +48,11 @@ display: inline-block;
 .menu-icon > a::before {
     content: none !important;
     display: none !important;
+}
+/* checkout */
+.select-address {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
 }
