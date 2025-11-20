@@ -104,7 +104,13 @@
                             </div>
                         <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit" id="order_button_cash">Đặt hàng</button>
                         <div id="paypal-button-container"></div>
+                        </form>
 
+                        <form action="{{ route('checkout.momo_payment') }}" method="POST" id="momo-form" style="display: none;">
+                            @csrf
+                            <input type="hidden" name="address_id" value="{{ $defaultAddress->id }}">
+                            <input type="hidden" name="amount" value="{{ $total }}">
+                            <button type="submit" class="btn theme-btn-1 btn-effect-1 text-uppercase" id="order_button_momo">Thanh toán MoMo</button>
                         </form>
 
                     </div>

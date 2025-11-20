@@ -82,11 +82,13 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/checkout/get-address', [CheckoutController::class, 'getAddress'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
     Route::post('/checkout/paypal', [CheckoutController::class, 'placeOrderPayPal'])->name('checkout.placeOrderPayPal');
-
-
-
+    Route::post('/checkout/momo', [CheckoutController::class, 'momo_payment'])->name('checkout.momo_payment');
 
 });
+
+// Routes momo
+Route::get('/checkout/momo/return', [CheckoutController::class, 'momoReturn'])->name('checkout.momo.return');
+Route::post('/checkout/momo/notify', [CheckoutController::class, 'momoNotify'])->name('checkout.momo.notify');
 
 // Giỏ hàng - ko cần đăng nhập (lưu vào session nếu chưa login)
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');

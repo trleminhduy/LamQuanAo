@@ -583,11 +583,17 @@ $(document).ready(function () {
     // chức năng khi ng dùng click chọn COD thì hiện buttton riêng cod và khi chọn pp thì hiện pp
     function togglePayment() {
         if ($("#payment_paypal").is(":checked")) {
-            $("#paypal-button-container").show();
             $("#order_button_cash").hide();
-        } else {
+            $("#paypal-button-container").show();
+            $("#momo-form").hide();
+        } else if ($("#payment_momo").is(":checked")) {
+            $("#order_button_cash").hide();
             $("#paypal-button-container").hide();
+            $("#momo-form").show();
+        } else {
             $("#order_button_cash").show();
+            $("#paypal-button-container").hide();
+            $("#momo-form").hide();
         }
     }
 
