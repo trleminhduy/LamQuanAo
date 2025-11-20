@@ -83,12 +83,17 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::post('/checkout', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
     Route::post('/checkout/paypal', [CheckoutController::class, 'placeOrderPayPal'])->name('checkout.placeOrderPayPal');
     Route::post('/checkout/momo', [CheckoutController::class, 'momo_payment'])->name('checkout.momo_payment');
+    Route::post('/checkout/vnpay', [CheckoutController::class, 'vnpay_payment'])->name('checkout.vnpay_payment');
+
 
 });
 
 // Routes momo
 Route::get('/checkout/momo/return', [CheckoutController::class, 'momoReturn'])->name('checkout.momo.return');
 Route::post('/checkout/momo/notify', [CheckoutController::class, 'momoNotify'])->name('checkout.momo.notify');
+
+// Routes VNPay
+Route::get('/checkout/vnpay/return', [CheckoutController::class, 'vnpayReturn'])->name('checkout.vnpay.return');
 
 // Giỏ hàng - ko cần đăng nhập (lưu vào session nếu chưa login)
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');

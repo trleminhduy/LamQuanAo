@@ -586,14 +586,22 @@ $(document).ready(function () {
             $("#order_button_cash").hide();
             $("#paypal-button-container").show();
             $("#momo-form").hide();
+            $("#vnpay-form").hide();
         } else if ($("#payment_momo").is(":checked")) {
             $("#order_button_cash").hide();
             $("#paypal-button-container").hide();
             $("#momo-form").show();
+            $("#vnpay-form").hide();
+        } else if ($("#payment_vnpay").is(":checked")) {
+            $("#order_button_cash").hide();
+            $("#paypal-button-container").hide();
+            $("#momo-form").hide();
+            $("#vnpay-form").show();
         } else {
             $("#order_button_cash").show();
             $("#paypal-button-container").hide();
             $("#momo-form").hide();
+            $("#vnpay-form").hide();
         }
     }
 

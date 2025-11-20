@@ -101,17 +101,36 @@
                                         <label for="payment_momo">Momo</label>
                                     </h5>
                                 </div>
+                                <div class="card">
+                                    <h5 class="collapsed ltn__card-title">
+                                        <input type="radio" name="payment_method" value="vnpay" id="payment_vnpay">
+                                        <label for="payment_vnpay">VNPay</label>
+                                    </h5>
+                                </div>
                             </div>
-                        <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit" id="order_button_cash">Đặt hàng</button>
-                        <div id="paypal-button-container"></div>
+                            <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit"
+                                id="order_button_cash">Đặt hàng</button>
+                            <div id="paypal-button-container"></div>
                         </form>
 
-                        <form action="{{ route('checkout.momo_payment') }}" method="POST" id="momo-form" style="display: none;">
+                        <form action="{{ route('checkout.momo_payment') }}" method="POST" id="momo-form"
+                            style="display: none;">
                             @csrf
                             <input type="hidden" name="address_id" value="{{ $defaultAddress->id }}">
                             <input type="hidden" name="amount" value="{{ $total }}">
-                            <button type="submit" class="btn theme-btn-1 btn-effect-1 text-uppercase" id="order_button_momo">Thanh toán MoMo</button>
+                            <button type="submit" class="btn theme-btn-1 btn-effect-1 text-uppercase"
+                                id="order_button_momo">Thanh toán MoMo</button>
                         </form>
+                        
+                        <form action="{{ route('checkout.vnpay_payment') }}" method="POST" id="vnpay-form"
+                            style="display: none;">
+                            @csrf
+                            <input type="hidden" name="address_id" value="{{ $defaultAddress->id }}">
+                            <input type="hidden" name="amount" value="{{ $total }}">
+                            <button type="submit" class="btn theme-btn-1 btn-effect-1 text-uppercase"
+                                id="order_button_vnpay">Thanh toán VNPay</button>
+                        </form>
+
 
                     </div>
                 </div>
@@ -135,7 +154,9 @@
 
                                 <tr>
                                     <td><strong>Tổng tiền</strong></td>
-                                    <td><strong id="total_price" data-amount="{{ $total }}">{{ number_format($total) }} VNĐ</strong></td>
+                                    <td><strong id="total_price"
+                                            data-amount="{{ $total }}">{{ number_format($total) }} VNĐ</strong>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -144,7 +165,7 @@
             </div>
         </div>
     </div>
-  
+
 
 @endsection
 
