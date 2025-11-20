@@ -74,10 +74,10 @@
                 <div class="col-lg-6">
                     <div class="ltn__checkout-payment-method mt-50">
                         <h4 class="title-2">Phương thức thanh toán</h4>
-                        <form action="" method="POST">
+                        <form action="{{ route('checkout.placeOrder') }}" method="POST">
                             @csrf
                             <div id="checkout_payment">
-
+                                <input type="hidden" name="address_id" value="{{ $defaultAddress->id }}">
 
                                 <div class="card">
                                     <h5 class="ltn__card-title">
@@ -102,9 +102,11 @@
                                     </h5>
                                 </div>
                             </div>
+                        <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit" id="order_button_cash">Đặt hàng</button>
+                        <div id="paypal-button-container"></div>
+
                         </form>
 
-                        <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit">Đặt hàng</button>
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -114,7 +116,8 @@
                             <tbody>
                                 @foreach ($cartItems as $item)
                                     <tr>
-                                        <td>{{ $item->productVariant->product->name }} <strong>× {{ $item->quantity }}</strong></td>
+                                        <td>{{ $item->productVariant->product->name }} <strong>×
+                                                {{ $item->quantity }}</strong></td>
                                         <td>{{ number_format($item->productVariant->price * $item->quantity) }}đ</td>
                                     </tr>
                                 @endforeach
@@ -123,10 +126,10 @@
                                     <td>Phí vận chuyển</td>
                                     <td>{{ number_format($shippingFee) }}đ</td>
                                 </tr>
-                               
+
                                 <tr>
                                     <td><strong>Tổng tiền</strong></td>
-                                    <td><strong>{{ number_format($total) }}đ</strong></td>
+                                    <td><strong id="total_price" data-amount="{{ $total }}">{{ number_format($total) }} VNĐ</strong></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -135,7 +138,7 @@
             </div>
         </div>
     </div>
-    <!-- WISHLIST AREA START -->
+  
 
 @endsection
 

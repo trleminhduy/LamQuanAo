@@ -81,27 +81,15 @@
     <!-- Main JS -->
     <script src="{{asset ('assets/clients/js/main.js')}}"></script>
 
-    {{-- toast notification --}}
+    {{-- toast noti --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"> </script>
 
-    {{-- MY JS --}}
+    {{-- MY JS  --}}
 
     <script src="{{asset ('assets/clients/js/custom.js')}}">  </script>
 
-    <!-- Helpful debug helper (dev-only): logs bootstrap version if available -->
-    <script>
-        (function(){
-            try{
-                if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-                    console.log('Bootstrap JS is loaded.');
-                } else {
-                    console.log('Bootstrap JS not detected in global `bootstrap`. If tabs/modals using data-bs-* do not work, ensure bootstrap.bundle.js is loaded.');
-                }
-            }catch(e){
-                console.log('Bootstrap detection skipped.');
-            }
-        })();
-    </script>
+    {{-- PAYPAL thanh toan --}}
+     <script src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&currency=USD"></script>
 
 </body>
 

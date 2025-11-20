@@ -571,6 +571,7 @@ $(document).ready(function () {
                     $('input[name="ltn__phone"]').val(response.data.phone);
                     $('input[name="ltn__address"]').val(response.data.address);
                     $('input[name="ltn__city"]').val(response.data.city);
+                    $('input[name="address_id"]').val(response.data.id);
                 }
             },
             error: function (xhr) {
@@ -578,4 +579,125 @@ $(document).ready(function () {
             },
         });
     });
+
+    // chức năng khi ng dùng click chọn COD thì hiện buttton riêng cod và khi chọn pp thì hiện pp
+    function togglePayment() {
+        if ($("#payment_paypal").is(":checked")) {
+            $("#paypal-button-container").show();
+            $("#order_button_cash").hide();
+        } else {
+            $("#paypal-button-container").hide();
+            $("#order_button_cash").show();
+        }
+    }
+
+    // Chỉ chạy PayPal nếu đang ở trang checkout
+    if ($("#paypal-button-container").length > 0) {
+        togglePayment();
+
+        //bắt sự kiện
+        $("input[name='payment_method']").on("change", togglePayment);
+
+        // Lấy giá trị từ data attribute thay vì parse text
+        var totalPrice = parseFloat($("#total_price").data("amount"));
+        console.log("Total Price from data-amount:", totalPrice);
+        
+        var totalPriceText = $("#total_price").text().trim();
+        console.log("Total Price display text:", totalPriceText);
+
+        console.log("Total Price VNĐ:", totalPrice);
+        console.log("Total Price USD:", (totalPrice / 26000).toFixed(2));
+
+        // Kiểm tra giá trị hợp lệ
+        if (!totalPrice || totalPrice <= 0 || isNaN(totalPrice)) {
+            console.error("Invalid total price:", totalPrice);
+            alert("Lỗi: Tổng tiền không hợp lệ!");
+            return;
+        }
+
+        var usdAmount = (totalPrice / 26000).toFixed(2);
+        
+        // PayPal yêu cầu tối thiểu 0.01 USD
+        if (parseFloat(usdAmount) < 0.01) {
+            console.error("Amount too small:", usdAmount);
+            alert("Số tiền quá nhỏ để thanh toán qua PayPal!");
+            return;
+        }
+
+        console.log("Initializing PayPal with amount:", usdAmount, "USD");
+
+        // Paypal thanh toán
+        paypal
+            .Buttons({
+                createOrder: function (data, actions) {
+                    console.log("Creating PayPal order with USD amount:", usdAmount);
+                    return actions.order.create({
+                        purchase_units: [
+                            {
+                                amount: {
+                                    value: usdAmount,
+                                    currency_code: "USD"
+                                },
+                            },
+                        ],
+                    }).then(function(orderID) {
+                        console.log("PayPal Order Created:", orderID);
+                        return orderID;
+                    }).catch(function(error) {
+                        console.error("Error creating order:", error);
+                        alert("Lỗi tạo đơn hàng PayPal: " + error.message);
+                        throw error;
+                    });
+                },
+                onApprove: function (data, actions) {
+                    console.log("PayPal approved:", data);
+                    return actions.order.capture().then(function (details) {
+                        console.log("PayPal captured:", details);
+                        // Gửi thông tin về server
+                        return fetch("/checkout/paypal", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": $(
+                                    'meta[name="csrf-token"]'
+                                ).attr("content"),
+                            },
+                            body: JSON.stringify({
+                                orderID: data.orderID,
+                                payerID: data.payerID,
+                                transactionID: details.id,
+                                amount: details.purchase_units[0].amount.value,
+                                address_id: $("#list_address").val(),
+                            }),
+                        })
+                            .then((response) => response.json())
+                            .then((data) => {
+                                console.log("Server response:", data);
+                                if (data.success) {
+                                    toastr.success("Thanh toán PayPal thành công!");
+                                    // Delay 2 giây để hiện toastr trước khi redirect
+                                    setTimeout(function() {
+                                        window.location.href = "/account";
+                                    }, 2000);
+                                } else {
+                                    alert("Có lỗi xảy ra: " + (data.message || "Vui lòng thử lại."));
+                                }
+                            })
+                            .catch(function(error) {
+                                console.error("Server error:", error);
+                                alert("Lỗi kết nối server: " + error.message);
+                            });
+                    });
+                },
+                onError: function(err) {
+                    console.error("PayPal error:", err);
+                    alert("Có lỗi xảy ra với PayPal: " + err.message);
+                },
+                onCancel: function(data) {
+                    console.log("PayPal cancelled:", data);
+                    toastr.warning("Bạn đã hủy thanh toán PayPal");
+                }
+            })
+            .render("#paypal-button-container");
+    }
 });

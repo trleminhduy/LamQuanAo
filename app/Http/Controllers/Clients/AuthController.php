@@ -158,7 +158,7 @@ class AuthController extends Controller
                 ->first();
             
             if ($cartItem) {
-                // Nếu đã có - cộng thêm số lượng
+                // Nếu đã có thì cộng thêm số lượng
                 $newQuantity = $cartItem->quantity + $cartData['quantity'];
                 
                 // Kiểm tra tồn kho
@@ -167,7 +167,7 @@ class AuthController extends Controller
                     $cartItem->save();
                 }
             } else {
-                // Nếu chưa có - tạo mới
+                // Nếu chưa có thì tạo mới
                 if ($cartData['quantity'] <= $variant->stock) {
                     CartItem::create([
                         'user_id' => $userId,

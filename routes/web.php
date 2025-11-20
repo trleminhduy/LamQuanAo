@@ -80,6 +80,10 @@ Route::middleware(['auth.custom'])->group(function () {
     //Checkout
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::get('/checkout/get-address', [CheckoutController::class, 'getAddress'])->name('checkout');
+    Route::post('/checkout', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
+    Route::post('/checkout/paypal', [CheckoutController::class, 'placeOrderPayPal'])->name('checkout.placeOrderPayPal');
+
+
 
 
 });
