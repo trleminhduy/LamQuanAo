@@ -81,7 +81,7 @@ class ProductController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        //Lấy sản phẩm liên quan cùng danh mục (trừ cái đang xem)
+        //Lấy sản phẩm liên quan cùng danh mục (trừ cái userđang xem)
         $relatedProducts = Product::with('firstImage')
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
