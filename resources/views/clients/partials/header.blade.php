@@ -92,14 +92,15 @@
                                      <i class="icon-cancel  for-search-close"></i>
                                  </div>
                              </div>
-                             <div class="header-search-1-form">
-                                 <form id="#" method="get" action="#">
-                                     <input type="text" name="search" value="" placeholder="Search here..." />
-                                     <button type="submit">
-                                         <span><i class="icon-search"></i></span>
-                                     </button>
-                                 </form>
-                             </div>
+                              <div class="header-search-1-form">
+                             <form id="#" method="GET" action="{{ route('search') }}">
+                                 <input type="text" name="keyword" value="" placeholder="Tìm kiếm..." />
+                                 <i class="fa fa-microphone" aria-hidden="true" id="voice-search"></i>
+                                 <button type="submit">
+                                     <span><i class="icon-search"></i></span>
+                                 </button>
+                             </form>
+                         </div>
                          </div>
                          <!-- user-menu -->
                          <div class="ltn__drop-menu user-menu">

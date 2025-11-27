@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặc tả Use Case - Quản lý Đơn đặt hàng</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            margin: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 24pt;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        h2 {
+            color: #34495e;
+            font-size: 16pt;
+            margin-top: 25px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-size: 14pt;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        td {
+            padding: 10px;
+            vertical-align: top;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        ul, ol {
+            margin-left: 20px;
+        }
+        .usecase-box {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+        }
+        .branch {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-left: 4px solid #ffc107;
+            margin: 10px 0;
+        }
+        .highlight {
+            background-color: #d4edda;
+            padding: 2px 5px;
+            font-weight: bold;
+        }
+        .page-break {
+            page-break-after: always;
+        }
+        @media print {
+            body {
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Đặc tả Use Case<br/>Quản lý Đơn đặt hàng</h1>
+
+<div class="section">
+    <h2>1. Thông tin Use Case chính</h2>
+    <table>
+        <tr>
+            <th style="width: 30%;">Tên Use Case</th>
+            <td>Quản lý Đơn đặt hàng</td>
+        </tr>
+        <tr>
+            <th>Actor</th>
+            <td>Khách hàng</td>
+        </tr>
+        <tr>
+            <th>Mô tả</th>
+            <td>Khách hàng xem thông tin đơn đặt hàng và thực hiện các chức năng tạo, xóa và cập nhật thông tin đơn hàng</td>
+        </tr>
+        <tr>
+            <th>Pre-conditions</th>
+            <td>Actor đã đăng nhập vào hệ thống</td>
+        </tr>
+        <tr>
+            <th>Post-conditions</th>
+            <td>
+                <strong>Success:</strong> Thông báo thành công<br/>
+                <strong>Fail:</strong> Thông báo lỗi
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>2. Luồng sự kiện chính</h2>
+    <ol>
+        <li>Actor chọn chức năng <span class="highlight">Quản lý đơn đặt hàng</span>.</li>
+        <li>Hệ thống hiển thị màn hình Quản lý đơn đặt hàng.</li>
+        <li>Actor có thể thực hiện các chức năng sau:
+            <ul>
+                <li><strong>Extend Use Case:</strong> Tạo đơn</li>
+                <li><strong>Extend Use Case:</strong> Hủy đơn</li>
+                <li><strong>Extend Use Case:</strong> Cập nhật thông tin đơn hàng</li>
+                <li><strong>Extend Use Case:</strong> Tìm kiếm</li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<div class="section">
+    <h2>3. Luồng sự kiện phụ</h2>
+    <p>Actor nhấn <strong>đăng xuất</strong>, hệ thống trở về trang chủ.</p>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>4. Extend Use Case: Tạo đơn</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Chức năng cho phép khách hàng tạo đơn đặt hàng mới từ giỏ hàng hiện có.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Actor chọn <strong>Giỏ hàng</strong>.</li>
+            <li>Chỉnh sửa số lượng của sản phẩm muốn mua.</li>
+            <li>Nhấn <strong>Thanh toán</strong>.</li>
+            <li>Nhập thông tin giao hàng (họ tên, địa chỉ, số điện thoại).</li>
+            <li>Chọn phương thức thanh toán (COD / VNPay / MoMo / PayPal).</li>
+            <li>Nhấn <strong>Đặt hàng</strong>.</li>
+            <li>Hệ thống kiểm tra thông tin giao hàng.</li>
+            <li>Lưu thông tin vào cơ sở dữ liệu (bảng <code>orders</code>, <code>order_items</code>, <code>payments</code>).</li>
+            <li>Hệ thống gửi email xác nhận đơn hàng.</li>
+            <li>Hiển thị thông báo thành công và mã đơn hàng.</li>
+        </ol>
+
+        <h3>Rẽ nhánh</h3>
+        <div class="branch">
+            <strong>Rẽ nhánh 1:</strong> Thông tin không hợp lệ
+            <ul>
+                <li><strong>7.1.</strong> Thông tin giao hàng không hợp lệ (thiếu trường bắt buộc, định dạng sai).</li>
+                <li><strong>7.2.</strong> Hệ thống hiển thị thông báo lỗi chi tiết.</li>
+                <li><strong>7.3.</strong> Quay lại bước 4 để nhập lại.</li>
+            </ul>
+        </div>
+
+        <div class="branch">
+            <strong>Rẽ nhánh 2:</strong> Sản phẩm hết hàng
+            <ul>
+                <li><strong>7.1.</strong> Hệ thống phát hiện số lượng tồn kho không đủ.</li>
+                <li><strong>7.2.</strong> Hiển thị thông báo "Sản phẩm [tên] chỉ còn [số lượng] trong kho".</li>
+                <li><strong>7.3.</strong> Quay lại bước 2 để điều chỉnh số lượng.</li>
+            </ul>
+        </div>
+
+        <div class="branch">
+            <strong>Rẽ nhánh 3:</strong> Thanh toán online thất bại
+            <ul>
+                <li><strong>8.1.</strong> Giao dịch VNPay/MoMo/PayPal bị từ chối hoặc hủy.</li>
+                <li><strong>8.2.</strong> Hệ thống không tạo đơn hàng hoặc tạo với trạng thái "Chờ thanh toán".</li>
+                <li><strong>8.3.</strong> Hiển thị thông báo lỗi và cho phép chọn lại phương thức thanh toán.</li>
+            </ul>
+        </div>
+
+        <h3>Dữ liệu liên quan</h3>
+        <table>
+            <tr>
+                <th>Bảng</th>
+                <th>Trường chính</th>
+            </tr>
+            <tr>
+                <td><code>orders</code></td>
+                <td>user_id, coupon_id, shipping_address_id, total_price, status</td>
+            </tr>
+            <tr>
+                <td><code>order_items</code></td>
+                <td>order_id, product_variant_id, quantity, price</td>
+            </tr>
+            <tr>
+                <td><code>payments</code></td>
+                <td>order_id, payment_method, transaction_id, amount, status, paid_at</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>5. Extend Use Case: Hủy đơn (Xóa đơn)</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Chức năng cho phép khách hàng hủy đơn hàng khi chưa được giao.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Actor truy cập trang <strong>Quản lý đơn hàng</strong>.</li>
+            <li>Chọn đơn hàng muốn hủy từ danh sách.</li>
+            <li>Nhấn nút <strong>Hủy</strong>.</li>
+            <li>Hệ thống kiểm tra trạng thái đơn hàng.</li>
+            <li>Cập nhật trạng thái đơn hàng thành "Đã hủy" trong cơ sở dữ liệu.</li>
+            <li>Hoàn lại số lượng sản phẩm vào kho (cập nhật bảng <code>product_variants</code>).</li>
+            <li>Ghi lại lịch sử thay đổi trạng thái (bảng <code>order_status_histories</code>).</li>
+            <li>Gửi email thông báo hủy đơn thành công.</li>
+            <li>Hiển thị thông báo "Hủy đơn hàng thành công".</li>
+        </ol>
+
+        <h3>Rẽ nhánh</h3>
+        <div class="branch">
+            <strong>Rẽ nhánh 1:</strong> Đơn hàng đang được giao
+            <ul>
+                <li><strong>5.1.</strong> Trạng thái đơn hàng là "Đang giao" hoặc "Đã giao".</li>
+                <li><strong>5.2.</strong> Hệ thống thông báo <em>"Đơn hàng đang được giao, không thể hủy"</em>.</li>
+                <li><strong>5.3.</strong> Quay lại bước 2.</li>
+            </ul>
+        </div>
+
+        <div class="branch">
+            <strong>Rẽ nhánh 2:</strong> Đơn hàng đã thanh toán online
+            <ul>
+                <li><strong>5.1.</strong> Đơn hàng đã thanh toán qua VNPay/MoMo/PayPal.</li>
+                <li><strong>5.2.</strong> Hệ thống thông báo "Đơn hàng đã thanh toán, vui lòng liên hệ CSKH để hoàn tiền".</li>
+                <li><strong>5.3.</strong> Chuyển trạng thái đơn về "Chờ hoàn tiền" thay vì "Đã hủy".</li>
+            </ul>
+        </div>
+
+        <h3>Điều kiện hủy đơn</h3>
+        <table>
+            <tr>
+                <th>Trạng thái đơn hàng</th>
+                <th>Có thể hủy?</th>
+            </tr>
+            <tr>
+                <td>Chờ xác nhận</td>
+                <td class="highlight">✓ Có</td>
+            </tr>
+            <tr>
+                <td>Đã xác nhận</td>
+                <td class="highlight">✓ Có</td>
+            </tr>
+            <tr>
+                <td>Đang chuẩn bị hàng</td>
+                <td>✗ Không (liên hệ CSKH)</td>
+            </tr>
+            <tr>
+                <td>Đang giao</td>
+                <td>✗ Không</td>
+            </tr>
+            <tr>
+                <td>Đã giao</td>
+                <td>✗ Không</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>6. Extend Use Case: Cập nhật thông tin đơn hàng</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Chức năng cho phép khách hàng cập nhật thông tin giao hàng khi đơn chưa được xử lý.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Actor truy cập trang <strong>Quản lý đơn hàng</strong>.</li>
+            <li>Chọn đơn hàng muốn cập nhật.</li>
+            <li>Nhấn nút <strong>Cập nhật thông tin</strong>.</li>
+            <li>Hệ thống kiểm tra trạng thái đơn hàng.</li>
+            <li>Hiển thị form chỉnh sửa thông tin giao hàng.</li>
+            <li>Actor nhập thông tin mới (địa chỉ, số điện thoại, ghi chú).</li>
+            <li>Nhấn <strong>Lưu thay đổi</strong>.</li>
+            <li>Hệ thống validate thông tin.</li>
+            <li>Cập nhật bảng <code>shipping_addresses</code> hoặc <code>orders</code>.</li>
+            <li>Ghi lại lịch sử thay đổi.</li>
+            <li>Hiển thị thông báo "Cập nhật thông tin thành công".</li>
+        </ol>
+
+        <h3>Rẽ nhánh</h3>
+        <div class="branch">
+            <strong>Rẽ nhánh 1:</strong> Thông tin không hợp lệ
+            <ul>
+                <li><strong>8.1.</strong> Thông tin nhập vào không hợp lệ (địa chỉ quá ngắn, số điện thoại sai định dạng).</li>
+                <li><strong>8.2.</strong> Hiển thị thông báo lỗi chi tiết.</li>
+                <li><strong>8.3.</strong> Quay lại bước 6.</li>
+            </ul>
+        </div>
+
+        <div class="branch">
+            <strong>Rẽ nhánh 2:</strong> Đơn hàng đã được xử lý
+            <ul>
+                <li><strong>4.1.</strong> Trạng thái đơn hàng là "Đang giao" hoặc "Đã giao".</li>
+                <li><strong>4.2.</strong> Hệ thống thông báo "Không thể cập nhật thông tin đơn hàng đã được xử lý".</li>
+                <li><strong>4.3.</strong> Kết thúc use case.</li>
+            </ul>
+        </div>
+
+        <h3>Trường có thể cập nhật</h3>
+        <ul>
+            <li>✓ Địa chỉ giao hàng</li>
+            <li>✓ Số điện thoại người nhận</li>
+            <li>✓ Ghi chú cho người giao hàng</li>
+            <li>✗ Sản phẩm trong đơn (phải hủy và đặt lại)</li>
+            <li>✗ Phương thức thanh toán (đã chọn khi đặt hàng)</li>
+        </ul>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>7. Extend Use Case: Tìm kiếm đơn hàng</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Chức năng cho phép khách hàng tìm kiếm và lọc đơn hàng theo các tiêu chí.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Actor truy cập trang <strong>Quản lý đơn hàng</strong>.</li>
+            <li>Nhập tiêu chí tìm kiếm:
+                <ul>
+                    <li>Mã đơn hàng</li>
+                    <li>Trạng thái đơn hàng</li>
+                    <li>Khoảng thời gian (từ ngày - đến ngày)</li>
+                    <li>Tên sản phẩm</li>
+                </ul>
+            </li>
+            <li>Nhấn <strong>Tìm kiếm</strong>.</li>
+            <li>Hệ thống truy vấn cơ sở dữ liệu với điều kiện tìm kiếm.</li>
+            <li>Hiển thị danh sách đơn hàng phù hợp.</li>
+            <li>Actor có thể:
+                <ul>
+                    <li>Xem chi tiết đơn hàng</li>
+                    <li>Hủy đơn (nếu đủ điều kiện)</li>
+                    <li>Cập nhật thông tin (nếu đủ điều kiện)</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>Rẽ nhánh</h3>
+        <div class="branch">
+            <strong>Rẽ nhánh 1:</strong> Không tìm thấy kết quả
+            <ul>
+                <li><strong>5.1.</strong> Không có đơn hàng nào phù hợp với tiêu chí.</li>
+                <li><strong>5.2.</strong> Hiển thị thông báo "Không tìm thấy đơn hàng phù hợp".</li>
+                <li><strong>5.3.</strong> Đề xuất "Xem tất cả đơn hàng" hoặc "Thay đổi tiêu chí tìm kiếm".</li>
+            </ul>
+        </div>
+
+        <h3>Bộ lọc và sắp xếp</h3>
+        <table>
+            <tr>
+                <th>Tiêu chí</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>Trạng thái</td>
+                <td>Chờ xác nhận, Đã xác nhận, Đang giao, Đã giao, Đã hủy</td>
+            </tr>
+            <tr>
+                <td>Thời gian</td>
+                <td>7 ngày qua, 30 ngày qua, 3 tháng qua, Tùy chỉnh</td>
+            </tr>
+            <tr>
+                <td>Sắp xếp</td>
+                <td>Mới nhất, Cũ nhất, Giá trị cao nhất, Giá trị thấp nhất</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<footer style="margin-top: 50px; text-align: center; color: #7f8c8d; border-top: 1px solid #bdc3c7; padding-top: 20px;">
+    <p><strong>Tài liệu đặc tả Use Case - Quản lý Đơn đặt hàng</strong></p>
+    <p>Dự án: Hệ thống Bán hàng Quần áo trực tuyến (Clothes Shop)</p>
+    <p>Ngày tạo: 23/11/2025</p>
+</footer>
+
+</body>
+</html>

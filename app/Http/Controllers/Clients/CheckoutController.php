@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Clients;
+use App\Http\Controllers\Controller;   
 
 use App\Models\CartItem;
 use App\Models\Order;
@@ -102,9 +103,12 @@ class CheckoutController extends Controller
                     'quantity' => $item->quantity,
                     'price' => $item->productVariant->price
                 ]);
-                
+
                 // Trừ stock
                 $variant = $item->productVariant;
+                if ($variant->stock < $item->quantity) {
+                    throw new \Exception('Sản phẩm ' . $variant->product->name . ' không đủ số lượng trong kho.');
+                }
                 $variant->stock -= $item->quantity;
                 $variant->save();
             }
@@ -164,9 +168,13 @@ class CheckoutController extends Controller
                     'quantity' => $item->quantity,
                     'price' => $item->productVariant->price
                 ]);
-                
+
                 // Trừ stock
+
                 $variant = $item->productVariant;
+                if ($variant->stock < $item->quantity) {
+                    throw new \Exception('Sản phẩm ' . $variant->product->name . ' không đủ số lượng trong kho.');
+                }
                 $variant->stock -= $item->quantity;
                 $variant->save();
             }
@@ -260,9 +268,12 @@ class CheckoutController extends Controller
                     'quantity' => $item->quantity,
                     'price' => $item->productVariant->price
                 ]);
-                
+
                 // Trừ stock
                 $variant = $item->productVariant;
+                if ($variant->stock < $item->quantity) {
+                    throw new \Exception('Sản phẩm ' . $variant->product->name . ' không đủ số lượng trong kho.');
+                }
                 $variant->stock -= $item->quantity;
                 $variant->save();
             }
@@ -492,9 +503,12 @@ class CheckoutController extends Controller
                     'quantity' => $item->quantity,
                     'price' => $item->productVariant->price
                 ]);
-                
+
                 // Trừ stock
                 $variant = $item->productVariant;
+                if ($variant->stock < $item->quantity) {
+                    throw new \Exception('Sản phẩm ' . $variant->product->name . ' không đủ số lượng trong kho.');
+                }
                 $variant->stock -= $item->quantity;
                 $variant->save();
             }
@@ -515,7 +529,7 @@ class CheckoutController extends Controller
             $vnp_HashSecret = "G0M8AM9GRJM6OXCMCNRHBDJYNIFQECEK";
             $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
             $vnp_Returnurl = route('checkout.vnpay.return');
-            
+
             $vnp_TxnRef = $order->id . '_' . time();
             $vnp_OrderInfo = 'Thanh toan don hang #' . $order->id;
             $vnp_OrderType = 'billpayment';
@@ -542,7 +556,7 @@ class CheckoutController extends Controller
             $query = "";
             $i = 0;
             $hashdata = "";
-            
+
             foreach ($inputData as $key => $value) {
                 if ($i == 1) {
                     $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
@@ -558,7 +572,6 @@ class CheckoutController extends Controller
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
 
             return redirect()->to($vnp_Url);
-            
         } catch (\Exception $e) {
             DB::rollBack();
             toastr()->error('Có lỗi xảy ra: ' . $e->getMessage());
@@ -571,17 +584,17 @@ class CheckoutController extends Controller
     {
         $vnp_HashSecret = "G0M8AM9GRJM6OXCMCNRHBDJYNIFQECEK";
         $inputData = array();
-        
+
         foreach ($request->all() as $key => $value) {
             if (substr($key, 0, 4) == "vnp_") {
                 $inputData[$key] = $value;
             }
         }
-        
+
         $vnp_SecureHash = $inputData['vnp_SecureHash'];
         unset($inputData['vnp_SecureHash']);
         ksort($inputData);
-        
+
         $i = 0;
         $hashData = "";
         foreach ($inputData as $key => $value) {
@@ -594,49 +607,49 @@ class CheckoutController extends Controller
         }
 
         $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
-        
+
         if ($secureHash == $vnp_SecureHash) {
             $vnp_TxnRef = $request->vnp_TxnRef;
             $vnp_ResponseCode = $request->vnp_ResponseCode;
             $vnp_TransactionNo = $request->vnp_TransactionNo;
-            
+
             $orderIdParts = explode("_", $vnp_TxnRef);
             $dbOrderId = $orderIdParts[0];
-            
+
             if ($vnp_ResponseCode == '00') {
-                $payment = Payment::whereHas('order', function($query) use ($dbOrderId) {
+                $payment = Payment::whereHas('order', function ($query) use ($dbOrderId) {
                     $query->where('id', $dbOrderId);
                 })->where('payment_method', 'vnpay')->first();
-                
+
                 if ($payment && $payment->status == 'pending') {
                     $payment->status = 'completed';
                     $payment->paid_at = now();
                     $payment->transaction_id = $vnp_TransactionNo;
                     $payment->save();
-                    
+
                     $order = Order::find($dbOrderId);
                     if ($order) {
                         CartItem::where('user_id', $order->user_id)->delete();
                     }
                 }
-                
+
                 toastr()->success('Thanh toán VNPay thành công!');
             } else {
-                $payment = Payment::whereHas('order', function($query) use ($dbOrderId) {
+                $payment = Payment::whereHas('order', function ($query) use ($dbOrderId) {
                     $query->where('id', $dbOrderId);
                 })->where('payment_method', 'vnpay')->first();
-                
+
                 if ($payment) {
                     $payment->status = 'failed';
                     $payment->save();
                 }
-                
+
                 toastr()->error('Thanh toán VNPay thất bại hoặc bị hủy.');
             }
         } else {
             toastr()->error('Chữ ký không hợp lệ!');
         }
-        
+
         return redirect()->route('account');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Clients;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\ShippingAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,8 +19,9 @@ class AccountController extends Controller
     {
         $user = Auth::user();
         $addresses = ShippingAddress::where('user_id', Auth::id())->get();
+        $orders = Order::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
 
-        return view('clients.pages.account', compact('user', 'addresses'));
+        return view('clients.pages.account', compact('user', 'addresses', 'orders'));
     }
 
 
@@ -133,11 +135,11 @@ class AccountController extends Controller
         //Tìm địa chỉ cần update
         $address = ShippingAddress::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
-    // Sau khi update thì set tất cả địa chỉ còn lại bằng is_default = 0
-    ShippingAddress::where('user_id', Auth::id())->update(['is_default' => 0]);
+        // Sau khi update thì set tất cả địa chỉ còn lại bằng is_default = 0
+        ShippingAddress::where('user_id', Auth::id())->update(['is_default' => 0]);
 
-    // Update địa chỉ chọn bằng 1 (mặc định)
-    $address->update(['is_default' => 1]);
+        // Update địa chỉ chọn bằng 1 (mặc định)
+        $address->update(['is_default' => 1]);
 
         toastr()->success('Địa chỉ mặc định đã được cập nhật');
         return back();

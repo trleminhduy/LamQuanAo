@@ -1,13 +1,15 @@
 <?php
 
-use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Clients\CheckoutController;
 use App\Http\Controllers\Clients\AccountController;
 use App\Http\Controllers\Clients\AuthController;
 use App\Http\Controllers\Clients\CartController;
 use App\Http\Controllers\Clients\ForgotPasswordController;
 use App\Http\Controllers\Clients\HomeController;
+use App\Http\Controllers\Clients\OrderController;
 use App\Http\Controllers\Clients\ProductController;
 use App\Http\Controllers\Clients\ResetPasswordController;
+use App\Http\Controllers\Clients\SearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -85,6 +87,10 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::post('/checkout/momo', [CheckoutController::class, 'momo_payment'])->name('checkout.momo_payment');
     Route::post('/checkout/vnpay', [CheckoutController::class, 'vnpay_payment'])->name('checkout.vnpay_payment');
 
+    //Xem chi tiết đơn hàng
+    Route::get('/order/{id}', [OrderController::class, 'showOrder'])->name('order.show');
+    //Huỷ đơn hàng
+    Route::post('/order/{id}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
 
 });
 
@@ -109,3 +115,7 @@ Route::get('/product/filter', [ProductController::class, 'filter'])->name('produ
 
 //ROute chi tiết sản phẩm
 Route::get('/product/{slug}', [ProductController::class, 'detail'])->name('products.detail');
+
+//ROute search sản phẩm
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+

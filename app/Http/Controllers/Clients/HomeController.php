@@ -19,7 +19,7 @@ class HomeController extends Controller
             }
         }
 
-        // Best selling products: join through product_variants -> order_items
+        // Sản phẩm bán chạy nhất
             $bestSellingProducts = Product::selectRaw("products.*,
                 (SELECT COALESCE(SUM(oi.quantity), 0)
                  FROM order_items oi

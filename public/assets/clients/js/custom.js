@@ -364,6 +364,11 @@ $(document).ready(function () {
     //Phân trang sản phẩm
     let currentPage = 1;
     $(document).on("click", ".pagination-link", function (e) {
+        // Chỉ dùng AJAX cho trang products (có filter), các trang khác để mặc định
+        if (!$(".products-sidebar").length) {
+            return; // Không có sidebar = không phải trang products, cho phép link bình thường
+        }
+
         e.preventDefault();
         let pageUrl = $(this).attr("href");
         let page = pageUrl.split("page=")[1];
@@ -475,7 +480,6 @@ $(document).ready(function () {
         var sizeId = $("#product-size").val();
         var quantity = $("#quantity").val();
 
-        // TẠM THỜI BỎ KIỂM TRA MÀU ĐỂ TEST
         // if (!colorId) {
         //     toastr.warning("Vui lòng chọn màu sắc!");
         //     return;
@@ -615,7 +619,7 @@ $(document).ready(function () {
         // Lấy giá trị từ data attribute thay vì parse text
         var totalPrice = parseFloat($("#total_price").data("amount"));
         console.log("Total Price from data-amount:", totalPrice);
-        
+
         var totalPriceText = $("#total_price").text().trim();
         console.log("Total Price display text:", totalPriceText);
 
@@ -630,7 +634,7 @@ $(document).ready(function () {
         }
 
         var usdAmount = (totalPrice / 26000).toFixed(2);
-        
+
         // PayPal yêu cầu tối thiểu 0.01 USD
         if (parseFloat(usdAmount) < 0.01) {
             console.error("Amount too small:", usdAmount);
@@ -644,24 +648,30 @@ $(document).ready(function () {
         paypal
             .Buttons({
                 createOrder: function (data, actions) {
-                    console.log("Creating PayPal order with USD amount:", usdAmount);
-                    return actions.order.create({
-                        purchase_units: [
-                            {
-                                amount: {
-                                    value: usdAmount,
-                                    currency_code: "USD"
+                    console.log(
+                        "Creating PayPal order with USD amount:",
+                        usdAmount
+                    );
+                    return actions.order
+                        .create({
+                            purchase_units: [
+                                {
+                                    amount: {
+                                        value: usdAmount,
+                                        currency_code: "USD",
+                                    },
                                 },
-                            },
-                        ],
-                    }).then(function(orderID) {
-                        console.log("PayPal Order Created:", orderID);
-                        return orderID;
-                    }).catch(function(error) {
-                        console.error("Error creating order:", error);
-                        alert("Lỗi tạo đơn hàng PayPal: " + error.message);
-                        throw error;
-                    });
+                            ],
+                        })
+                        .then(function (orderID) {
+                            console.log("PayPal Order Created:", orderID);
+                            return orderID;
+                        })
+                        .catch(function (error) {
+                            console.error("Error creating order:", error);
+                            alert("Lỗi tạo đơn hàng PayPal: " + error.message);
+                            throw error;
+                        });
                 },
                 onApprove: function (data, actions) {
                     console.log("PayPal approved:", data);
@@ -688,30 +698,97 @@ $(document).ready(function () {
                             .then((data) => {
                                 console.log("Server response:", data);
                                 if (data.success) {
-                                    toastr.success("Thanh toán PayPal thành công!");
+                                    toastr.success(
+                                        "Thanh toán PayPal thành công!"
+                                    );
                                     // Delay 2 giây để hiện toastr trước khi redirect
-                                    setTimeout(function() {
+                                    setTimeout(function () {
                                         window.location.href = "/account";
                                     }, 2000);
                                 } else {
-                                    alert("Có lỗi xảy ra: " + (data.message || "Vui lòng thử lại."));
+                                    alert(
+                                        "Có lỗi xảy ra: " +
+                                            (data.message ||
+                                                "Vui lòng thử lại.")
+                                    );
                                 }
                             })
-                            .catch(function(error) {
+                            .catch(function (error) {
                                 console.error("Server error:", error);
                                 alert("Lỗi kết nối server: " + error.message);
                             });
                     });
                 },
-                onError: function(err) {
+                onError: function (err) {
                     console.error("PayPal error:", err);
                     alert("Có lỗi xảy ra với PayPal: " + err.message);
                 },
-                onCancel: function(data) {
+                onCancel: function (data) {
                     console.log("PayPal cancelled:", data);
                     toastr.warning("Bạn đã hủy thanh toán PayPal");
-                }
+                },
             })
             .render("#paypal-button-container");
+    }
+    //////////// HANDLER đánh giá /////////////////
+    //////////// **************** /////////////////
+
+    //////////// HANDLER giọng nói /////////////////
+
+    //Kiểm tra trình duyệt có hỗ trợ không
+    if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
+        var recognition = new (window.SpeechRecognition ||
+            window.webkitSpeechRecognition)();
+        recognition.lang = "vi-VN";
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        //Biển đổi khi nhận diện
+
+        var isRecognizing = false;
+        $("#voice-search").click(function () {
+            if (isRecognizing) {
+                recognition.stop();
+                $(this)
+                    .removeClass("fa-microphone-slash")
+                    .addClass("fa-microphone");
+            } else {
+                recognition.start();
+                $(this)
+                    .removeClass("fa-microphone")
+                    .addClass("fa-microphone-slash");
+            }
+        });
+        recognition.onstart = function () {
+            console.log("Bắt đầu nhận diện giọng nói");
+            isRecognizing = true;
+            $("#voice-search")
+                .removeClass("fa-microphone")
+                .addClass("fa-microphone-slash");
+        };
+        recognition.onresult = function (event) {
+            var transcript = event.results[0][0].transcript; // Lấy kết quả nhận diện
+            if (event.results[0].isFinal) {
+                $('input[name="keyword"]').val(transcript);
+            } else {
+                $('input[name="keyword"]').val(transcript);
+            }
+        };
+
+        recognition.onerror = function (event) {
+            console.error("Lỗi nhận diện giọng nói:", event.error);
+            toastr.error("Lỗi nhận diện giọng nói: " + event.error);
+        };
+        recognition.onend = function () {
+            console.log("Kết thúc nhận diện giọng nói");
+            $("#voice-search")
+                .removeClass("fa-microphone-slash")
+                .addClass("fa-microphone");
+            isRecognizing = false;
+
+        };
+    }else{
+        console.warn("Trình duyệt không hỗ trợ nhận diện giọng nói");
+        toastr.error("Trình duyệt không hỗ trợ nhận diện giọng nói");
     }
 });
