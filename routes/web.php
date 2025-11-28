@@ -119,3 +119,5 @@ Route::get('/product/{slug}', [ProductController::class, 'detail'])->name('produ
 //ROute search sản phẩm
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 
+//REquire admin
+require __DIR__ . '/admin.php';
