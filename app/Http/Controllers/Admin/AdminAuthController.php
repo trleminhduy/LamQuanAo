@@ -40,4 +40,12 @@ class AdminAuthController extends Controller
         toastr()->error('Email hoặc mật khẩu không chính xác');
         return back();
     }
+
+    public function logout(Request $request){
+        Auth::guard('admin')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('admin.login')->with('success','Đăng xuất thành công');
+    }
 }
