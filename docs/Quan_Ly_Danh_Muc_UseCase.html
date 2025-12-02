@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Use Case - Quản lý Danh mục</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
+        h1 { text-align: center; font-size: 20pt; }
+        h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #000; }
+        h3 { font-size: 12pt; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        table, th, td { border: 1px solid #000; }
+        th, td { padding: 8px; text-align: left; }
+        ul, ol { margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Use Case - Quản lý Danh mục</h1>
+
+<h2>1. Thông tin Use Case chính</h2>
+<table>
+    <tr><th style="width:30%">Tên Use Case</th><td>Quản lý Danh mục</td></tr>
+    <tr><th>Actor</th><td>Khách hàng</td></tr>
+    <tr><th>Mô tả</th><td>Khách hàng xem danh sách danh mục sản phẩm và lọc sản phẩm theo danh mục</td></tr>
+    <tr><th>Pre-conditions</th><td>Không</td></tr>
+    <tr><th>Post-conditions</th><td><b>Success:</b> Hiển thị danh sách sản phẩm thuộc danh mục<br/><b>Fail:</b> Không có sản phẩm</td></tr>
+</table>
+
+<h2>2. Luồng sự kiện chính</h2>
+<ol>
+    <li>Người dùng truy cập trang chủ hoặc menu.</li>
+    <li>Hệ thống hiển thị danh sách danh mục.</li>
+    <li>Người dùng có thể:
+        <ul>
+            <li>Extend Use Case: Xem sản phẩm theo danh mục</li>
+            <li>Extend Use Case: Lọc kết hợp danh mục + giá</li>
+        </ul>
+    </li>
+</ol>
+
+<h2>3. Luồng sự kiện phụ</h2>
+<p>Danh mục có thể có danh mục cha (parent_id) → Hiển thị dạng cây phân cấp.</p>
+
+<h2>4. Extend Use Case: Xem sản phẩm theo danh mục</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng xem sản phẩm thuộc danh mục cụ thể.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng chọn danh mục.</li>
+    <li>Hệ thống hiển thị danh sách sản phẩm thuộc danh mục đó.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Có sản phẩm
+                <ul>
+                    <li>Hiển thị danh sách sản phẩm với phân trang.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Danh mục không có sản phẩm
+                <ul>
+                    <li>Hiển thị "Chưa có sản phẩm nào".</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>5. Extend Use Case: Lọc kết hợp danh mục + giá</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng lọc sản phẩm theo danh mục và khoảng giá.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng chọn danh mục và khoảng giá.</li>
+    <li>Hệ thống lọc sản phẩm theo điều kiện.</li>
+    <li>Hiển thị kết quả phù hợp.</li>
+</ol>
+
+<h2>6. Extend Use Case: Hiển thị danh mục phân cấp</h2>
+<h3>Mô tả</h3>
+<p>Hệ thống hiển thị danh mục cha - danh mục con.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Hệ thống lấy danh sách danh mục.</li>
+    <li>Phân loại danh mục gốc và danh mục con.</li>
+    <li>Hiển thị dạng cấp bậc lồng nhau.</li>
+</ol>
+    <li>Phân loại:
+        <ul>
+            <li>Danh mục gốc: parent_id = NULL</li>
+            <li>Danh mục con: parent_id = {id_danh_mục_cha}</li>
+        </ul>
+    </li>
+    <li>Hiển thị dạng dropdown hoặc sidebar với cấp độ lồng nhau</li>
+</ol>
+
+<h3>Ví dụ cấu trúc</h3>
+<table>
+    <tr><th>Danh mục cha</th><th>Danh mục con</th></tr>
+    <tr><td>Áo nam</td><td>Áo thun, Áo sơ mi, Áo khoác</td></tr>
+    <tr><td>Quần nam</td><td>Quần jean, Quần kaki, Quần short</td></tr>
+</table>
+
+<h2>7. Extend Use Case: Đếm số lượng sản phẩm theo danh mục</h2>
+<h3>Mô tả</h3>
+<p>Hiển thị số lượng sản phẩm bên cạnh tên danh mục.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Hệ thống đếm số lượng sản phẩm trong mỗi danh mục.</li>
+    <li>Hiển thị kèm tên danh mục (ví dụ: "Áo thun (25)").</li>
+</ol>
+
+</body>
+</html>

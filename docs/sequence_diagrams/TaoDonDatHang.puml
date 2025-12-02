@@ -1,0 +1,69 @@
+@startuml Tạo đơn đặt hàng
+autonumber
+actor "Khách hàng" as User
+participant "View\n(Blade)" as View
+participant "Controller\n(CheckoutController)" as Controller
+database "Database" as DB
+
+== Thêm sản phẩm vào giỏ hàng ==
+User -> View: Chọn sản phẩm và biến thể (size, màu)
+activate View
+View -> Controller: POST /cart/add
+activate Controller
+
+Controller -> DB: Kiểm tra tồn kho
+activate DB
+DB --> Controller: Trả về thông tin tồn kho
+deactivate DB
+
+alt Đủ hàng
+    Controller -> DB: Lưu vào giỏ hàng (cart_items/session)
+    activate DB
+    DB --> Controller: Xác nhận lưu thành công
+    deactivate DB
+    
+    Controller --> View: Thông báo thêm thành công
+    deactivate Controller
+    View --> User: Hiển thị thông báo + cập nhật số lượng giỏ hàng
+    deactivate View
+else Hết hàng
+    Controller --> View: Thông báo hết hàng
+    deactivate Controller
+    View --> User: Hiển thị lỗi "Sản phẩm không đủ số lượng"
+    deactivate View
+end
+
+== Thanh toán ==
+User -> View: Truy cập giỏ hàng, nhấn "Thanh toán"
+activate View
+View --> User: Hiển thị trang checkout
+deactivate View
+
+User -> View: Nhập thông tin giao hàng, chọn phương thức thanh toán
+activate View
+View -> Controller: POST /checkout
+activate Controller
+
+Controller -> DB: Kiểm tra thông tin và tồn kho
+activate DB
+DB --> Controller: Xác nhận hợp lệ
+deactivate DB
+
+alt Thông tin hợp lệ
+    Controller -> DB: Tạo đơn hàng (orders, order_items, payments)
+    activate DB
+    DB --> Controller: Trả về order_id
+    deactivate DB
+    
+    Controller --> View: Gửi email xác nhận + Hiển thị mã đơn hàng
+    deactivate Controller
+    View --> User: Hiển thị thông báo đặt hàng thành công
+    deactivate View
+else Thông tin không hợp lệ
+    Controller --> View: Thông báo lỗi validation
+    deactivate Controller
+    View --> User: Hiển thị lỗi, yêu cầu nhập lại
+    deactivate View
+end
+
+@enduml

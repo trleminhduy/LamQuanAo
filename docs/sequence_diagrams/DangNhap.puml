@@ -1,0 +1,48 @@
+@startuml Đăng nhập
+autonumber
+actor "Khách hàng" as User
+participant "View\n(Blade)" as View
+participant "Controller\n(AuthController)" as Controller
+database "Database" as DB
+
+== Đăng nhập ==
+User -> View: Truy cập trang đăng nhập
+activate View
+View --> User: Hiển thị form đăng nhập
+deactivate View
+
+User -> View: Nhập email và password
+activate View
+View -> Controller: POST /login
+activate Controller
+
+Controller -> DB: Tìm user theo email
+activate DB
+DB --> Controller: Trả về user
+deactivate DB
+
+alt Thông tin đúng và đã kích hoạt
+    Controller -> Controller: Kiểm tra password (Hash::check)
+    Controller -> Controller: Tạo session (Auth::login)
+    Controller -> DB: Merge giỏ hàng từ session vào DB
+    activate DB
+    DB --> Controller: Xác nhận
+    deactivate DB
+    
+    Controller --> View: Chuyển hướng trang chủ
+    deactivate Controller
+    View --> User: Đăng nhập thành công
+    deactivate View
+else Sai thông tin
+    Controller --> View: Thông báo "Thông tin không chính xác"
+    deactivate Controller
+    View --> User: Hiển thị lỗi
+    deactivate View
+else Chưa kích hoạt
+    Controller --> View: Thông báo "Vui lòng kích hoạt tài khoản"
+    deactivate Controller
+    View --> User: Hiển thị lỗi
+    deactivate View
+end
+
+@enduml

@@ -53,7 +53,7 @@
                                         </div>
                                         <div class=" profile-bottom text-center">
                                             <div class=" col-sm-8 emphasis">
-                                                @if ($user->role->name = 'customer')
+                                                @if ($user->role->name == 'customer')
                                                     <button type="button" class="btn btn-primary btn-sm upgradeStaff"
                                                         data-userid="{{ $user->id }}">
                                                         <i class="fa fa-user"> </i> Nhân viên

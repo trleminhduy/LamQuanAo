@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Use Case - Quản lý Tài khoản</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
+        h1 { text-align: center; font-size: 20pt; }
+        h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #000; }
+        h3 { font-size: 12pt; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        table, th, td { border: 1px solid #000; }
+        th, td { padding: 8px; text-align: left; }
+        ul, ol { margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Use Case - Quản lý Tài khoản</h1>
+
+<h2>1. Thông tin Use Case chính</h2>
+<table>
+    <tr><th style="width:30%">Tên Use Case</th><td>Quản lý Tài khoản</td></tr>
+    <tr><th>Actor</th><td>Khách hàng đã đăng nhập</td></tr>
+    <tr><th>Mô tả</th><td>Khách hàng xem và cập nhật thông tin cá nhân, đổi mật khẩu, quản lý địa chỉ giao hàng, xem lịch sử đơn hàng</td></tr>
+    <tr><th>Pre-conditions</th><td>Đã đăng nhập hệ thống</td></tr>
+    <tr><th>Post-conditions</th><td><b>Success:</b> Thông tin được cập nhật<br/><b>Fail:</b> Thông báo lỗi validation</td></tr>
+</table>
+
+<h2>2. Luồng sự kiện chính</h2>
+<ol>
+    <li>Actor truy cập <b>Tài khoản của tôi</b></li>
+    <li>Hệ thống hiển thị thông tin: name, email, phone, address, avatar, danh sách địa chỉ giao hàng, lịch sử đơn hàng</li>
+    <li>Actor có thể thực hiện:
+        <ul>
+            <li>Extend Use Case: Cập nhật thông tin cá nhân</li>
+            <li>Extend Use Case: Đổi mật khẩu</li>
+            <li>Extend Use Case: Quản lý địa chỉ giao hàng</li>
+            <li>Extend Use Case: Xem lịch sử đơn hàng</li>
+        </ul>
+    </li>
+</ol>
+
+<h2>3. Luồng sự kiện phụ</h2>
+<p>Nếu actor chưa có địa chỉ giao hàng → Hiển thị form thêm địa chỉ mới.</p>
+
+<h2>4. Extend Use Case: Cập nhật thông tin cá nhân</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng chỉnh sửa thông tin cá nhân.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng chỉnh sửa thông tin đang hiển thị (tên, số điện thoại, địa chỉ, ảnh đại diện).</li>
+    <li>Hệ thống kiểm tra thông tin.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Thông tin hợp lệ
+                <ul>
+                    <li>Hệ thống cập nhật thông tin.</li>
+                    <li>Chuyển người dùng đến trang tài khoản.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Thông tin không hợp lệ
+                <ul>
+                    <li>Hệ thống thông báo lỗi.</li>
+                    <li>Người dùng thực hiện lại bước 1.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>5. Extend Use Case: Đổi mật khẩu</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng thay đổi mật khẩu đăng nhập.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng nhập mật khẩu hiện tại, mật khẩu mới và xác nhận mật khẩu mới.</li>
+    <li>Hệ thống xác thực thông tin.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Mật khẩu hiện tại đúng và mật khẩu mới hợp lệ
+                <ul>
+                    <li>Hệ thống cập nhật mật khẩu mới.</li>
+                    <li>Thông báo thành công.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Mật khẩu hiện tại sai
+                <ul>
+                    <li>Hệ thống thông báo lỗi.</li>
+                    <li>Người dùng thực hiện lại bước 1.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 3:</b> Mật khẩu mới không hợp lệ hoặc không khớp
+                <ul>
+                    <li>Hệ thống thông báo lỗi.</li>
+                    <li>Người dùng thực hiện lại bước 1.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>6. Extend Use Case: Quản lý địa chỉ giao hàng</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng quản lý danh sách địa chỉ giao hàng.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng xem danh sách địa chỉ đã lưu.</li>
+    <li>Người dùng thực hiện thao tác:
+        <ul>
+            <li><b>Thêm địa chỉ mới:</b>
+                <ul>
+                    <li>Nhập thông tin địa chỉ.</li>
+                    <li>Hệ thống lưu địa chỉ mới.</li>
+                </ul>
+            </li>
+            <li><b>Đặt địa chỉ mặc định:</b>
+                <ul>
+                    <li>Chọn địa chỉ cần đặt làm mặc định.</li>
+                    <li>Hệ thống cập nhật trạng thái.</li>
+                </ul>
+            </li>
+            <li><b>Xóa địa chỉ:</b>
+                <ul>
+                    <li>Chọn địa chỉ cần xóa.</li>
+                    <li>Hệ thống kiểm tra:
+                        <ul>
+                            <li><b>Rẽ nhánh 1:</b> Không phải địa chỉ mặc định cuối cùng → Xóa thành công.</li>
+                            <li><b>Rẽ nhánh 2:</b> Là địa chỉ mặc định cuối cùng → Thông báo lỗi.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>7. Extend Use Case: Xem lịch sử đơn hàng</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng xem danh sách đơn hàng đã đặt.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Actor vào tab <b>Đơn hàng của tôi</b></li>
+    <li>Hệ thống lấy tất cả đơn hàng của user từ bảng <code>orders</code> (sắp xếp mới nhất trước)</li>
+    <li>Hiển thị: mã đơn, ngày đặt, tổng tiền, trạng thái (pending, processing, shipping, delivered, cancelled)</li>
+    <li>Actor có thể:
+        <ul>
+            <li>Nhấn <b>Xem chi tiết</b> → Chuyển sang Use Case "Quản lý Đơn đặt hàng"</li>
+            <li>Nhấn <b>Hủy đơn</b> (nếu trạng thái = pending)</li>
+        </ul>
+    </li>
+</ol>
+
+<h3>Dữ liệu liên quan</h3>
+<table>
+    <tr><th>Bảng</th><th>Trường</th></tr>
+    <tr><td>orders</td><td>user_id, order_code, total_amount, status, created_at</td></tr>
+</table>
+
+</body>
+</html>

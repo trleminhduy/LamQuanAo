@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Use Case - Đăng nhập & Đăng ký</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
+        h1 { text-align: center; font-size: 20pt; }
+        h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #000; }
+        h3 { font-size: 12pt; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        table, th, td { border: 1px solid #000; }
+        th, td { padding: 8px; text-align: left; }
+        ul, ol { margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Use Case - Đăng nhập & Đăng ký</h1>
+
+<h2>1. Thông tin Use Case chính</h2>
+<table>
+    <tr><th style="width:30%">Tên Use Case</th><td>Đăng nhập & Đăng ký</td></tr>
+    <tr><th>Actor</th><td>Khách hàng (chưa đăng nhập)</td></tr>
+    <tr><th>Mô tả</th><td>Khách hàng tạo tài khoản mới hoặc đăng nhập vào hệ thống</td></tr>
+    <tr><th>Pre-conditions</th><td>Chưa đăng nhập</td></tr>
+    <tr><th>Post-conditions</th><td><b>Success:</b> Đăng nhập thành công, chuyển về trang chủ<br/><b>Fail:</b> Thông báo lỗi (email đã tồn tại, sai mật khẩu, chưa kích hoạt)</td></tr>
+</table>
+
+<h2>2. Luồng sự kiện chính</h2>
+<ol>
+    <li>Actor truy cập trang web</li>
+    <li>Hệ thống hiển thị các tùy chọn:
+        <ul>
+            <li>Extend Use Case: Đăng ký tài khoản mới</li>
+            <li>Extend Use Case: Đăng nhập</li>
+            <li>Extend Use Case: Quên mật khẩu</li>
+        </ul>
+    </li>
+</ol>
+
+<h2>3. Luồng sự kiện phụ</h2>
+<p>Sau khi đăng nhập thành công → Merge giỏ hàng từ session vào database (nếu có).</p>
+
+<h2>4. Extend Use Case: Đăng ký tài khoản mới</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng tạo tài khoản mới.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng nhập thông tin đăng ký (tên, email, mật khẩu, xác nhận mật khẩu).</li>
+    <li>Hệ thống kiểm tra thông tin.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Thông tin hợp lệ
+                <ul>
+                    <li>Hệ thống tạo mã kích hoạt và gửi email xác thực.</li>
+                    <li>Thông báo "Vui lòng kiểm tra email để kích hoạt tài khoản!"</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Email đã tồn tại
+                <ul>
+                    <li>Hệ thống thông báo lỗi.</li>
+                    <li>Người dùng thực hiện lại bước 1.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 3:</b> Mật khẩu không hợp lệ hoặc không khớp
+                <ul>
+                    <li>Hệ thống thông báo lỗi.</li>
+                    <li>Người dùng thực hiện lại bước 1.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>5. Extend Use Case: Kích hoạt tài khoản</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng kích hoạt tài khoản qua email.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng nhấn vào link kích hoạt trong email.</li>
+    <li>Hệ thống xác thực mã kích hoạt.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Mã hợp lệ
+                <ul>
+                    <li>Hệ thống kích hoạt tài khoản.</li>
+                    <li>Chuyển hướng đến trang đăng nhập.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Mã không hợp lệ hoặc đã hết hạn
+                <ul>
+                    <li>Hệ thống thông báo lỗi.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+<h2>6. Extend Use Case: Đăng nhập</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng đăng nhập vào hệ thống.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng nhập thông tin đăng nhập (email, mật khẩu).</li>
+    <li>Hệ thống xác thực thông tin.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Thông tin chính xác và tài khoản đã kích hoạt
+                <ul>
+                    <li>Hệ thống tạo phiên đăng nhập.</li>
+                    <li>Đồng bộ giỏ hàng (nếu có).</li>
+                    <li>Chuyển hướng đến trang chủ.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Thông tin không chính xác
+                <ul>
+                    <li>Hệ thống thông báo lỗi.</li>
+                    <li>Người dùng thực hiện lại bước 1.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 3:</b> Tài khoản chưa kích hoạt
+                <ul>
+                    <li>Hệ thống thông báo yêu cầu kích hoạt qua email.</li>
+                    <li>Người dùng thực hiện lại bước 1 sau khi kích hoạt.</li>
+                </ul>
+<h2>7. Extend Use Case: Quên mật khẩu</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng đặt lại mật khẩu khi quên.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng nhập email đã đăng ký.</li>
+    <li>Hệ thống kiểm tra email.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Email hợp lệ
+                <ul>
+                    <li>Hệ thống gửi link đặt lại mật khẩu đến email.</li>
+                    <li>Thông báo "Vui lòng kiểm tra email để đặt lại mật khẩu."</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Email không tồn tại
+                <ul>
+                    <li>Hệ thống thông báo lỗi.</li>
+                    <li>Người dùng thực hiện lại bước 1.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>Người dùng nhấn vào link trong email.</li>
+    <li>Người dùng nhập mật khẩu mới và xác nhận.</li>
+    <li>Hệ thống xác thực.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Link hợp lệ và mật khẩu đúng định dạng
+                <ul>
+                    <li>Hệ thống cập nhật mật khẩu mới.</li>
+                    <li>Chuyển hướng đến trang đăng nhập.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Link hết hạn hoặc không hợp lệ
+                <ul>
+                    <li>Hệ thống thông báo lỗi.</li>
+                    <li>Người dùng thực hiện lại bước 1.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol> nhánh 1:</b> Email không tồn tại → "Email này chưa được đăng ký!"</p>
+<p><b>Rẽ nhánh 2:</b> Token hết hạn (> 60 phút) → "Link đặt lại mật khẩu đã hết hạn!"</p>
+
+<h3>Dữ liệu liên quan</h3>
+<table>
+    <tr><th>Bảng</th><th>Trường</th></tr>
+    <tr><td>password_reset_tokens</td><td>email, token, created_at</td></tr>
+</table>
+
+</body>
+</html>

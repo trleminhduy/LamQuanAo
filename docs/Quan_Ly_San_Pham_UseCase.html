@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặc tả Use Case - Quản lý Sản phẩm</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            margin: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 24pt;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        h2 {
+            color: #34495e;
+            font-size: 16pt;
+            margin-top: 25px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-size: 14pt;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        td {
+            padding: 10px;
+            vertical-align: top;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        ul, ol {
+            margin-left: 20px;
+        }
+        .usecase-box {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+        }
+        .branch {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-left: 4px solid #ffc107;
+            margin: 10px 0;
+        }
+        .highlight {
+            background-color: #d4edda;
+            padding: 2px 5px;
+            font-weight: bold;
+        }
+        .page-break {
+            page-break-after: always;
+        }
+        @media print {
+            body {
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Đặc tả Use Case<br/>Quản lý Sản phẩm</h1>
+
+<div class="section">
+    <h2>1. Thông tin Use Case chính</h2>
+    <table>
+        <tr>
+            <th style="width: 30%;">Tên Use Case</th>
+            <td>Quản lý Sản phẩm</td>
+        </tr>
+        <tr>
+            <th>Actor</th>
+            <td>Khách hàng</td>
+        </tr>
+        <tr>
+            <th>Mô tả</th>
+            <td>Khách hàng xem danh sách sản phẩm, lọc theo tiêu chí, xem chi tiết sản phẩm và tìm kiếm sản phẩm</td>
+        </tr>
+        <tr>
+            <th>Pre-conditions</th>
+            <td>Không yêu cầu (có thể truy cập khi chưa đăng nhập)</td>
+        </tr>
+        <tr>
+            <th>Post-conditions</th>
+            <td>
+                <strong>Success:</strong> Hiển thị sản phẩm phù hợp<br/>
+                <strong>Fail:</strong> Hiển thị thông báo không tìm thấy sản phẩm
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>2. Luồng sự kiện chính</h2>
+    <ol>
+        <li>Người dùng truy cập trang sản phẩm.</li>
+        <li>Hệ thống hiển thị danh sách sản phẩm.</li>
+        <li>Người dùng có thể:
+            <ul>
+                <li>Xem chi tiết sản phẩm</li>
+                <li>Lọc sản phẩm</li>
+                <li>Tìm kiếm sản phẩm</li>
+                <li>Sắp xếp sản phẩm</li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<div class="section">
+    <h2>3. Luồng sự kiện phụ</h2>
+    <p>Người dùng có thể chuyển sang các trang khác bất kỳ lúc nào.</p>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>4. Extend Use Case: Xem chi tiết sản phẩm</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Khách hàng xem thông tin chi tiết của sản phẩm.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Người dùng chọn sản phẩm.</li>
+            <li>Hệ thống hiển thị thông tin chi tiết.
+                <ul>
+                    <li><b>Rẽ nhánh 1:</b> Sản phẩm tồn tại → Hiển thị đầy đủ thông tin.</li>
+                    <li><b>Rẽ nhánh 2:</b> Sản phẩm không tồn tại → Thông báo lỗi.</li>
+                    <li><b>Rẽ nhánh 3:</b> Sản phẩm hết hàng → Vô hiệu hóa nút mua hàng.</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+            <tr>
+                <td><code>product_images</code></td>
+                <td>product_id, image</td>
+            </tr>
+            <tr>
+                <td><code>product_variants</code></td>
+                <td>product_id, size_id, color_id, price, stock</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>5. Extend Use Case: Lọc sản phẩm</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Khách hàng lọc sản phẩm theo danh mục, khoảng giá.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Người dùng chọn tiêu chí lọc (danh mục, khoảng giá).</li>
+            <li>Hệ thống lọc sản phẩm theo điều kiện.
+                <ul>
+                    <li><b>Rẽ nhánh 1:</b> Có sản phẩm khớp → Hiển thị kết quả.</li>
+                    <li><b>Rẽ nhánh 2:</b> Không có sản phẩm khớp → Thông báo không tìm thấy.</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>6. Extend Use Case: Tìm kiếm sản phẩm</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Khách hàng tìm kiếm sản phẩm theo từ khóa.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Người dùng nhập từ khóa tìm kiếm.</li>
+            <li>Hệ thống tìm kiếm sản phẩm theo tên.
+                <ul>
+                    <li><b>Rẽ nhánh 1:</b> Có kết quả
+                        <ul>
+                            <li>Hiển thị danh sách sản phẩm tìm thấy.</li>
+                        </ul>
+                    </li>
+                    <li><b>Rẽ nhánh 2:</b> Từ khóa rỗng
+                        <ul>
+                            <li>Hệ thống thông báo yêu cầu nhập từ khóa.</li>
+                        </ul>
+                    </li>
+                    <li><b>Rẽ nhánh 3:</b> Không tìm thấy
+                        <ul>
+                            <li>Hiển thị "Không tìm thấy sản phẩm".</li>
+                            <li>Gợi ý xem tất cả sản phẩm.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>7. Extend Use Case: Sắp xếp sản phẩm</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Khách hàng sắp xếp danh sách sản phẩm.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Người dùng chọn tiêu chí sắp xếp (giá, tên, mới nhất).</li>
+            <li>Hệ thống sắp xếp lại danh sách.</li>
+            <li>Hiển thị kết quả đã sắp xếp.</li>
+        </ol>
+    </div>
+                    <li>newest: ORDER BY created_at DESC</li>
+                </ul>
+            </li>
+            <li>Trả về danh sách đã sắp xếp.</li>
+            <li>Cập nhật giao diện.</li>
+        </ol>
+
+        <h3>Các tiêu chí sắp xếp</h3>
+        <table>
+            <tr>
+                <th>Tiêu chí</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>Giá: Thấp → Cao</td>
+                <td>Sắp xếp theo giá tăng dần</td>
+            </tr>
+            <tr>
+                <td>Giá: Cao → Thấp</td>
+                <td>Sắp xếp theo giá giảm dần</td>
+            </tr>
+            <tr>
+                <td>Tên: A → Z</td>
+                <td>Sắp xếp theo tên alphabet</td>
+            </tr>
+            <tr>
+                <td>Mới nhất</td>
+                <td>Sản phẩm mới thêm trước</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<footer style="margin-top: 50px; text-align: center; color: #7f8c8d; border-top: 1px solid #bdc3c7; padding-top: 20px;">
+    <p><strong>Tài liệu đặc tả Use Case - Quản lý Sản phẩm</strong></p>
+    <p>Dự án: Hệ thống Bán hàng Quần áo trực tuyến (Clothes Shop)</p>
+    <p>Ngày tạo: 01/12/2025</p>
+</footer>
+
+</body>
+</html>

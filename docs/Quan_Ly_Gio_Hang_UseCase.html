@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặc tả Use Case - Quản lý Giỏ hàng</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            margin: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 24pt;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        h2 {
+            color: #34495e;
+            font-size: 16pt;
+            margin-top: 25px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-size: 14pt;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        td {
+            padding: 10px;
+            vertical-align: top;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        ul, ol {
+            margin-left: 20px;
+        }
+        .usecase-box {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+        }
+        .branch {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-left: 4px solid #ffc107;
+            margin: 10px 0;
+        }
+        .highlight {
+            background-color: #d4edda;
+            padding: 2px 5px;
+            font-weight: bold;
+        }
+        .page-break {
+            page-break-after: always;
+        }
+        @media print {
+            body {
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Đặc tả Use Case<br/>Quản lý Giỏ hàng</h1>
+
+<div class="section">
+    <h2>1. Thông tin Use Case chính</h2>
+    <table>
+        <tr>
+            <th style="width: 30%;">Tên Use Case</th>
+            <td>Quản lý Giỏ hàng</td>
+        </tr>
+        <tr>
+            <th>Actor</th>
+            <td>Khách hàng (đã đăng nhập hoặc chưa đăng nhập)</td>
+        </tr>
+        <tr>
+            <th>Mô tả</th>
+            <td>Khách hàng thêm sản phẩm vào giỏ hàng, cập nhật số lượng, xóa sản phẩm và xem tổng giá trị đơn hàng</td>
+        </tr>
+        <tr>
+            <th>Pre-conditions</th>
+            <td>Không bắt buộc đăng nhập (giỏ hàng lưu trong session nếu chưa đăng nhập)</td>
+        </tr>
+        <tr>
+            <th>Post-conditions</th>
+            <td>
+                <strong>Success:</strong> Giỏ hàng được cập nhật, hiển thị thông báo thành công<br/>
+                <strong>Fail:</strong> Thông báo lỗi (hết hàng, số lượng không hợp lệ)
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>2. Luồng sự kiện chính</h2>
+    <ol>
+        <li>Actor truy cập <span class="highlight">Giỏ hàng</span>.</li>
+        <li>Hệ thống hiển thị danh sách sản phẩm trong giỏ:
+            <ul>
+                <li>Nếu đã đăng nhập: lấy từ bảng <code>cart_items</code></li>
+                <li>Nếu chưa đăng nhập: lấy từ session</li>
+            </ul>
+        </li>
+        <li>Actor có thể thực hiện:
+            <ul>
+                <li><strong>Extend Use Case:</strong> Thêm sản phẩm vào giỏ</li>
+                <li><strong>Extend Use Case:</strong> Cập nhật số lượng</li>
+                <li><strong>Extend Use Case:</strong> Xóa sản phẩm khỏi giỏ</li>
+                <li><strong>Extend Use Case:</strong> Chuyển sang thanh toán</li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<div class="section">
+    <h2>3. Luồng sự kiện phụ</h2>
+    <p>Khi actor <strong>đăng nhập</strong>, hệ thống tự động merge giỏ hàng từ session vào database.</p>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>4. Extend Use Case: Thêm sản phẩm vào giỏ</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Khách hàng thêm sản phẩm vào giỏ hàng.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Người dùng chọn biến thể sản phẩm (size, màu) và số lượng.</li>
+            <li>Hệ thống kiểm tra tồn kho.
+                <ul>
+                    <li><b>Rẽ nhánh 1:</b> Số lượng hợp lệ
+                        <ul>
+                            <li>Hệ thống thêm sản phẩm vào giỏ hàng.</li>
+                            <li>Cập nhật số lượng hiển thị trên icon giỏ hàng.</li>
+                        </ul>
+                    </li>
+                    <li><b>Rẽ nhánh 2:</b> Sản phẩm hết hàng hoặc không đủ số lượng
+                        <ul>
+                            <li>Hệ thống thông báo lỗi.</li>
+                            <li>Người dùng thực hiện lại bước 1.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>5. Extend Use Case: Cập nhật số lượng</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Khách hàng thay đổi số lượng sản phẩm trong giỏ.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Người dùng chỉnh sửa số lượng sản phẩm trong giỏ hàng.</li>
+            <li>Hệ thống kiểm tra số lượng mới.
+                <ul>
+                    <li><b>Rẽ nhánh 1:</b> Số lượng hợp lệ
+                        <ul>
+                            <li>Hệ thống cập nhật số lượng.</li>
+                            <li>Tính lại tổng tiền.</li>
+                        </ul>
+                    </li>
+                    <li><b>Rẽ nhánh 2:</b> Số lượng = 0
+                        <ul>
+                            <li>Hệ thống tự động xóa sản phẩm khỏi giỏ.</li>
+                        </ul>
+                    </li>
+                    <li><b>Rẽ nhánh 3:</b> Số lượng vượt tồn kho
+                        <ul>
+                            <li>Hệ thống reset về số lượng tối đa có thể.</li>
+                            <li>Thông báo giới hạn tồn kho.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>6. Extend Use Case: Xóa sản phẩm khỏi giỏ</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Khách hàng xóa sản phẩm khỏi giỏ hàng.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Người dùng chọn sản phẩm cần xóa.</li>
+            <li>Hệ thống hiển thị xác nhận.</li>
+            <li>Người dùng xác nhận xóa.</li>
+            <li>Hệ thống xóa sản phẩm khỏi giỏ hàng.
+                <ul>
+                    <li><b>Rẽ nhánh 1:</b> Còn sản phẩm khác trong giỏ
+                        <ul>
+                            <li>Tính lại tổng tiền.</li>
+                            <li>Cập nhật giao diện.</li>
+                        </ul>
+                    </li>
+                    <li><b>Rẽ nhánh 2:</b> Giỏ hàng trống
+                        <ul>
+                            <li>Hiển thị thông báo "Giỏ hàng trống".</li>
+                            <li>Hiển thị nút "Tiếp tục mua sắm".</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="section">
+    <h2>7. Extend Use Case: Chuyển sang thanh toán</h2>
+    <div class="usecase-box">
+        <h3>Mô tả</h3>
+        <p>Khách hàng chuyển sang bước thanh toán.</p>
+        
+        <h3>Luồng sự kiện chính</h3>
+        <ol>
+            <li>Người dùng nhấn nút "Thanh toán".</li>
+            <li>Hệ thống kiểm tra điều kiện.
+                <ul>
+                    <li><b>Rẽ nhánh 1:</b> Đã đăng nhập và giỏ hàng hợp lệ
+                        <ul>
+                            <li>Chuyển hướng đến trang thanh toán.</li>
+                        </ul>
+                    </li>
+                    <li><b>Rẽ nhánh 2:</b> Chưa đăng nhập
+                        <ul>
+                            <li>Chuyển hướng đến trang đăng nhập.</li>
+                            <li>Sau khi đăng nhập, quay lại trang thanh toán.</li>
+                        </ul>
+                    </li>
+                    <li><b>Rẽ nhánh 3:</b> Giỏ hàng trống hoặc sản phẩm hết hàng
+                        <ul>
+                            <li>Hệ thống thông báo lỗi.</li>
+                            <li>Không cho phép thanh toán.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<footer style="margin-top: 50px; text-align: center; color: #7f8c8d; border-top: 1px solid #bdc3c7; padding-top: 20px;">
+    <p><strong>Tài liệu đặc tả Use Case - Quản lý Giỏ hàng</strong></p>
+    <p>Dự án: Hệ thống Bán hàng Quần áo trực tuyến (Clothes Shop)</p>
+    <p>Ngày tạo: 01/12/2025</p>
+</footer>
+
+</body>
+</html>

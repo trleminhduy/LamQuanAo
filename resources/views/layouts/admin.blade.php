@@ -8,6 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
+     <meta name="csrf-token" content="{{csrf_token() }}">
+     
+
 
     <title>Admin</title>
 
@@ -29,6 +32,12 @@
     <link href="{{ asset('assets/admin/vendors/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="{{ asset('assets/admin/build/css/custom.min.css') }}" rel="stylesheet">
+
+      <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    {{-- custom css cho admin --}}
+    <link href="{{ asset('assets/admin/css/custom.css') }}" rel="stylesheet">
+
 </head>
 
 <body class="nav-md">
@@ -89,6 +98,14 @@
     <script src="{{ asset('assets/admin/vendors/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
     <!-- Custom Theme Scripts -->
     <script src="{{ asset('assets/admin/build/js/custom.min.js') }}"></script>
+
+
+    {{-- custom js cho admin --}}
+    <script src="{{ asset('assets/admin/js/custom.js') }}"></script>
+
+        {{-- toast notification --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"> </script>
+
 
 </body>
 
