@@ -36,6 +36,11 @@ Route::prefix('admin')->group(function () {
         Route::get('/categories/add', [CategoryController::class, 'showFormAddCategory'])->name('admin.categories.add');
         Route::post('/categories/add', [CategoryController::class, 'addCategory'])->name('admin.categories.add');
 
+        //Quản lý danh mục
+        Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+        Route::post('/categories/update', [CategoryController::class, 'updateCategory']);
+
+
       
 
     });
