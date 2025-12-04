@@ -220,7 +220,6 @@ $(document).ready(function () {
                 },
             });
         }
-
     });
 
     //////////////////////////////  Sản phẩm /////////////////////////////
@@ -235,7 +234,12 @@ $(document).ready(function () {
                     const img = $("<img>")
                         .attr("src", e.target.result)
                         .addClass("image-preview")
-                        .css({ width: "150px", height: "100px", margin: "5px" ,borderRadius:"5px"});
+                        .css({
+                            width: "150px",
+                            height: "100px",
+                            margin: "5px",
+                            borderRadius: "5px",
+                        });
                     previewContainer.append(img);
                 };
                 reader.readAsDataURL(file);
@@ -243,4 +247,121 @@ $(document).ready(function () {
         }
     });
 
+    $(".product-images").change(function (e) {
+        let files = e.target.files;
+        let productId = $(this).data("id");
+        let previewContainer = $("#image-preview-container-" + productId);
+        previewContainer.empty(); // Xóa các ảnh xem trước cũ
+        if (files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                let file = files[i];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        let img = $("<img>")
+                            .attr("src", e.target.result)
+                            .addClass("image-preview")
+                            .css({
+                                width: "150px",
+                                height: "100px",
+                                margin: "5px",
+                                borderRadius: "5px",
+                            });
+                        previewContainer.append(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+    });
+
+    //Cậph nhật sản phẩm
+    $(document).on("click", ".btn-update-submit-product", function (e) {
+        e.preventDefault();
+        let button = $(this);
+        let productId = button.data("id");
+        let form = button.closest(".modal").find("form");
+        let formData = new FormData(form[0]);
+
+        //Append
+        formData.append("id", productId);
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+        $.ajax({
+            url: "product/update",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                button.prop("disabled", true);
+                button.text("Đang lưu...");
+            },
+            success: function (response) {
+                console.log("Response:", response); // Debug
+                if (response.status) {
+                    //Cập nhật lại thông tin trên giao diện
+                    let productId = response.data.id; 
+                    let product = response.data;
+
+                    let imageSRC = product.image.length > 0 ? product.image[0] : "assets/images/default-product.png";
+                    
+                    // Format giá VNĐ
+                    let formattedPrice = new Intl.NumberFormat('vi-VN').format(product.price) + ' VNĐ';
+
+                    //Regenarate new HTML
+                    let newRow = `
+                    <tr id="product-row-${productId}">
+                        <td> <img src="${
+                            imageSRC
+                        }" class="image-product" alt="${
+                        product.name
+                    }" width="50"> </td>
+                        <td>${product.name}</td>
+                        <td>${product.supplier ?? 'N/A'}</td>
+                        <td>${product.category_name}</td>
+                        <td>${product.slug}</td>
+                        <td>${product.description}</td>
+                        <td>${formattedPrice}</td>
+                        <td>${product.stock}</td>
+                        <td>${product.status}</td>
+                        <td>
+                             <a class="btn btn-app btn-update-product" data-toggle="modal"
+                                                                data-target="#modalUpdate-${productId}">
+                                                                <i class="fa fa-pencil"> </i>Sửa
+                                                            </a>
+                        </td>
+
+                        <td>
+                          <a class="btn btn-app btn-delete-product" data-id="${productId}">
+                                                                <i class="fa fa-trash"> </i>Xóa
+                                                            </a>
+                        </td>
+                    </tr>
+                    `;
+                    //thay thế row cũ
+                    $("#product-row-" + productId).replaceWith(newRow);
+                    toastr.success(response.message);
+                    //Đóng modal
+                    $("#modalUpdate-" + productId).modal("hide");
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+
+            error: function (xhr, status, error) {
+                console.log("Error:", xhr.responseText);
+                console.log("Status:", status);
+                console.log("Error:", error);
+                toastr.error("Lỗi hệ thống: " + (xhr.responseJSON?.message || error));
+            },
+            complete: function () {
+                button.prop("disabled", false);
+                button.text("Lưu");
+            },
+        });
+    });
 });

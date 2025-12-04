@@ -167,7 +167,7 @@
                                                                             <div class="col-md-6 col-sm-6 ">
                                                                                 <input type="text"
                                                                                     id="product-description"
-                                                                                    name="product-description"
+                                                                                    name="description"
                                                                                     required="required" class="form-control"
                                                                                     value="{{ $product->description }}">
                                                                             </div>
@@ -181,10 +181,10 @@
                                                                             </label>
                                                                             <div class="col-md-6 col-sm-6 ">
                                                                                 <input type="number" id="product-price"
-                                                                                    name="product-price"
+                                                                                    name="price"
                                                                                     required="required"
                                                                                     class="form-control"
-                                                                                    value="{{ number_format($product->price, 0, ',', '.') }}">
+                                                                                    value="{{ intval($product->price) }}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="item form-group">
@@ -196,7 +196,7 @@
                                                                             </label>
                                                                             <div class="col-md-6 col-sm-6 ">
                                                                                 <input type="number" id="product-stock"
-                                                                                    name="product-stock"
+                                                                                    name="stock"
                                                                                     required="required"
                                                                                     class="form-control"
                                                                                     value="{{ $product->stock }}">

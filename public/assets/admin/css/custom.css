@@ -46,3 +46,9 @@ color: red !important
 .product-images{
     display: none;
 }
+.image-preview-listproduct{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    margin-top: 10px;
+    gap: 10px;
+}
