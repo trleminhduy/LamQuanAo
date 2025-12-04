@@ -9,7 +9,7 @@
     text-align: center;
     margin: 10px 0;
 }
-#category-image{
+#category-image, #product-images{
     display: none;
 }   
 
@@ -35,5 +35,14 @@ color: green !important
 color: red !important
 }
 .category-image{
+    display: none;
+}
+.btn-update-product{
+color: green !important
+}
+.btn-delete-product{
+color: red !important
+}
+.product-images{
     display: none;
 }

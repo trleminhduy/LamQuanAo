@@ -44,4 +44,22 @@ class Product extends Model
     public function firstImage(){
         return $this->hasOne(ProductImage::class)->orderBy('id', 'ASC');
     }
+
+    // Accessor để lấy URL ảnh chính
+    public function getImageUrlAttribute()
+    {
+        $mainImage = $this->images()->where('is_main', true)->first();
+        if ($mainImage) {
+            return asset('storage/' . $mainImage->image);
+        }
+        
+        // Nếu không có ảnh chính, lấy ảnh đầu tiên
+        $firstImage = $this->images()->first();
+        if ($firstImage) {
+            return asset('storage/' . $firstImage->image);
+        }
+        
+        // Không có ảnh nào, trả về ảnh mặc định
+        return asset('storage/uploads/products/default-product.png');
+    }
 }

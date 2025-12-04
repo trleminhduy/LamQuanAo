@@ -76,7 +76,7 @@ class CategoryController extends Controller
                 $category->image = $imagePath;
             }
             $category->save();
-            return response()->json(['status' => true, 'message' => 'Cập nhật danh mục thành công', 'data'=>[
+            return response()->json(['status' => true, 'message' => 'Cập nhật danh mục thành công', 'data' => [
                 'id' => $category->id,
                 'name' => $category->name,
                 'slug' => $category->slug,
@@ -85,6 +85,37 @@ class CategoryController extends Controller
             ]]);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => 'Cập nhật danh mục thất bại: ' . $e->getMessage()]);
+        }
+    }
+    public function deleteCategory(Request $request)
+    {
+        try {
+            $category = Category::findOrFail($request->category_id);
+            if (!$category) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Danh mục không tồn tại',
+                ], 404);
+            }
+
+            // Kiểm tra xem danh mục có sản phẩm không
+            if ($category->products()->count() > 0) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không thể xoá danh mục vì vẫn còn ' . $category->products()->count() . ' sản phẩm tồn tại',
+                    'hasProducts' => true
+                ]);
+            }
+
+            //Xoá ảnh cũ
+            if ($category->image) {
+                Storage::disk('public')->delete($category->image);
+            }
+
+            $category->delete();
+            return response()->json(['status' => true, 'message' => 'Xoá danh mục thành công', 'hasProducts' => false]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => 'Xoá danh mục thất bại: ' . $e->getMessage()]);
         }
     }
 }

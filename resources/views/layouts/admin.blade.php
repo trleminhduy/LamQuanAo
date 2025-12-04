@@ -12,7 +12,7 @@
 
 
 
-    <title>Admin</title>
+    <title>@yield('title')</title>
 
     <!-- Bootstrap -->
     <link href="{{ asset('assets/admin/vendors/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">

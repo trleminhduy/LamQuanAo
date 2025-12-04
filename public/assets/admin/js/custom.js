@@ -71,6 +71,7 @@ $(document).ready(function () {
         });
     });
 
+    ////////////////////////////// Danh mục /////////////////////////////
     //Ảnh xem trước
     $("#category-image").change(function () {
         const file = this.files[0];
@@ -178,7 +179,68 @@ $(document).ready(function () {
             complete: function () {
                 button.prop("disabled", false);
                 button.text("Lưu");
-            }
+            },
         });
     });
+    //Xóa danh mục
+    $(document).on("click", ".btn-delete-category", function (e) {
+        e.preventDefault();
+        let button = $(this);
+        let categoryId = button.data("id");
+        let row = button.closest("tr");
+        if (confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
+            $.ajaxSetup({
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+            });
+
+            $.ajax({
+                url: "categories/delete",
+                type: "POST",
+                data: {
+                    category_id: categoryId,
+                },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response.message);
+                        //Xóa dòng khỏi bảng
+                        row.fadeOut(500, function () {
+                            $(this).remove();
+                        });
+                    } else {
+                        //Nếu có lỗi hoặc còn sản phẩm
+                        toastr.error(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Lỗi hệ thống, vui lòng thử lại sau!");
+                },
+            });
+        }
+
+    });
+
+    //////////////////////////////  Sản phẩm /////////////////////////////
+    $("#product-images").change(function (e) {
+        const files = e.target.files;
+        let previewContainer = $("#image-preview-container");
+        previewContainer.empty(); // Xóa các ảnh xem trước cũ
+        if (files) {
+            Array.from(files).forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = $("<img>")
+                        .attr("src", e.target.result)
+                        .addClass("image-preview")
+                        .css({ width: "150px", height: "100px", margin: "5px" ,borderRadius:"5px"});
+                    previewContainer.append(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+
 });
