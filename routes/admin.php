@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,5 +53,20 @@ Route::prefix('admin')->group(function () {
         Route::get('/products', [ProductController::class, 'index'])->name('admin.products.index');
         Route::post('/product/update', [ProductController::class, 'updateProduct']);
         Route::post('/product/delete', [ProductController::class, 'deleteProduct']);
+    });
+
+    // Quản lý biến thể sản phẩm
+    Route::middleware(['permission:manage_variants'])->group(function () {
+        Route::get('/variants', [ProductVariantController::class, 'listAll'])->name('admin.variants.all');
+        Route::get('/products/{id}/variants', [ProductVariantController::class, 'index'])->name('admin.variants.index');
+        Route::post('/products/{id}/variants/add', [ProductVariantController::class, 'addVariant'])->name('admin.variants.add');
+        Route::post('/variants/update', [ProductVariantController::class, 'updateVariant']);
+        Route::post('/variants/delete', [ProductVariantController::class, 'deleteVariant']);
+    });
+
+
+    // Quản lý đơn hàng
+    Route::middleware(['permission:manage_orders'])->group(function () {
+        Route::get('/orders', [OrderController::class, 'index'])->name('admin.orders.index');
     });
 });

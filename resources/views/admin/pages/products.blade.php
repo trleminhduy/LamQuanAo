@@ -74,10 +74,13 @@
                                                         <td>{{ $product->slug }}</td>
                                                         <td>{{ $product->description }}</td>
                                                         <td>{{ number_format($product->price, 0, ',', '.') }} VNĐ</td>
-                                                        <td>{{ $product->stock }}</td>
+                                                        <td>{{ $product->stock }} <small>({{ $product->variants->count() }} biến thể)</small></td>
                                                         <td>{{ $product->status == 'in_stock' ? 'Còn hàng' : 'Hết hàng' }}
                                                         </td>
                                                         <td>
+                                                            <a href="{{ route('admin.variants.index', $product->id) }}" class="btn btn-app btn-info">
+                                                                <i class="fa fa-tags"> </i>Biến thể
+                                                            </a>
                                                             <a class="btn btn-app btn-update-product" data-toggle="modal"
                                                                 data-target="#modalUpdate-{{ $product->id }}">
                                                                 <i class="fa fa-pencil"> </i>Sửa

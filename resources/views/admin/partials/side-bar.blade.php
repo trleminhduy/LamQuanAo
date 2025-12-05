@@ -41,8 +41,8 @@
                          <li><a href="#"><i class="fa fa-lock"></i> Quản lý danh mục <span
                                      class="fa fa-chevron-down"></span></a>
                              <ul class="nav child_menu">
-                                 <li><a href="general_elements.html">Thêm danh mục</a></li>
-                                 <li><a href="media_gallery.html">Danh sách danh mục</a></li>
+                                 <li><a href="{{ route('admin.categories.add') }}">Thêm danh mục</a></li>
+                                 <li><a href="{{ route('admin.categories.index') }}">Danh sách danh mục</a></li>
 
                              </ul>
                          </li>
@@ -53,8 +53,8 @@
                          <li><a href="#"><i class="fa fa-desktop"></i> Quản lý sản phẩm <span
                                      class="fa fa-chevron-down"></span></a>
                              <ul class="nav child_menu">
-                                 <li><a href="general_elements.html">Thêm sản phẩm</a></li>
-                                 <li><a href="media_gallery.html">Danh sách sản phẩm</a></li>
+                                 <li><a href="{{ route('admin.product.add') }}">Thêm sản phẩm</a></li>
+                                 <li><a href="{{ route('admin.products.index') }}">Danh sách sản phẩm</a></li>
 
                              </ul>
                          </li>
@@ -65,8 +65,7 @@
                          <li><a href="#"><i class="fa fa-cubes"></i> Quản lý biến thể <span
                                      class="fa fa-chevron-down"></span></a>
                              <ul class="nav child_menu">
-                                 <li><a href="general_elements.html">Thêm biến thể</a></li>
-                                 <li><a href="media_gallery.html">Danh sách biến thể</a></li>
+                                 <li><a href="{{ route('admin.variants.all') }}">Danh sách biến thể</a></li>
                              </ul>
                          </li>
                      @endif

@@ -52,3 +52,7 @@ color: red !important
     margin-top: 10px;
     gap: 10px;
 }
+.custom-badge{
+    padding: 4px 8px;
+    border-radius: 10px;
+}

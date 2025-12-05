@@ -304,24 +304,27 @@ $(document).ready(function () {
                 console.log("Response:", response); // Debug
                 if (response.status) {
                     //Cập nhật lại thông tin trên giao diện
-                    let productId = response.data.id; 
+                    let productId = response.data.id;
                     let product = response.data;
 
-                    let imageSRC = product.image.length > 0 ? product.image[0] : "assets/images/default-product.png";
-                    
+                    let imageSRC =
+                        product.image.length > 0
+                            ? product.image[0]
+                            : "assets/images/default-product.png";
+
                     // Format giá VNĐ
-                    let formattedPrice = new Intl.NumberFormat('vi-VN').format(product.price) + ' VNĐ';
+                    let formattedPrice =
+                        new Intl.NumberFormat("vi-VN").format(product.price) +
+                        " VNĐ";
 
                     //Regenarate new HTML
                     let newRow = `
                     <tr id="product-row-${productId}">
-                        <td> <img src="${
-                            imageSRC
-                        }" class="image-product" alt="${
+                        <td> <img src="${imageSRC}" class="image-product" alt="${
                         product.name
                     }" width="50"> </td>
                         <td>${product.name}</td>
-                        <td>${product.supplier ?? 'N/A'}</td>
+                        <td>${product.supplier ?? "N/A"}</td>
                         <td>${product.category_name}</td>
                         <td>${product.slug}</td>
                         <td>${product.description}</td>
@@ -356,7 +359,9 @@ $(document).ready(function () {
                 console.log("Error:", xhr.responseText);
                 console.log("Status:", status);
                 console.log("Error:", error);
-                toastr.error("Lỗi hệ thống: " + (xhr.responseJSON?.message || error));
+                toastr.error(
+                    "Lỗi hệ thống: " + (xhr.responseJSON?.message || error)
+                );
             },
             complete: function () {
                 button.prop("disabled", false);
@@ -364,4 +369,269 @@ $(document).ready(function () {
             },
         });
     });
+
+    //Xóa sản phẩm
+    $(document).on("click", ".btn-delete-product", function (e) {
+        e.preventDefault();
+        let button = $(this);
+        let productId = button.data("id");
+        let row = button.closest("tr");
+        if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+            $.ajaxSetup({
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+            });
+            $.ajax({
+                url: "product/delete",
+                type: "POST",
+                data: {
+                    product_id: productId,
+                },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response.message);
+                        row.remove();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", xhr.responseText);
+                    console.log("Status:", status);
+                    console.log("Error:", error);
+                    toastr.error(
+                        "Lỗi hệ thống: " + (xhr.responseJSON?.message || error)
+                    );
+                },
+            });
+        }
+    });
+
+    //////////////////////////////  Quản lý biến thể /////////////////////////////
+    // Thêm biến thể
+    $("#add-variant-form").submit(function (e) {
+        e.preventDefault();
+        let form = $(this);
+        let formData = new FormData(form[0]);
+        let productId = window.location.pathname.split("/")[3]; // Lấy ID từ URL
+
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+
+        $.ajax({
+            url: `/admin/products/${productId}/variants/add`,
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    // Reload trang để cập nhật danh sách
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function (xhr) {
+                toastr.error(
+                    "Lỗi: " + (xhr.responseJSON?.message || "Có lỗi xảy ra")
+                );
+            },
+        });
+    });
+
+    // Mở modal sửa biến thể
+    $(document).on("click", ".btn-edit-variant", function () {
+        let variantId = $(this).data("id");
+        let price = $(this).data("price");
+        let stock = $(this).data("stock");
+        let size = $(this).data("size");
+        let color = $(this).data("color");
+
+        $("#edit-variant-id").val(variantId);
+        $("#edit-price").val(price);
+        $("#edit-stock").val(stock);
+        $("#edit-variant-info").val(size + " - " + color);
+
+        $("#editVariantModal").modal("show");
+    });
+
+    // Sửa biến thể
+    $("#edit-variant-form").submit(function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+
+        $.ajax({
+            url: "/admin/variants/update",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    
+                    // Cập nhật giao diện
+                    let variantId = response.data.id;
+                    let row = $("#variant-row-" + variantId);
+                    row.find(".variant-price").text(
+                        new Intl.NumberFormat("vi-VN").format(response.data.price) + " VNĐ"
+                    );
+                    row.find(".variant-stock").text(response.data.stock);
+
+                    // Reload để cập nhật tổng stock
+                    setTimeout(() => location.reload(), 1000);
+                    
+                    $("#editVariantModal").modal("hide");
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function (xhr) {
+                toastr.error(
+                    "Lỗi: " + (xhr.responseJSON?.message || "Có lỗi xảy ra")
+                );
+            },
+        });
+    });
+
+    // Xóa biến thể
+    $(document).on("click", ".btn-delete-variant", function () {
+        if (!confirm("Bạn có chắc chắn muốn xóa biến thể này?")) {
+            return;
+        }
+
+        let variantId = $(this).data("id");
+        let row = $("#variant-row-" + variantId);
+
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+
+        $.ajax({
+            url: "/admin/variants/delete",
+            type: "POST",
+            data: {
+                variant_id: variantId,
+            },
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    row.fadeOut(500, function () {
+                        $(this).remove();
+                        // Reload để cập nhật tổng stock
+                        location.reload();
+                    });
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function (xhr) {
+                toastr.error(
+                    "Lỗi: " + (xhr.responseJSON?.message || "Có lỗi xảy ra")
+                );
+            },
+        });
+    });
+
+    ////////////////////////////// Quản lý tất cả biến thể (Global) /////////////////////////////
+    // Sửa biến thể từ trang all-variants
+    $(document).on("click", ".btn-edit-variant-global", function () {
+        let variantId = $(this).data("id");
+        let price = $(this).data("price");
+        let stock = $(this).data("stock");
+        let product = $(this).data("product");
+        let size = $(this).data("size");
+        let color = $(this).data("color");
+
+        $("#edit-variant-global-id").val(variantId);
+        $("#edit-variant-global-price").val(price);
+        $("#edit-variant-global-stock").val(stock);
+        $("#edit-variant-global-product").val(product);
+        $("#edit-variant-global-size-color").val(size + " - " + color);
+
+        $("#editVariantGlobalModal").modal("show");
+    });
+
+    // Submit form sửa biến thể global
+    $("#edit-variant-global-form").submit(function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: "/admin/variants/update",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    $("#editVariantGlobalModal").modal("hide");
+                    location.reload(); // Reload để cập nhật bảng
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function (xhr) {
+                toastr.error(
+                    "Lỗi: " + (xhr.responseJSON?.message || "Có lỗi xảy ra")
+                );
+            },
+        });
+    });
+
+    // Xóa biến thể từ trang all-variants
+    $(document).on("click", ".btn-delete-variant-global", function () {
+        let variantId = $(this).data("id");
+        let productName = $(this).data("product");
+
+        if (
+            confirm(
+                "Bạn có chắc muốn xóa biến thể của sản phẩm '" +
+                    productName +
+                    "' không?"
+            )
+        ) {
+            $.ajax({
+                url: "/admin/variants/delete",
+                method: "POST",
+                data: {
+                    variant_id: variantId,
+                    _token: $('meta[name="csrf-token"]').attr("content"),
+                },
+                success: function (response) {
+                    if (response.status) {
+                        toastr.success(response.message);
+                        $("#variant-row-" + variantId).fadeOut(500, function () {
+                            $(this).remove();
+                        });
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function (xhr) {
+                    toastr.error(
+                        "Lỗi: " + (xhr.responseJSON?.message || "Có lỗi xảy ra")
+                    );
+                },
+            });
+        }
+    });
 });
+

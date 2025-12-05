@@ -105,7 +105,7 @@ class ProductController extends Controller
          //Xoá ảnh cũ
          $oldImages = ProductImage::where('product_id', $product->id)->get();
          foreach ($oldImages as $oldImage) {
-            Storage::disk('public')->delete('uploads/' . $oldImage->image);
+            Storage::disk('public')->delete($oldImage->image);
          }
          ProductImage::where('product_id', $product->id)->delete();
 
@@ -139,6 +139,55 @@ class ProductController extends Controller
             'image' => $product->images->map(fn($img) => asset('storage/' . $img->image)),
             'status' => $product->status == 'in_stock' ? 'Còn hàng' : 'Hết hàng',
          ]
+      ]);
+   }
+
+   //Xoá sản phẩm
+   public function deleteProduct(Request $request)
+   {
+      $request->validate([
+         'product_id' => 'required|exists:products,id',
+      ]);
+      
+      $product = Product::findOrFail($request->product_id);
+      
+      // Kiểm tra biến thể có trong cart
+      $variants = $product->variants;
+      
+      foreach ($variants as $variant) {
+         // Kiểm tra trong cart
+         if ($variant->cartItems()->count() > 0) {
+            return response()->json([
+               'status' => false,
+               'message' => 'Không thể xoá sản phẩm vì đang có biến thể đã được thêm vào giỏ hàng',
+            ]);
+         }
+         
+         // Kiểm tra trong đơn hàng
+         if ($variant->orderItems()->count() > 0) {
+            return response()->json([
+               'status' => false,
+               'message' => 'Không thể xoá sản phẩm vì đang có biến thể trong đơn hàng',
+            ]);
+         }
+      }
+      
+      // Xoá tất cả variants của sản phẩm
+      $product->variants()->delete();
+      
+      // Xoá ảnh cũ
+      $oldImages = ProductImage::where('product_id', $product->id)->get();
+      foreach ($oldImages as $oldImage) {
+         Storage::disk('public')->delete($oldImage->image);
+      }
+      ProductImage::where('product_id', $product->id)->delete();
+      
+      // Xoá sản phẩm
+      $product->delete();
+      
+      return response()->json([
+         'status' => true,
+         'message' => 'Xoá sản phẩm thành công',
       ]);
    }
 }
