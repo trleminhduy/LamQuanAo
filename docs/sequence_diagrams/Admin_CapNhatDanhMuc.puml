@@ -1,0 +1,34 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor Admin as Quản trị viên
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over Admin,DB: Cập nhật danh mục
+    Admin->>View: Nhấn nút sửa danh mục
+    View-->>Admin: Hiển thị form chỉnh sửa
+
+    Admin->>View: Sửa thông tin (tên, mô tả, ảnh)
+    View->>Ctrl: Gửi yêu cầu cập nhật
+    Ctrl->>DB: Tìm danh mục theo ID
+
+    alt Danh mục không tồn tại
+        Ctrl-->>View: "Danh mục không tồn tại"
+        View-->>Admin: Hiển thị lỗi
+    else Danh mục tồn tại
+        Ctrl->>Ctrl: Validate dữ liệu
+        alt Có ảnh mới
+            Ctrl->>Ctrl: Xóa ảnh cũ
+            Ctrl->>Ctrl: Lưu ảnh mới
+        end
+        Ctrl->>Ctrl: Cập nhật slug
+        Ctrl->>DB: Lưu thông tin đã sửa
+        Ctrl-->>View: "Cập nhật thành công"
+        View-->>Admin: Hiển thị thông báo & reload dữ liệu
+    end

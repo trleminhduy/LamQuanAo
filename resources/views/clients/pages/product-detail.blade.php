@@ -86,6 +86,19 @@
                             <input type="hidden" name="quantity" id="quantity" value="1">
                         </div>
                     </div>
+                    {{-- tồn kho --}}
+                    <div class="option-item">
+                        <label><strong>Còn lại:</strong></label>
+                        <div class="quantity-control">
+                            <span id="stock-quantity" class="stock-quantity">
+                                @if ($product->variants && $product->variants->count() > 0)
+                                    {{ $product->variants->first()->stock }}
+                                @else
+                                    {{ $product->stock }}
+                                @endif
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Nút hành động -->
@@ -216,8 +229,40 @@
                     c.classList.remove('selected');
                 });
                 this.classList.add('selected');
+                updateStockQuantity(); // Cập nhật tồn kho khi chọn màu
             });
         });
+
+        // Cập nhật tồn kho khi chọn size
+        document.getElementById('product-size').addEventListener('change', function() {
+            updateStockQuantity();
+        });
+
+        // Hàm cập nhật số lượng tồn kho theo variant được chọn
+        function updateStockQuantity() {
+            var colorId = document.querySelector('.color-item.selected')?.dataset.colorId;
+            var sizeId = document.getElementById('product-size').value;
+
+            if (!colorId || !sizeId || !window.productVariants) {
+                return;
+            }
+
+            // Tìm variant khớp với màu và size
+            var selectedVariant = window.productVariants.find(
+                v => v.color_id == colorId && v.size_id == sizeId
+            );
+
+            if (selectedVariant) {
+                document.getElementById('stock-quantity').textContent = selectedVariant.stock;
+                
+                // Reset số lượng về 1 nếu vượt quá tồn kho
+                var currentQty = parseInt(document.getElementById('quantity').value);
+                if (currentQty > selectedVariant.stock) {
+                    document.getElementById('quantity').value = 1;
+                    document.getElementById('quantity-display').textContent = 1;
+                }
+            }
+        }
 
         // Tabs
         function showTab(tabName) {
@@ -235,9 +280,10 @@
             event.target.classList.add('active');
         }
 
-        // Tự động chọn màu đầu tiên
+        // Tự động chọn màu đầu tiên và cập nhật tồn kho
         if (colorItems.length > 0) {
             colorItems[0].classList.add('selected');
+            updateStockQuantity(); // Cập nhật tồn kho ngay khi load trang
         }
     </script>
 

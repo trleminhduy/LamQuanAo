@@ -1,0 +1,36 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor User as Khách hàng
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over User,DB: Thêm sản phẩm vào giỏ hàng
+    User->>View: Chọn sản phẩm & số lượng
+    View->>Ctrl: Gửi yêu cầu thêm vào giỏ
+    Ctrl->>DB: Kiểm tra tồn kho
+
+    alt Không đủ hàng
+        Ctrl-->>View: "Sản phẩm không đủ số lượng"
+        View-->>User: Hiển thị lỗi
+    else Đủ hàng
+        alt Khách chưa đăng nhập
+            Ctrl->>Ctrl: Lưu vào Session
+            Ctrl-->>View: "Đã thêm vào giỏ hàng"
+            View-->>User: Cập nhật số lượng giỏ hàng
+        else Khách đã đăng nhập
+            Ctrl->>DB: Kiểm tra sản phẩm đã có trong giỏ?
+            alt Đã có trong giỏ
+                Ctrl->>DB: Cộng thêm số lượng
+            else Chưa có trong giỏ
+                Ctrl->>DB: Tạo mới trong giỏ hàng
+            end
+            Ctrl-->>View: "Đã thêm vào giỏ hàng"
+            View-->>User: Cập nhật số lượng giỏ hàng
+        end
+    end

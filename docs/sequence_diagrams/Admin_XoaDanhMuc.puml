@@ -1,0 +1,35 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor Admin as Quản trị viên
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over Admin,DB: Xóa danh mục
+    Admin->>View: Nhấn nút xóa danh mục
+    View-->>Admin: Hiển thị xác nhận
+
+    Admin->>View: Xác nhận xóa
+    View->>Ctrl: Gửi yêu cầu xóa
+    Ctrl->>DB: Tìm danh mục theo ID
+
+    alt Danh mục không tồn tại
+        Ctrl-->>View: "Danh mục không tồn tại"
+        View-->>Admin: Hiển thị lỗi
+    else Danh mục tồn tại
+        Ctrl->>DB: Kiểm tra có sản phẩm?
+        alt Có sản phẩm trong danh mục
+            Ctrl-->>View: "Không thể xóa, còn X sản phẩm"
+            View-->>Admin: Hiển thị lỗi
+        else Không có sản phẩm
+            Ctrl->>Ctrl: Xóa ảnh đã lưu
+            Ctrl->>DB: Xóa danh mục
+            Ctrl-->>View: "Xóa thành công"
+            View-->>Admin: Ẩn dòng danh mục & thông báo
+        end
+    end

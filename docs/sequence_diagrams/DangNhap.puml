@@ -1,48 +1,33 @@
-@startuml Đăng nhập
-autonumber
-actor "Khách hàng" as User
-participant "View\n(Blade)" as View
-participant "Controller\n(AuthController)" as Controller
-database "Database" as DB
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor User as Khách hàng
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
 
-== Đăng nhập ==
-User -> View: Truy cập trang đăng nhập
-activate View
-View --> User: Hiển thị form đăng nhập
-deactivate View
+    Note over User,DB: Đăng nhập
+    User->>View: Truy cập trang đăng nhập
+    View-->>User: Hiển thị form đăng nhập
 
-User -> View: Nhập email và password
-activate View
-View -> Controller: POST /login
-activate Controller
+    User->>View: Nhập email & password
+    View->>Ctrl: Gửi yêu cầu đăng nhập
+    Ctrl->>DB: Tìm user theo email
 
-Controller -> DB: Tìm user theo email
-activate DB
-DB --> Controller: Trả về user
-deactivate DB
-
-alt Thông tin đúng và đã kích hoạt
-    Controller -> Controller: Kiểm tra password (Hash::check)
-    Controller -> Controller: Tạo session (Auth::login)
-    Controller -> DB: Merge giỏ hàng từ session vào DB
-    activate DB
-    DB --> Controller: Xác nhận
-    deactivate DB
-    
-    Controller --> View: Chuyển hướng trang chủ
-    deactivate Controller
-    View --> User: Đăng nhập thành công
-    deactivate View
-else Sai thông tin
-    Controller --> View: Thông báo "Thông tin không chính xác"
-    deactivate Controller
-    View --> User: Hiển thị lỗi
-    deactivate View
-else Chưa kích hoạt
-    Controller --> View: Thông báo "Vui lòng kích hoạt tài khoản"
-    deactivate Controller
-    View --> User: Hiển thị lỗi
-    deactivate View
-end
-
-@enduml
+    alt Thông tin đúng & đã kích hoạt
+        Ctrl->>Ctrl: Kiểm tra password
+        Ctrl->>Ctrl: Tạo phiên đăng nhập
+        Ctrl->>DB: Merge giỏ hàng vào tài khoản
+        Ctrl-->>View: Chuyển về trang chủ
+        View-->>User: Đăng nhập thành công
+    else Sai thông tin
+        Ctrl-->>View: "Thông tin không chính xác"
+        View-->>User: Hiển thị lỗi
+    else Chưa kích hoạt
+        Ctrl-->>View: "Vui lòng kích hoạt tài khoản"
+        View-->>User: Hiển thị lỗi
+    end

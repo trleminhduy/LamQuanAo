@@ -1,72 +1,43 @@
-@startuml Đăng ký tài khoản
-autonumber
-actor "Khách hàng" as User
-participant "View\n(Blade)" as View
-participant "Controller\n(AuthController)" as Controller
-database "Database" as DB
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor User as Khách hàng
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
 
-== Đăng ký tài khoản ==
-User -> View: Truy cập trang đăng ký
-activate View
-View --> User: Hiển thị form đăng ký
-deactivate View
+    Note over User,DB: Đăng ký
+    User->>View: Truy cập trang đăng ký
+    View-->>User: Hiển thị form đăng ký
 
-User -> View: Nhập thông tin (name, email, password)
-activate View
-View -> Controller: POST /register
-activate Controller
+    User->>View: Nhập thông tin (name, email, password)
+    View->>Ctrl: Gửi yêu cầu đăng ký
+    Ctrl->>DB: Kiểm tra email đã tồn tại?
 
-Controller -> DB: Kiểm tra email đã tồn tại
-activate DB
-DB --> Controller: Trả về kết quả
-deactivate DB
+    alt Email chưa tồn tại
+        Ctrl->>DB: Tạo tài khoản mới (chưa kích hoạt)
+        Ctrl->>Ctrl: Tạo mã kích hoạt & gửi email
+        Ctrl-->>View: "Kiểm tra email để kích hoạt"
+        View-->>User: Thông báo thành công
+    else Email đã tồn tại
+        Ctrl-->>View: "Email đã được đăng ký"
+        View-->>User: Hiển thị lỗi
+    end
 
-alt Email chưa tồn tại
-    Controller -> DB: Tạo user mới (is_active = 0)
-    activate DB
-    DB --> Controller: Trả về user_id
-    deactivate DB
-    
-    Controller -> Controller: Tạo activation_token
-    Controller -> Controller: Gửi email kích hoạt
-    
-    Controller --> View: Thông báo "Kiểm tra email để kích hoạt"
-    deactivate Controller
-    View --> User: Hiển thị thông báo
-    deactivate View
-else Email đã tồn tại
-    Controller --> View: Thông báo "Email đã được đăng ký"
-    deactivate Controller
-    View --> User: Hiển thị lỗi
-    deactivate View
-end
+    Note over User,DB: Kích hoạt tài khoản
+    User->>View: Nhấn link kích hoạt trong email
+    View->>Ctrl: Gửi yêu cầu kích hoạt
+    Ctrl->>DB: Tìm tài khoản theo mã kích hoạt
 
-== Kích hoạt tài khoản ==
-User -> View: Nhấn link kích hoạt trong email
-activate View
-View -> Controller: GET /activate/{token}
-activate Controller
-
-Controller -> DB: Tìm user theo token
-activate DB
-DB --> Controller: Trả về user
-deactivate DB
-
-alt Token hợp lệ
-    Controller -> DB: Cập nhật is_active = 1
-    activate DB
-    DB --> Controller: Xác nhận cập nhật
-    deactivate DB
-    
-    Controller --> View: Chuyển hướng trang đăng nhập
-    deactivate Controller
-    View --> User: Hiển thị "Kích hoạt thành công"
-    deactivate View
-else Token không hợp lệ
-    Controller --> View: Thông báo lỗi
-    deactivate Controller
-    View --> User: Hiển thị "Link không hợp lệ"
-    deactivate View
-end
-
-@enduml
+    alt Mã hợp lệ
+        Ctrl->>DB: Kích hoạt tài khoản
+        Ctrl-->>View: Chuyển đến trang đăng nhập
+        View-->>User: "Kích hoạt thành công"
+    else Mã không hợp lệ
+        Ctrl-->>View: "Link không hợp lệ hoặc hết hạn"
+        View-->>User: Hiển thị lỗi
+    end

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Use Case - Quản lý Biến thể Sản phẩm</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
+        h1 { text-align: center; font-size: 20pt; }
+        h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #000; }
+        h3 { font-size: 12pt; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        table, th, td { border: 1px solid #000; }
+        th, td { padding: 8px; text-align: left; }
+        ul, ol { margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Use Case - Quản lý Biến thể Sản phẩm</h1>
+
+<h2>1. Thông tin Use Case chính</h2>
+<table>
+    <tr><th style="width:30%">Tên Use Case</th><td>Quản lý Biến thể Sản phẩm</td></tr>
+    <tr><th>Actor</th><td>Quản trị viên (Admin)</td></tr>
+    <tr><th>Mô tả</th><td>Quản trị viên quản lý các biến thể của sản phẩm: xem danh sách, thêm, cập nhật giá/tồn kho, xóa biến thể. Mỗi biến thể là kết hợp duy nhất của size và màu sắc với giá và tồn kho riêng.</td></tr>
+    <tr><th>Pre-conditions</th><td>- Đã đăng nhập hệ thống<br/>- Có quyền <code>manage_variants</code><br/>- Sản phẩm đã tồn tại<br/>- Đã có danh sách Size và Color</td></tr>
+    <tr><th>Post-conditions</th><td><b>Success:</b> Biến thể được thêm/sửa/xóa, tồn kho sản phẩm tự động cập nhật<br/><b>Fail:</b> Thông báo lỗi validation</td></tr>
+</table>
+
+<h2>2. Luồng sự kiện chính</h2>
+<ol>
+    <li>Actor truy cập trang danh sách sản phẩm</li>
+    <li>Hệ thống hiển thị danh sách sản phẩm với số lượng biến thể</li>
+    <li>Actor nhấn nút <b>Biến thể</b> trên sản phẩm cần quản lý</li>
+    <li>Hệ thống hiển thị: thông tin sản phẩm, form thêm biến thể, bảng danh sách biến thể (STT, Size, Màu, Giá, Tồn kho, Hành động)</li>
+    <li>Actor có thể thực hiện:
+        <ul>
+            <li>Extend Use Case: Thêm biến thể mới</li>
+            <li>Extend Use Case: Cập nhật biến thể</li>
+            <li>Extend Use Case: Xóa biến thể</li>
+            <li>Extend Use Case: Xem tất cả biến thể (Global View)</li>
+        </ul>
+    </li>
+</ol>
+
+<h2>3. Luồng sự kiện phụ</h2>
+<p>Nếu sản phẩm chưa có biến thể → Hiển thị thông báo khuyến khích thêm biến thể mới.</p>
+
+<h2>4. Extend Use Case: Thêm biến thể mới</h2>
+<h3>Mô tả</h3>
+<p>Quản trị viên tạo biến thể mới với size, màu, giá và tồn kho.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng chọn Size, Color, nhập giá (mặc định = giá sản phẩm) và số lượng tồn kho.</li>
+    <li>Người dùng nhấn <b>Thêm biến thể</b>.</li>
+    <li>Hệ thống kiểm tra thông tin.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Biến thể (Size + Color) đã tồn tại
+                <ul>
+                    <li>Hệ thống thông báo lỗi: "Biến thể này đã tồn tại (Size + Màu trùng)".</li>
+                    <li>Người dùng thực hiện lại bước 1.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Dữ liệu hợp lệ
+                <ul>
+                    <li>Hệ thống tạo biến thể mới trong database.</li>
+                    <li>Hệ thống cập nhật tồn kho tổng sản phẩm = SUM(tồn kho các biến thể).</li>
+                    <li>Thông báo "Đã thêm biến thể thành công".</li>
+                    <li>Reload trang hiển thị biến thể mới.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>5. Extend Use Case: Cập nhật biến thể</h2>
+<h3>Mô tả</h3>
+<p>Quản trị viên chỉnh sửa giá và tồn kho của biến thể.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng nhấn nút <b>Sửa</b> trên biến thể.</li>
+    <li>Hệ thống hiển thị modal với thông tin size-màu (readonly), giá và tồn kho hiện tại.</li>
+    <li>Người dùng sửa giá hoặc tồn kho, nhấn <b>Lưu thay đổi</b>.</li>
+    <li>Hệ thống kiểm tra thông tin.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Dữ liệu hợp lệ
+                <ul>
+                    <li>Hệ thống cập nhật giá và tồn kho.</li>
+                    <li>Tính lại tồn kho tổng sản phẩm.</li>
+                    <li>Đóng modal, thông báo "Cập nhật thành công".</li>
+                    <li>Reload trang cập nhật số liệu.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Dữ liệu không hợp lệ (giá/số lượng âm)
+                <ul>
+                    <li>Hệ thống thông báo lỗi validation.</li>
+                    <li>Người dùng thực hiện lại bước 3.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>6. Extend Use Case: Xóa biến thể</h2>
+<h3>Mô tả</h3>
+<p>Quản trị viên xóa biến thể không còn sử dụng.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng nhấn nút <b>Xóa</b> trên biến thể.</li>
+    <li>Hệ thống hiển thị xác nhận: "Bạn có chắc muốn xóa biến thể này?"</li>
+    <li>Người dùng xác nhận xóa.</li>
+    <li>Hệ thống kiểm tra.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Biến thể đang có trong giỏ hàng hoặc đơn hàng
+                <ul>
+                    <li>Hệ thống thông báo: "Không thể xóa vì biến thể đang được sử dụng".</li>
+                    <li>Đề xuất: Đặt tồn kho = 0 thay vì xóa.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Biến thể không được sử dụng
+                <ul>
+                    <li>Hệ thống xóa biến thể khỏi database.</li>
+                    <li>Cập nhật lại tồn kho tổng sản phẩm.</li>
+                    <li>Ẩn dòng biến thể, thông báo "Xóa thành công".</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>7. Extend Use Case: Xem tất cả biến thể (Global View)</h2>
+<h3>Mô tả</h3>
+<p>Quản trị viên xem danh sách tất cả biến thể từ tất cả sản phẩm.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Actor truy cập <code>/admin/variants</code></li>
+    <li>Hệ thống hiển thị bảng tất cả biến thể: STT, Tên sản phẩm (có link), Hình ảnh, Size, Màu (badge màu), Giá, Tồn kho, Hành động (Sửa/Xóa)</li>
+    <li>Actor có thể sửa hoặc xóa biến thể trực tiếp (tương tự Use Case 5 và 6)</li>
+</ol>
+
+<h3>Dữ liệu liên quan</h3>
+<table>
+    <tr><th>Bảng</th><th>Trường</th></tr>
+    <tr><td>product_variants</td><td>product_id, size_id, color_id, price, stock (UNIQUE: product_id, size_id, color_id)</td></tr>
+    <tr><td>products</td><td>id, name, price, stock (tự động = SUM(variants.stock))</td></tr>
+    <tr><td>sizes</td><td>id, name</td></tr>
+    <tr><td>colors</td><td>id, name, code</td></tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor Admin as Quản trị viên
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over Admin,DB: Thêm danh mục sản phẩm
+    Admin->>View: Truy cập trang thêm danh mục
+    View-->>Admin: Hiển thị form thêm danh mục
+
+    Admin->>View: Nhập thông tin (tên, mô tả, ảnh)
+    View->>Ctrl: Gửi yêu cầu thêm danh mục
+    Ctrl->>Ctrl: Validate dữ liệu
+
+    alt Dữ liệu không hợp lệ
+        Ctrl-->>View: "Vui lòng kiểm tra lại thông tin"
+        View-->>Admin: Hiển thị lỗi
+    else Dữ liệu hợp lệ
+        Ctrl->>Ctrl: Xử lý & lưu ảnh
+        Ctrl->>Ctrl: Tạo slug từ tên
+        Ctrl->>DB: Lưu danh mục mới
+        Ctrl-->>View: "Thêm danh mục thành công"
+        View-->>Admin: Hiển thị thông báo thành công
+    end
