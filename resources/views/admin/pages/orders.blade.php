@@ -70,11 +70,11 @@
                                                         </td>
                                                         <td>{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</td>
 
-                                                        <td>
+                                                        <td class="order-status">
                                                             @if ($order->status == 'pending')
                                                                 <span class="custom-badge badge-warning">Chờ xử lý</span>
                                                             @elseif ($order->status == 'processing')
-                                                                <span class="custom-badge badge-info">Đang giao</span>
+                                                                <span class="custom-badge badge-info">Đang giao hàng</span>
                                                             @elseif ($order->status == 'completed')
                                                                 <span class="custom-badge badge-success">Hoàn thành</span>
                                                             @elseif ($order->status == 'cancelled')
@@ -105,7 +105,7 @@
                                                                 <div class="dropdown-menu">
                                                                     @if ($order->status == 'pending')
                                                                         <a class="dropdown-item confirm-order"
-                                                                            href="javascript:void(0) "
+                                                                            href="javascript:void(0)"  
                                                                             data-id="{{ $order->id }}">Xác nhận</a>
                                                                     @endif
 

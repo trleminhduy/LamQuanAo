@@ -483,18 +483,20 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.status) {
                     toastr.success(response.message);
-                    
+
                     // Cập nhật giao diện
                     let variantId = response.data.id;
                     let row = $("#variant-row-" + variantId);
                     row.find(".variant-price").text(
-                        new Intl.NumberFormat("vi-VN").format(response.data.price) + " VNĐ"
+                        new Intl.NumberFormat("vi-VN").format(
+                            response.data.price
+                        ) + " VNĐ"
                     );
                     row.find(".variant-stock").text(response.data.stock);
 
                     // Reload để cập nhật tổng stock
                     setTimeout(() => location.reload(), 1000);
-                    
+
                     $("#editVariantModal").modal("hide");
                 } else {
                     toastr.error(response.message);
@@ -549,7 +551,7 @@ $(document).ready(function () {
         });
     });
 
-    ////////////////////////////// Quản lý tất cả biến thể (Global) /////////////////////////////
+    ////////////////////////////// Quản lý tất cả biến thể  /////////////////////////////
     // Sửa biến thể từ trang all-variants
     $(document).on("click", ".btn-edit-variant-global", function () {
         let variantId = $(this).data("id");
@@ -618,9 +620,12 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response.status) {
                         toastr.success(response.message);
-                        $("#variant-row-" + variantId).fadeOut(500, function () {
-                            $(this).remove();
-                        });
+                        $("#variant-row-" + variantId).fadeOut(
+                            500,
+                            function () {
+                                $(this).remove();
+                            }
+                        );
                     } else {
                         toastr.error(response.message);
                     }
@@ -633,5 +638,39 @@ $(document).ready(function () {
             });
         }
     });
-});
 
+    //////////////////// Đơn hàng ////////////////////////
+    $(document).on("click", ".confirm-order", function (e) {
+        e.preventDefault();
+        let button = $(this);
+        let orderId = button.data("id");
+        
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+        $.ajax({
+            url: "orders/confirm",
+            type: "POST",
+            data: {
+                id: orderId,
+            },
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    button.closest("tr").find(".order-status").html(
+                        `<span class="custom-badge badge-info">Đang giao hàng</span>`
+                    );
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function (xhr) {
+                toastr.error(
+                    "Lỗi: " + (xhr.responseJSON?.message || "Có lỗi xảy ra")
+                );
+            },
+        });
+    });
+});
