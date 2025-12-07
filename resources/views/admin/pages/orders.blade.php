@@ -51,7 +51,7 @@
                                                     <th>Tổng tiền</th>
                                                     <th>Trạng thái đơn hàng</th>
                                                     <th>Trạng thái thanh toán</th>
-                                                    <th>Chi tiết đơn hàng</th>
+                                                    <th>Chi tiết hoá đơn</th>
                                                     <th>Hành động</th>
 
                                                 </tr>
@@ -66,7 +66,7 @@
                                                         </td>
                                                         <td>{{ $order->user->name ?? 'N/A' }}</td>
 
-                                                        <td><a href="javascript:void(0)" data-toggle="modal" data-target="#addressShippingModal-{{ $order->id }}">{{ $order->shippingAddress->address }}</a>
+                                                        <td><a href="javascript:void(0)" data-toggle="modal" data-target="#addressShippingModal-{{ $order->id }}">{{ $order->shippingAddress->full_name }}</a>
                                                         </td>
                                                         <td>{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</td>
 
@@ -110,7 +110,7 @@
                                                                     @endif
 
                                                                     <a class="dropdown-item" target="_blank"
-                                                                        href="#">Xem chi tiết
+                                                                        href="{{ route('admin.orders-detail', ['id' => $order->id]) }}">Xem chi tiết
                                                                     </a>
 
                                                                 </div>

@@ -8,7 +8,7 @@
     <div class="liton__shopping-cart-area mb-120">
         <div class="container mt-4">
             <h3> Chi tiết đơn hàng # {{ $order->id }}</h3>
-            <p> Ngày đặt {{ $order->created_at->format('d/m/Y') }} </p>
+            <p> Ngày đặt {{ $order->created_at->format('d/m/Y H:i') }} </p>
             <p> Trạng thái:
                 @if ($order->status == 'pending')
                     <span class="badge bg-warning"> Chờ xác nhận </span>

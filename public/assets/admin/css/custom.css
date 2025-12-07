@@ -56,3 +56,8 @@ color: red !important
     padding: 4px 8px;
     border-radius: 10px;
 }
+.image-payment{
+    width: 80px;
+    height: auto;
+    margin-right: 10px;
+}

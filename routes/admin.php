@@ -70,5 +70,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/orders', [OrderController::class, 'index'])->name('admin.orders.index');
         Route::post('/orders/confirm', [OrderController::class, 'confirmOrder']);
 
+        Route::get('/orders-detail/{id}', [OrderController::class, 'showOrderDetail'])->name('admin.orders-detail');
+
     });
 });

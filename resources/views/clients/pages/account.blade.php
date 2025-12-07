@@ -59,7 +59,7 @@
                         <!-- Orders Tab -->
                         <div class="tab-pane" id="orders">
                             <h4>Đơn hàng của tôi</h4>
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="overflow-x: auto; overflow-y: scroll; max-height: 400px;">
                                 <table class="table">
                                     <thead>
                                         <tr>
