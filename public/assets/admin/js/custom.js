@@ -644,7 +644,7 @@ $(document).ready(function () {
         e.preventDefault();
         let button = $(this);
         let orderId = button.data("id");
-        
+
         $.ajaxSetup({
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
@@ -659,9 +659,76 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.status) {
                     toastr.success(response.message);
-                    button.closest("tr").find(".order-status").html(
-                        `<span class="custom-badge badge-info">Đang giao hàng</span>`
-                    );
+                    button
+                        .closest("tr")
+                        .find(".order-status")
+                        .html(
+                            `<span class="custom-badge badge-info">Đang giao hàng</span>`
+                        );
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function (xhr) {
+                toastr.error(
+                    "Lỗi: " + (xhr.responseJSON?.message || "Có lỗi xảy ra")
+                );
+            },
+        });
+    });
+
+    //Gửi email cho khách hàng]
+    $(document).on("click", ".send-invoice-mail", function (e) {
+        e.preventDefault();
+        let button = $(this);
+        let orderId = button.data("id");
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+        $.ajax({
+            url: "send-invoice",
+            type: "POST",
+            data: {
+                order_id: orderId,
+            },
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    button.prop("disabled", true).text("Đã gửi");
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function (xhr) {
+                toastr.error(
+                    "Lỗi: " + (xhr.responseJSON?.message || "Có lỗi xảy ra")
+                );
+            },
+        });
+    });
+
+    //Huỷ đơn
+    $(document).on("click", ".cancel-order", function (e) {
+        e.preventDefault();
+        let button = $(this);
+        let orderId = button.data("id");
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+        $.ajax({
+            url: "cancel-order",
+            type: "POST",
+            data: {
+                id: orderId,
+            },
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    button.remove();
                 } else {
                     toastr.error(response.message);
                 }

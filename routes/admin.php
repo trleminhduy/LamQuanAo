@@ -71,6 +71,8 @@ Route::prefix('admin')->group(function () {
         Route::post('/orders/confirm', [OrderController::class, 'confirmOrder']);
 
         Route::get('/orders-detail/{id}', [OrderController::class, 'showOrderDetail'])->name('admin.orders-detail');
+        Route::post('/orders-detail/send-invoice', [OrderController::class, 'sendMailInvoice']);
+        Route::post('/orders-detail/cancel-order', [OrderController::class, 'cancelOrder']);
 
     });
 });
