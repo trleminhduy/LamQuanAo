@@ -37,8 +37,12 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     {{-- custom css cho admin --}}
     <link href="{{ asset('assets/admin/css/custom.css') }}" rel="stylesheet">
+    {{-- ckeditor --}}
+    <script src="{{ asset('assets/admin/js/ckeditor/ckeditor.js') }}"></script>
+    <script src="//cdn.ckeditor.com/4.25.1-lts/basic/ckeditor.js"></script>
 
- 
+
+
     <!-- Datatables -->
     @php
         $dataTableRoutes = ['admin.categories.index', 'admin.products.index', 'admin.orders.index'];
@@ -151,6 +155,11 @@
             });
         </script>
     @endif
+
+    {{-- ckeditor --}}
+
+    <script src="{{ asset('assets/admin/js/ckeditor/ckeditor.js') }}"></script>
+    <script src="//cdn.ckeditor.com/4.25.1-lts/basic/ckeditor.js"></script>
 
 </body>
 

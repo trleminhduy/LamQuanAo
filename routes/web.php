@@ -4,6 +4,7 @@ use App\Http\Controllers\Clients\CheckoutController;
 use App\Http\Controllers\Clients\AccountController;
 use App\Http\Controllers\Clients\AuthController;
 use App\Http\Controllers\Clients\CartController;
+use App\Http\Controllers\Clients\ContactsController;
 use App\Http\Controllers\Clients\ForgotPasswordController;
 use App\Http\Controllers\Clients\HomeController;
 use App\Http\Controllers\Clients\OrderController;
@@ -91,7 +92,6 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/order/{id}', [OrderController::class, 'showOrder'])->name('order.show');
     //Huỷ đơn hàng
     Route::post('/order/{id}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
-
 });
 
 // Routes momo
@@ -118,6 +118,11 @@ Route::get('/product/{slug}', [ProductController::class, 'detail'])->name('produ
 
 //ROute search sản phẩm
 Route::get('/search', [SearchController::class, 'index'])->name('search');
+
+//ROute trang liên hệ
+Route::get('/contact', [ContactsController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactsController::class, 'sendContact'])->name('contact');
+
 
 //REquire admin
 require __DIR__ . '/admin.php';

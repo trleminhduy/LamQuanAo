@@ -785,10 +785,38 @@ $(document).ready(function () {
                 .removeClass("fa-microphone-slash")
                 .addClass("fa-microphone");
             isRecognizing = false;
-
         };
-    }else{
+    } else {
         console.warn("Trình duyệt không hỗ trợ nhận diện giọng nói");
         toastr.error("Trình duyệt không hỗ trợ nhận diện giọng nói");
     }
+
+    // Hànle contact
+
+    $("#contact-form").submit(function (e) {
+        let name = $('input[name="name"]').val().trim();
+        let phone = $('input[name="phone"]').val().trim();
+        let email = $('input[name="email"]').val().trim();
+        let message = $('textarea[name="message"]').val().trim();
+        let errorMessage = "";
+
+        if (name.length < 2) {
+            errorMessage += "Họ và tên phải có ít nhất 2 ký tự . <br>";
+        }
+        let phoneRegex = /^[0-9]{10}$/;
+        if (!phoneRegex.test(phone)) {
+            errorMessage += "Số điện thoại phải là 10 chữ số . <br>";
+        }
+        let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email)) {
+            errorMessage += "Email không hợp lệ, vui lòng thử lại . <br>";
+        }
+        if (message.length < 10) {
+            errorMessage += "Tin nhắn phải có ít nhất 10 ký tự .<br>";
+        }
+        if (errorMessage != "") {
+            toastr.error(errorMessage, "Lỗi");
+            e.preventDefault();
+        }
+    });
 });

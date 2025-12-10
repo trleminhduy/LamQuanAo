@@ -73,8 +73,8 @@
                                      </li>
                                      <li class="menu-icon"><a href="{{ route('products.index') }}">Sản phẩm</a>
                                      </li>
-                                     <li><a href="{{ route('about') }}">Liên hệ</a></li>
-                                     <li class="special-link"><a href="{{ route('about') }}">LIÊN HỆ ĐẶT HÀNG</a></li>
+                                     <li><a href="{{ route('contact.index') }}">Liên hệ</a></li>
+                                     
                                  </ul>
                              </div>
                          </nav>

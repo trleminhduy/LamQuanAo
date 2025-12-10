@@ -740,4 +740,77 @@ $(document).ready(function () {
             },
         });
     });
+    
+    // Quản lý contact - Không dùng CKEditor nữa
+    $(document).on("click", ".contact-item", function (e) {
+        //Đổ dữ liệu
+        let contactName = $(this).data("name");
+        let contactEmail = $(this).data("email");
+        let contactMessage = $(this).data("message");
+        let contactID = $(this).data("id");
+        let isReply = $(this).data("is_reply");
+        // tìm thẻ con
+        $(".mail_view .inbox-body .sender-info strong").text(contactName);
+        $(".mail_view .inbox-body .sender-info span").text('<' + contactEmail + '>');
+        $(".mail_view .view-mail p").text(contactMessage);
+
+        $(".mail_view").show();
+
+        if (isReply != 0) {
+            $("#compose").hide();
+        } else {
+            //thêm thuộc tính cho nút gửi
+            $(".send-reply-contact").attr("data-email", contactEmail);
+            $(".send-reply-contact").attr("data-id", contactID);
+            $("#compose").show();
+        }
+    });
+
+    //Gửi phản hồi
+    $(document).on("click", ".send-reply-contact", function (e) {
+        e.preventDefault();
+        let button = $(this);
+        let email = button.data("email");
+        let contactID = button.data("id");
+        let message = $("#editor-contact").val(); // Lấy giá trị từ textarea thông thường
+        
+        if (!message || message.trim() === '') {
+            toastr.error('Vui lòng nhập nội dung phản hồi');
+            return;
+        }
+        
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+        $.ajax({
+            url: "contacts/reply",
+            type: "POST",
+            data: {
+                email: email,
+                message: message,
+                contact_id: contactID,
+            },
+            beforeSend: function() {
+                button.prop('disabled', true).text('Đang gửi...');
+            },
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    $('.mail_view').hide();
+                    $('#compose').hide();
+                    $('#editor-contact').val(''); // Xóa nội dung textarea
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                toastr.error("Lỗi hệ thống: " + (xhr.responseJSON?.message || "Vui lòng thử lại sau!"));
+            },
+            complete: function() {
+                button.prop('disabled', false).text('Gửi');
+            }
+        });
+    });
 });
