@@ -8,9 +8,7 @@
 
          <!-- menu profile quick info -->
          <div class="profile clearfix">
-             <div class="profile_pic">
-                 <img src="images/img.jpg" alt="..." class="img-circle profile_img">
-             </div>
+             
              <div class="profile_info">
                  <span>Xin chào,</span>
                  <h2>Admin</h2>
@@ -32,7 +30,7 @@
 
                      </li>
                      @if ($adminUser->role->permissions->contains('name', 'manage_users'))
-                         <li><a href="#"><i class="fa fa-edit"></i> Quản lý người dùng </a>
+                         <li><a href="{{ route('admin.users.index') }}"><i class="fa fa-edit"></i> Quản lý người dùng </a>
 
                          </li>
                      @endif

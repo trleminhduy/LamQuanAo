@@ -102,10 +102,9 @@ class ChatController extends Controller
                     $q->where('guest_token', $guestToken);
                 }
             })
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'desc')// sắp xếp lại tăng dần
             ->limit(10)
-            ->get()
-            ->sortBy('created_at') // sắp xếp lại tăng dần
+            ->get() 
             ->values();
 
         // Chuẩn bị tin theo format dsk

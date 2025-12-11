@@ -14,9 +14,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $users = User::where('role_id', 3)->latest()->get();
+        $users = User::where('role_id', 3)->latest()->limit(3)->get();
         $categories = Category::with('products')->get();
-        $products = Product::where('stock', '>', 0)->get();
+        $products = Product::where('status', 'in_stock')->get();
         $orders = Order::with('shippingAddress')->latest()->get();
 
         // Lấy top 3 sản phẩm bán chạy nhất
@@ -31,10 +31,13 @@ class DashboardController extends Controller
             ->orderByRaw('SUM(COALESCE(order_items.quantity, 0)) DESC')
             ->take(3)
             ->get();
+        // Doanh thu theo tháng (6 tháng gần nhất)
         $monthlyRevenues = Order::select(
             DB::raw('SUM(total_price) as revenue'),
             DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month')
         )
+        ->where('created_at', '>=', now()->subMonths(6))
+        ->where('status', '!=', 'cancelled') // Không tính đơn cáncelled
         ->groupBy('month')
         ->orderBy('month', 'asc')
         ->get();
