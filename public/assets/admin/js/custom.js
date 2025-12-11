@@ -741,7 +741,7 @@ $(document).ready(function () {
         });
     });
     
-    // Quản lý contact - Không dùng CKEditor nữa
+    // Quản lý contact - 
     $(document).on("click", ".contact-item", function (e) {
         //Đổ dữ liệu
         let contactName = $(this).data("name");
@@ -772,7 +772,7 @@ $(document).ready(function () {
         let button = $(this);
         let email = button.data("email");
         let contactID = button.data("id");
-        let message = $("#editor-contact").val(); // Lấy giá trị từ textarea thông thường
+        let message = $("#editor-contact").val(); // Lấy giá trị từ textarea 
         
         if (!message || message.trim() === '') {
             toastr.error('Vui lòng nhập nội dung phản hồi');
@@ -800,7 +800,7 @@ $(document).ready(function () {
                     toastr.success(response.message);
                     $('.mail_view').hide();
                     $('#compose').hide();
-                    $('#editor-contact').val(''); // Xóa nội dung textarea
+                    $('#editor-contact').val(''); // Xóa hết content của ảrea
                 } else {
                     toastr.error(response.message);
                 }

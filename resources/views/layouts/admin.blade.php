@@ -121,7 +121,7 @@
     <script src="{{ asset('assets/admin/vendors/moment/min/moment.min.js') }}"></script>
     <script src="{{ asset('assets/admin/vendors/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
     <!-- Custom Theme Scripts -->
-    <script src="{{ asset('assets/admin/build/js/custom.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/build/js/custom.js') }}"></script>
 
 
     {{-- custom js cho admin --}}
@@ -160,6 +160,9 @@
 
     <script src="{{ asset('assets/admin/js/ckeditor/ckeditor.js') }}"></script>
     <script src="//cdn.ckeditor.com/4.25.1-lts/basic/ckeditor.js"></script>
+
+    {{-- bảng --}}
+    
 
 </body>
 

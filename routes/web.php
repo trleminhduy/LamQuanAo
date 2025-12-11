@@ -4,6 +4,7 @@ use App\Http\Controllers\Clients\CheckoutController;
 use App\Http\Controllers\Clients\AccountController;
 use App\Http\Controllers\Clients\AuthController;
 use App\Http\Controllers\Clients\CartController;
+use App\Http\Controllers\Clients\ChatController;
 use App\Http\Controllers\Clients\ContactsController;
 use App\Http\Controllers\Clients\ForgotPasswordController;
 use App\Http\Controllers\Clients\HomeController;
@@ -123,6 +124,9 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/contact', [ContactsController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactsController::class, 'sendContact'])->name('contact');
 
+//ROute AI
+Route::get('/chat/messages', [ChatController::class, 'fetchMessages']);
+Route::post('/chat/send', [ChatController::class, 'sendMessage']);
 
 //REquire admin
 require __DIR__ . '/admin.php';

@@ -62,4 +62,8 @@ class Product extends Model
         // Không có ảnh nào, trả về ảnh mặc định
         return asset('storage/uploads/products/default-product.png');
     }
+
+    public function orderItems() {
+        return $this->hasManyThrough(OrderItem::class, ProductVariant::class);
+    }
 }

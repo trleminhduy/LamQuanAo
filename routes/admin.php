@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
@@ -24,9 +25,7 @@ Route::prefix('admin')->group(function () {
 
 
     Route::middleware(['auth.custom'])->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.pages.dashboard');
-        })->name('admin.dashboard');
+        Route::get('/dashboard', [DashboardController::class,'index'])->name('admin.dashboard');
     });
 
     Route::middleware(['permission:manage_users'])->group(function () {
@@ -74,15 +73,11 @@ Route::prefix('admin')->group(function () {
         Route::get('/orders-detail/{id}', [OrderController::class, 'showOrderDetail'])->name('admin.orders-detail');
         Route::post('/orders-detail/send-invoice', [OrderController::class, 'sendMailInvoice']);
         Route::post('/orders-detail/cancel-order', [OrderController::class, 'cancelOrder']);
-
     });
 
     // Quản lý liên hệ
     Route::middleware(['permission:manage_contacts'])->group(function () {
         Route::get('/contacts', [ContactController::class, 'index'])->name('admin.contacts.index');
         Route::post('/contacts/reply', [ContactController::class, 'replyContact']);
-
-       
-
     });
 });

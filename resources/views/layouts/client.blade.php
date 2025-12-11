@@ -30,6 +30,11 @@
     <link rel="stylesheet" href="{{asset('assets/clients/css/cart-custom.css')}}">
     <link rel="stylesheet" href="{{asset('assets/clients/css/account-custom.css')}}">
 
+    {{-- chatbot css --}}
+    {{-- <link rel="stylesheet" href="{{asset('assets/clients/css/custom.css')}}"> --}}
+    <link rel="stylesheet" href="{{asset('assets/clients/css/chat.css')}}">
+
+
     <!-- OPTIONAL: Bootstrap 5 CSS (only if your theme does not already include it) -->
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 </head>
@@ -49,7 +54,9 @@
 
         {{-- @include('clients.partials.feature') --}}
 
+        @include('clients.partials.chat_ai')
         @include('clients.partials.footer')
+
        
    </div>
     <!-- Body main wrapper end -->
@@ -87,6 +94,7 @@
     {{-- MY JS  --}}
 
     <script src="{{asset ('assets/clients/js/custom.js')}}">  </script>
+    <script src="{{asset ('assets/clients/js/chat.js')}}">  </script>
 
     {{-- PAYPAL thanh toan --}}
      <script src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&currency=USD"></script>

@@ -26,6 +26,8 @@
 {{-- Custom css --}}
     <link rel="stylesheet" href="{{asset('assets/clients/css/custom.css')}}">
     <link rel="stylesheet" href="{{asset('assets/clients/css/home-custom.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/clients/css/chat.css')}}">
+
 
 </head>
 
@@ -38,7 +40,9 @@
             @yield('content')
         </main>
 
+        @include('clients.partials.chat_ai')
         @include('clients.partials.footer_home')
+
 
     </div>
     <!-- Body main wrapper end -->
@@ -67,6 +71,8 @@
 
     {{-- MY JS --}}
     <script src="{{asset('assets/clients/js/custom.js')}}">  </script>
+    <script src="{{asset ('assets/clients/js/chat.js')}}">  </script>
+
 
 </body>
 
