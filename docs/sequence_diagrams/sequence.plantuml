@@ -1,0 +1,6 @@
+@startuml ddd
+Alice -> Bob: Xin chào
+Bob --> Alice: Chào bạn
+@enduml
+@startuml
+actor Alice

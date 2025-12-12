@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Use Case - Đánh giá sản phẩm</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
+        h1 { text-align: center; font-size: 20pt; }
+        h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #000; }
+        h3 { font-size: 12pt; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        table, th, td { border: 1px solid #000; }
+        th, td { padding: 8px; text-align: left; }
+        ul, ol { margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Use Case - Đánh giá sản phẩm</h1>
+
+<h2>1. Thông tin Use Case chính</h2>
+<table>
+    <tr><th style="width:30%">Tên Use Case</th><td>Đánh giá sản phẩm</td></tr>
+    <tr><th>Actor</th><td>Khách hàng</td></tr>
+    <tr><th>Mô tả</th><td>Khách hàng đánh giá và nhận xét về sản phẩm</td></tr>
+    <tr><th>Pre-conditions</th><td>Sản phẩm tồn tại trong hệ thống</td></tr>
+    <tr><th>Post-conditions</th><td><b>Success:</b> Đánh giá được lưu và hiển thị<br/><b>Fail:</b> Thông báo lỗi</td></tr>
+</table>
+
+<h2>2. Luồng sự kiện chính</h2>
+<ol>
+    <li>Người dùng truy cập trang chi tiết sản phẩm.</li>
+    <li>Hệ thống hiển thị tab "Đánh giá" với danh sách đánh giá hiện có và form đánh giá mới.</li>
+    <li>Người dùng có thể:
+        <ul>
+            <li>Extend Use Case: Xem danh sách đánh giá</li>
+            <li>Extend Use Case: Gửi đánh giá mới</li>
+        </ul>
+    </li>
+</ol>
+
+<h2>3. Luồng sự kiện phụ</h2>
+<p>Hệ thống tính và hiển thị điểm đánh giá trung bình từ tất cả đánh giá của sản phẩm.</p>
+
+<h2>4. Extend Use Case: Xem danh sách đánh giá</h2>
+<h3>Mô tả</h3>
+<p>Người dùng xem các đánh giá của sản phẩm.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng nhấn vào tab "Đánh giá".</li>
+    <li>Hệ thống hiển thị:
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Sản phẩm đã có đánh giá
+                <ul>
+                    <li>Hiển thị điểm trung bình (1-5 sao).</li>
+                    <li>Hiển thị tổng số đánh giá.</li>
+                    <li>Hiển thị danh sách đánh giá (tên người dùng, số sao, nội dung, thời gian).</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Chưa có đánh giá
+                <ul>
+                    <li>Hiển thị "Chưa có đánh giá nào".</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>5. Extend Use Case: Gửi đánh giá mới</h2>
+<h3>Mô tả</h3>
+<p>Người dùng gửi đánh giá cho sản phẩm.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Người dùng chọn số sao (1-5) và nhập nội dung đánh giá.</li>
+    <li>Người dùng nhấn nút "Gửi đánh giá".</li>
+    <li>Hệ thống kiểm tra:
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Người dùng chưa đăng nhập
+                <ul>
+                    <li>Hiển thị thông báo "Vui lòng đăng nhập để đánh giá sản phẩm".</li>
+                    <li>Chuyển hướng đến trang đăng nhập sau 1.5 giây.</li>
+                    <li>Use Case kết thúc.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Chưa chọn số sao
+                <ul>
+                    <li>Hiển thị thông báo "Vui lòng chọn số sao đánh giá".</li>
+                    <li>Người dùng thực hiện lại bước 1.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 3:</b> Người dùng đã đánh giá sản phẩm này
+                <ul>
+                    <li>Hiển thị thông báo "Bạn đã đánh giá sản phẩm này".</li>
+                    <li>Use Case kết thúc.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 4:</b> Dữ liệu hợp lệ
+                <ul>
+                    <li>Hệ thống lưu đánh giá vào database.</li>
+                    <li>Hiển thị thông báo "Đã thêm đánh giá thành công".</li>
+                    <li>Reset form đánh giá.</li>
+                    <li>Tải lại danh sách đánh giá.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+</body>
+</html>

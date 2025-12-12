@@ -1,0 +1,34 @@
+title Đăng ký tài khoản
+
+note over User,Database: ĐĂNG KÝ
+
+User->View: Truy cập trang đăng ký
+View<--User: Nhập thông tin
+View->Controller: Gửi yêu cầu đăng ký
+Controller->Database: Kiểm tra email
+
+alt Email đã tồn tại
+    Controller<--Database: Tồn tại
+    View<--Controller: Thông báo lỗi
+    User<--View: Hiển thị lỗi
+else Email chưa tồn tại
+    Controller->Database: Tạo tài khoản mới
+    Controller->MailServer: Gửi email kích hoạt
+    View<--Controller: Thông báo thành công
+    User<--View: Kiểm tra email
+end
+
+note over User,Database: KÍCH HOẠT
+
+User->View: Nhấn link trong email
+View->Controller: Gửi yêu cầu kích hoạt
+Controller->Database: Kiểm tra mã kích hoạt
+
+alt Mã hợp lệ
+    Controller->Database: Kích hoạt tài khoản
+    View<--Controller: Chuyển trang đăng nhập
+    User<--View: Kích hoạt thành công
+else Mã không hợp lệ
+    View<--Controller: Thông báo lỗi
+    User<--View: Link không hợp lệ
+end

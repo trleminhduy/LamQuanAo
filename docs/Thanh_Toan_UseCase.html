@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Use Case - Thanh toán</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
+        h1 { text-align: center; font-size: 20pt; }
+        h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #000; }
+        h3 { font-size: 12pt; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        table, th, td { border: 1px solid #000; }
+        th, td { padding: 8px; text-align: left; }
+        ul, ol { margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Use Case - Thanh toán</h1>
+
+<h2>1. Thông tin Use Case chính</h2>
+<table>
+    <tr><th style="width:30%">Tên Use Case</th><td>Thanh toán đơn hàng</td></tr>
+    <tr><th>Actor</th><td>Khách hàng (đã đăng nhập)</td></tr>
+    <tr><th>Mô tả</th><td>Khách hàng tiến hành thanh toán đơn hàng</td></tr>
+    <tr><th>Pre-conditions</th><td>Người dùng đã đăng nhập, giỏ hàng có sản phẩm, đã có địa chỉ giao hàng</td></tr>
+    <tr><th>Post-conditions</th><td><b>Success:</b> Đơn hàng được tạo, thanh toán thành công<br/><b>Fail:</b> Thông báo lỗi</td></tr>
+</table>
+
+<h2>2. Luồng sự kiện chính</h2>
+<ol>
+    <li>Người dùng nhấn "Thanh toán" từ trang giỏ hàng.</li>
+    <li>Hệ thống kiểm tra điều kiện:
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Giỏ hàng trống → Thông báo lỗi, quay về trang chủ</li>
+            <li><b>Rẽ nhánh 2:</b> Chưa có địa chỉ → Thông báo lỗi, chuyển đến trang tài khoản</li>
+            <li><b>Rẽ nhánh 3:</b> Hợp lệ → Tiếp tục bước 3</li>
+        </ul>
+    </li>
+    <li>Hệ thống hiển thị trang checkout.</li>
+    <li>Người dùng chọn phương thức thanh toán và nhấn "Đặt hàng".</li>
+    <li>Hệ thống xử lý:
+        <ul>
+            <li>Extend Use Case: Thanh toán COD</li>
+            <li>Extend Use Case: Thanh toán PayPal</li>
+            <li>Extend Use Case: Thanh toán MoMo</li>
+            <li>Extend Use Case: Thanh toán VNPay</li>
+        </ul>
+    </li>
+</ol>
+
+<h2>3. Luồng sự kiện phụ</h2>
+<p>Sau khi thanh toán thành công, hệ thống trừ tồn kho sản phẩm và xóa giỏ hàng của người dùng.</p>
+
+<h2>4. Extend Use Case: Thanh toán COD</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng chọn thanh toán khi nhận hàng.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Hệ thống tính tổng tiền (sản phẩm + phí vận chuyển 30,000 VNĐ).</li>
+    <li>Tạo đơn hàng và chi tiết đơn hàng.</li>
+    <li>Kiểm tra tồn kho:
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Tồn kho đủ
+                <ul>
+                    <li>Trừ stock sản phẩm.</li>
+                    <li>Lưu thông tin thanh toán (COD).</li>
+                    <li>Xóa giỏ hàng.</li>
+                    <li>Thông báo "Đặt hàng thành công".</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Tồn kho không đủ
+                <ul>
+                    <li>Hủy đơn hàng.</li>
+                    <li>Thông báo "Sản phẩm không đủ số lượng".</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>5. Extend Use Case: Thanh toán PayPal</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng thanh toán qua cổng PayPal.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Tạo đơn hàng và trừ kho giống như COD.</li>
+    <li>Tạo yêu cầu thanh toán PayPal.</li>
+    <li>Chuyển hướng người dùng đến trang thanh toán PayPal.</li>
+    <li>PayPal xử lý:
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Người dùng hủy
+                <ul>
+                    <li>Quay về trang checkout.</li>
+                    <li>Thông báo "Đã hủy thanh toán".</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Thanh toán thành công
+                <ul>
+                    <li>Cập nhật trạng thái thanh toán.</li>
+                    <li>Xóa giỏ hàng.</li>
+                    <li>Thông báo thành công.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>6. Extend Use Case: Thanh toán MoMo</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng thanh toán qua ví điện tử MoMo.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Tạo đơn hàng và trừ kho giống như COD.</li>
+    <li>Tạo yêu cầu thanh toán MoMo.</li>
+    <li>Chuyển hướng người dùng đến ứng dụng MoMo.</li>
+    <li>MoMo xử lý:
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Thành công
+                <ul>
+                    <li>Cập nhật trạng thái thanh toán.</li>
+                    <li>Xóa giỏ hàng.</li>
+                    <li>Thông báo thành công.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Thất bại
+                <ul>
+                    <li>Thông báo lỗi.</li>
+                    <li>Quay về trang checkout.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>7. Extend Use Case: Thanh toán VNPay</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng thanh toán qua cổng VNPay.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Tạo đơn hàng và trừ kho giống như COD.</li>
+    <li>Tạo URL thanh toán VNPay.</li>
+    <li>Chuyển hướng người dùng đến trang thanh toán VNPay.</li>
+    <li>VNPay xử lý:
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Thành công
+                <ul>
+                    <li>Cập nhật trạng thái thanh toán.</li>
+                    <li>Xóa giỏ hàng.</li>
+                    <li>Thông báo thành công.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Thất bại
+                <ul>
+                    <li>Thông báo lỗi.</li>
+                    <li>Quay về trang checkout.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+</body>
+</html>
