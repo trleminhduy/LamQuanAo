@@ -77,7 +77,7 @@ class ProductController extends Controller
 
     //Trang chi tiết sản phẩm
     public function detail($slug){
-        $product = Product::with(['category','images','variants.size','variants.color'])
+        $product = Product::with(['category','images','variants.size','variants.color','reviews.user'])
             ->where('slug', $slug)
             ->firstOrFail();
 
@@ -89,7 +89,6 @@ class ProductController extends Controller
             ->limit(4)
             ->get();
         
-        //Thêm image_url cho related products
         /** @var Product $relatedProduct */
         foreach ($relatedProducts as $relatedProduct) {
             $relatedProduct->image_url = $relatedProduct->firstImage?->image 

@@ -34,8 +34,7 @@
                 <h1>{{ $product->name }}</h1>
 
                 <div class="product-rating">
-                    {{-- <span>⭐⭐⭐⭐⭐</span>
-                <span>(95 Đánh giá)</span> --}}
+
                 </div>
 
                 <div class="product-price-detail">
@@ -128,38 +127,25 @@
                 <h3>Mô tả</h3>
                 <p>{{ $product->description }}</p>
             </div>
-
+            
             <div id="reviews" class="tab-content">
-                <h3>Đánh giá của khách hàng</h3>
-                <div class="review-summary">
-                    <span>⭐⭐⭐⭐⭐</span>
-                    <span>(95 Đánh giá)</span>
+                <div id="reviews-list">
+                    @include('clients.components.includes.review-list', ['product' => $product])
                 </div>
-
-                <div class="review-item">
-                    <div class="reviewer-info">
-                        <strong>Nguyễn Văn A</strong>
-                        <span>⭐⭐⭐⭐⭐</span>
-                    </div>
-                    <p>Sản phẩm rất đẹp, chất lượng tốt. Giao hàng nhanh!</p>
-                    <span class="review-date">15/11/2025</span>
-                </div>
+                {{-- tách riêng để load đánh giá --}}
 
                 <div class="add-review">
                     <h4>Thêm đánh giá</h4>
-                    <form>
+                    <form id="review-form" data-product-id="{{ $product->id }}">
                         <div class="rating-input">
                             <label>Số sao:</label>
-                            <ul>
-                                @for ($i = 1; $i<=5;$i++)
-                                <li> <a href="javascript:void(0)" class="rating-star" data-value="{{ $i }}">
-                                     <i class="far fa-star"></i>
+                            <div class="rating-stars">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <a href="javascript:void(0)" class="rating-star" data-value="{{ $i }}">
+                                        <i class="far fa-star"></i>
                                     </a>
-                                </li>
-                                    
                                 @endfor
-
-                            </ul>
+                            </div>
                         </div>
                         <input type="hidden" name="rating" id="rating-value" value="0">
                         <textarea placeholder="Nhập đánh giá của bạn..." id="review-content"></textarea>
@@ -185,11 +171,11 @@
                                 href="{{ route('products.detail', $relatedProduct->slug) }}">{{ $relatedProduct->name }}</a>
                         </h4>
                         <p class="related-product-price">{{ number_format($relatedProduct->price, 0, ',', '.') }} VNĐ</p>
-                        <div class="related-product-actions">
+                        {{-- <div class="related-product-actions">
                             <button class="btn-quick-view">👁️</button>
                             <button class="btn-add-cart">🛒</button>
                             <button class="btn-wishlist">♡</button>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             @endforeach
@@ -254,7 +240,7 @@
 
             if (selectedVariant) {
                 document.getElementById('stock-quantity').textContent = selectedVariant.stock;
-                
+
                 // Reset số lượng về 1 nếu vượt quá tồn kho
                 var currentQty = parseInt(document.getElementById('quantity').value);
                 if (currentQty > selectedVariant.stock) {

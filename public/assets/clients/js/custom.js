@@ -459,7 +459,7 @@ $(document).ready(function () {
         },
     });
 
-    // Hàm format số thành dạng 100,000
+    
     function number_format(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
@@ -480,12 +480,9 @@ $(document).ready(function () {
         var sizeId = $("#product-size").val();
         var quantity = $("#quantity").val();
 
-        // if (!colorId) {
-        //     toastr.warning("Vui lòng chọn màu sắc!");
-        //     return;
-        // }
+      
 
-        // Tìm variant phù hợp từ window.productVariants
+        
         if (!window.productVariants) {
             toastr.error("Không tìm thấy thông tin sản phẩm!");
             return;
@@ -732,6 +729,121 @@ $(document).ready(function () {
     }
     //////////// HANDLER đánh giá /////////////////
     //////////// **************** /////////////////
+    let selectedRating = 0;
+
+    //Hover sao
+    $(".rating-star").hover(
+        function () {
+            let value = $(this).data("value");
+            hightLightStars(value);
+        },
+        function () {
+            hightLightStars(selectedRating);
+        }
+    );
+
+    $(".rating-star").click(function (e) {
+        e.preventDefault();
+        selectedRating = $(this).data("value");
+        $("#rating-value").val(selectedRating); //Gán giá trị vào input
+        hightLightStars(selectedRating);
+    });
+
+    function hightLightStars(value) {
+        $(".rating-star i").each(function () {
+            let starValue = $(this).parent().data("value");
+            if (starValue <= value) {
+                $(this).removeClass("far").addClass("fas"); //HIện ngôi sao đầy
+            } else {
+                $(this).removeClass("fas").addClass("far"); //HIEn ngôi sao rỗng
+            }
+        });
+    }
+
+    //Gửi submit đánh giá với AJAX
+   // Gửi submit đánh giá với AJAX
+$("#review-form").submit(function (e) {
+    e.preventDefault();
+
+    let productId = $(this).data("product-id");
+    let rating = $("#rating-value").val();
+    let content = $("#review-content").val().trim();
+
+    // Xóa thông báo cũ
+    $(".error-message").remove();
+
+    if (rating == 0) {
+        $(this).before(
+            '<div class="error-message text-danger">Vui lòng chọn số sao đánh giá</div>'
+        );
+        return;
+    }
+
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            
+        },
+    });
+
+    $.ajax({
+        url: "/review",
+        type: "POST",
+        data: {
+            product_id: productId,
+            rating: rating,
+            comment: content,
+        },
+        beforeSend: function() {
+            $("#review-form button[type='submit']")
+                .prop("disabled", true)
+                .text("Đang gửi...");
+        },
+        success: function (response) {
+            if (response.status) {
+                // Reset
+                $("#review-content").val("");
+                $("#rating-value").val(0);
+                hightLightStars(0);
+                selectedRating = 0;
+
+                toastr.success(response.message || "Đánh giá thành công!");
+                loadReviews(productId);
+            } else {
+                toastr.error(response.message || "Gửi đánh giá không thành công hoặc chưa đăng nhập");
+            }
+        },
+        error: function (xhr) {
+            let msg =
+                xhr.responseJSON?.message ||
+                xhr.responseJSON?.error ||
+                "Gửi đánh giá không thành công hoặc chưa đăng nhập.";
+
+            toastr.error(msg);
+        },
+        complete: function() {
+            $("#review-form button[type='submit']")
+                .prop("disabled", false)
+                .text("Gửi đánh giá");
+        },
+    });
+});
+
+
+
+    // Hàm load lại danh sách reviews
+    function loadReviews(productId) {
+        $.ajax({
+            url: "/review/" + productId,
+            type: "GET",
+            success: function (html) {
+                $("#reviews-list").html(html);
+            },
+            error: function() {
+                console.error("Không thể tải lại danh sách đánh giá");
+            }
+        });
+    }
 
     //////////// HANDLER giọng nói /////////////////
 
