@@ -63,20 +63,20 @@
                                 <td>{{ $order->shippingAddress->address ?? 'N/A' }}</td>
                                 <td>
                                     @if ($order->deliveryUser)
-                                        <span class="badge bg-info">{{ $order->deliveryUser->name }}</span>
+                                        <span class="custom-badge badge-info">{{ $order->deliveryUser->name }}</span>
                                     @else
                                         <span class="text-muted">Chưa phân công</span>
                                     @endif
                                 </td>
                                 <td>
                                     @if ($order->status == 'assigned')
-                                        <span class="badge bg-primary">Đã phân công</span>
+                                        <span class="custom-badge badge-info">Đã phân công</span>
                                     @elseif($order->status == 'shipping')
-                                        <span class="badge bg-warning">Đang giao</span>
+                                        <span class="custom-badge badge-warning">Đang giao</span>
                                     @elseif($order->status == 'delivered')
-                                        <span class="badge bg-success">Đã giao</span>
-                                    @else
-                                        <span class="badge bg-secondary">{{ $order->status }}</span>
+                                        <span class="custom-badge badge-success">Đã giao</span>
+                                    @elseif($order->status == 'completed')
+                                        <span class="custom-badge badge-success">Đã hoàn thành</span>
                                     @endif
                                 </td>
                                 <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
@@ -110,7 +110,7 @@
 @endsection
 
 <style>
-    /* Pagination nhỏ hơn */
+    
     .pagination {
         margin-bottom: 0;
     }

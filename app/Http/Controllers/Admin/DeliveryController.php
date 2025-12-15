@@ -55,6 +55,9 @@ class DeliveryController extends Controller
             'delivery_note'=>$request->delivery_note,
             'status'=>'assigned',
         ]);
+
+        toastr()->success('Phân công giao hàng thành công');
+        return redirect()->route('admin.deliveries.index');
     }
 
     // Dashboard cho delivery user

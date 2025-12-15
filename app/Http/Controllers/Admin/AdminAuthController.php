@@ -28,7 +28,8 @@ class AdminAuthController extends Controller
             $user = Auth::guard('admin')->user();
 
             //kiểm tra role, quyền
-            if (in_array($user->role->name, ['admin', 'staff'])) {
+            // Cho phép admin, staff và delivery_user đăng nhập trang admin
+            if (in_array($user->role->name, ['admin', 'staff', 'delivery_user'])) {
                 $request->session()->regenerate();
                 toastr()->success('Đăng nhập admin thành công');
                 return redirect()->route('admin.dashboard');

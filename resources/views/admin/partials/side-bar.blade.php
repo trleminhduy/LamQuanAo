@@ -11,7 +11,7 @@
              
              <div class="profile_info">
                  <span>Xin chào,</span>
-                 <h2>{{ Auth::guard('admin')->user()->name }}</h2>
+                 <h2></h2>
              </div>
          </div>
          <!-- /menu profile quick info -->
