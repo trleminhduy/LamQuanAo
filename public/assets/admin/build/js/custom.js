@@ -2720,7 +2720,7 @@ function init_charts() {
     if ($("#revenueBarChart").length) {
         var ctx = document.getElementById("revenueBarChart");
 
-        //Lấy dữ liệu từ attribute data của thẻ canvas
+        //Lấy dữ liệu từ ttinh
         var labels = JSON.parse(ctx.getAttribute("data-labels"));
         var values = JSON.parse(ctx.getAttribute("data-values"));
         var revenueBarChart = new Chart(ctx, {
@@ -2731,7 +2731,7 @@ function init_charts() {
                     {
                         label: "Doanh thu",
                         backgroundColor: "#26B99A",
-                        data: values, //Doanh thu theo từng tháng
+                        data: values, //doan thu từng tháng
                     }
                 ],
             },

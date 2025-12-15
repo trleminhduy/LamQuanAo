@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Clients;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -35,5 +36,28 @@ class OrderController extends Controller
             'status' => 'cancelled'
         ]);
         return redirect()->back()->with('success', 'Đơn hàng đã được huỷ thành công');
+    }
+
+    public function confirmReceived(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        //Chỉ cho phép xác nhận nếu  hàng đã được giao
+        if ($order->status != 'delivered') {
+            toastr()->error('Đơn hàng chưa được giao tới bạn');
+            return back();
+        }
+        $order->update([
+            'status' => 'completed',
+        ]);
+        if ($order->payment) {
+            $order->payment->update([
+                'status' => 'completed',
+            ]);
+        }
+        toastr()->success('Cảm ơn bạn đã xác nhân đơn hàng');
+        return back();
     }
 }

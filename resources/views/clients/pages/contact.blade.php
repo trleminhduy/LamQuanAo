@@ -5,7 +5,7 @@
 
 
 @section('content')
- <!-- CONTACT MESSAGE AREA START -->
+
         <div class="ltn__contact-message-area ">
             <div class="container">
                 <div class="row">
@@ -47,7 +47,7 @@
                 </div>
             </div>
         </div>
-        <!-- CONTACT MESSAGE AREA END -->
+       
 
 @endsection
 

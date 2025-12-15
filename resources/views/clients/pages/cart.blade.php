@@ -24,7 +24,7 @@
                     @foreach($cartItems as $item)
                     <tr class="cart-item" data-id="{{ $item->id }}">
                         <td class="cart-product-info">
-                            <img src="{{ $item->productVariant->product->firstImage->image_url ?? asset('assets/clients/img/default.jpg') }}" 
+                            <img src="{{ $item->productVariant->product->firstImage?->image ? asset('storage/' . $item->productVariant->product->firstImage->image) : asset('storage/uploads/products/default-product.png') }}" 
                                  alt="{{ $item->productVariant->product->name }}">
                             <div class="product-details">
                                 <h4>{{ $item->productVariant->product->name }}</h4>

@@ -91,7 +91,9 @@ class ChatController extends Controller
             "2. Hỏi giá/màu/size/tồn kho → Trả lời CHÍNH XÁC từ data\n" .
             "3. Gợi ý sản phẩm phù hợp với nhu cầu khách\n" .
             "4. Ngắn gọn, thân thiện, tối đa 3-4 câu\n" .
-            "5. Câu hỏi ngoài sản phẩm → Từ chối lịch sự, gợi ý hỏi về sản phẩm";
+            "5. Câu hỏi ngoài sản phẩm → Từ chối lịch sự, gợi ý hỏi về sản phẩm\n" .
+            "6. Shop hiện tại có 3 phương thức thanh toán: Thanh toán khi nhận hàng (COD), Thanh toán online qua VNPay và MoMo.\n";
+
 
         // Lấy lịch sử chat gần nhất
         $history = ChatMessage::query()

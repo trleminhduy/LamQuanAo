@@ -8,7 +8,7 @@
               <ul class=" navbar-right">
                   <li class="nav-item dropdown open" style="padding-left: 15px;">
 
-                      <img src="images/img.jpg" alt="">Admin
+                      <img src="images/img.jpg" alt="">
                       </a>
 
                   </li>

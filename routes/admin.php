@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DeliveryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
@@ -32,6 +33,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/users', [UsersController::class, 'index'])->name('admin.users.index');
         Route::post('/user/upgrade', [UsersController::class, 'upgrade']);
         Route::post('/user/updateStatus', [UsersController::class, 'updateStatus']);
+        Route::post('/users/{user}/set-delivery', [UsersController::class, 'setDeliveryRole'])->name('users.setDeliveryRole');
+        
     });
 
     Route::middleware(['permission:manage_categories'])->group(function () {
@@ -75,9 +78,25 @@ Route::prefix('admin')->group(function () {
         Route::post('/orders-detail/cancel-order', [OrderController::class, 'cancelOrder']);
     });
 
+    // Quản lý giao hàng
+    Route::middleware(['permission:manage_deliveries'])->prefix('deliveries')->group(function () {
+        Route::get('/dashboard', [DeliveryController::class, 'dashboard'])->name('admin.deliveries.dashboard');
+        Route::get('/my-orders', [DeliveryController::class, 'myOrders'])->name('admin.deliveries.myOrders');
+        Route::get('/my-orders/{order}', [DeliveryController::class, 'showOrder'])->name('admin.deliveries.showOrder');
+        Route::post('/my-orders/{order}/start', [DeliveryController::class, 'startDelivery'])->name('admin.deliveries.start');
+        Route::post('/my-orders/{order}/complete', [DeliveryController::class, 'completeDelivery'])->name('admin.deliveries.complete');
+    });
+
     // Quản lý liên hệ
     Route::middleware(['permission:manage_contacts'])->group(function () {
         Route::get('/contacts', [ContactController::class, 'index'])->name('admin.contacts.index');
         Route::post('/contacts/reply', [ContactController::class, 'replyContact']);
+    });
+
+    //Quản lý giao hàng
+    Route::prefix('deliveries')->name('admin.deliveries.')->group(function () {
+        Route::get('/', [DeliveryController::class, 'index'])->name('index');
+        Route::get('/assign/{order}', [DeliveryController::class, 'assignForm'])->name('assignForm');
+        Route::post('/assign/{order}', [DeliveryController::class, 'assign'])->name('assign');
     });
 });

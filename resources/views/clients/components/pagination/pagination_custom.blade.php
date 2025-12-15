@@ -1,5 +1,6 @@
 @if ($paginator->hasPages())
     <div class="pagination-wrapper">
+        
         @if ($paginator->onFirstPage())
             <span class="pagination-btn disabled">«</span>
         @else

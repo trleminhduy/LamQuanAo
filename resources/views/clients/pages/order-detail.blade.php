@@ -14,6 +14,12 @@
                     <span class="badge bg-warning"> Chờ xác nhận </span>
                 @elseif($order->status == 'processing')
                     <span class="badge bg-primary"> Đang xử lý </span>
+                @elseif($order->status == 'assigned')
+                    <span class="badge bg-info"> Đã phân công giao hàng </span>
+                @elseif($order->status == 'shipping')
+                    <span class="badge bg-warning text-dark"> Đang giao hàng </span>
+                @elseif($order->status == 'delivered')
+                    <span class="badge bg-success"> Đã giao hàng </span>
                 @elseif($order->status == 'completed')
                     <span class="badge bg-success"> Hoàn thành </span>
                 @elseif($order->status == 'cancelled')
@@ -80,6 +86,20 @@
                         <button type="submit" class="btn btn-danger btn-sm mt-3"> Huỷ đơn hàng </button>
                     </form>
                 @endif
+
+                @if ($order->status == 'delivered')
+                    <div class="alert alert-success mt-3">
+                        <i class="fas fa-truck"></i> Đơn hàng đã được giao! Vui lòng xác nhận đã nhận hàng.
+                    </div>
+                    <form action="{{ route('orders.confirmReceived', $order->id) }}" method="POST"
+                        onsubmit="return confirm('Xác nhận bạn đã nhận được hàng?')">
+                        @csrf
+                        <button type="submit" class="btn btn-success btn-lg mt-2">
+                            <i class="fas fa-check-circle"></i> Đã nhận được hàng
+                        </button>
+                    </form>
+                @endif
+
                 @if ($order->status == 'completed')
                     <h4 class="mt-4">
                         Đánh giá sản phẩm

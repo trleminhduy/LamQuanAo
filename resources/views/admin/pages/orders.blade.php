@@ -66,17 +66,21 @@
                                                         </td>
                                                         <td>{{ $order->user->name ?? 'N/A' }}</td>
 
-                                                        <td><a href="javascript:void(0)" data-toggle="modal" data-target="#addressShippingModal-{{ $order->id }}">{{ $order->shippingAddress->full_name }}</a>
+                                                        <td><a href="javascript:void(0)" data-toggle="modal"
+                                                                data-target="#addressShippingModal-{{ $order->id }}">{{ $order->shippingAddress->full_name }}</a>
                                                         </td>
                                                         <td>{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</td>
 
                                                         <td class="order-status">
                                                             @if ($order->status == 'pending')
-                                                                <span class="custom-badge badge-warning">Chờ xử lý</span>
+                                                                <span class="custom-badge badge-warning">Chờ xác nhận</span>
                                                             @elseif ($order->status == 'processing')
-                                                                <span class="custom-badge badge-info">Đang giao hàng</span>
+                                                                <span class="custom-badge badge-info">Đang tiến hành giao
+                                                                    hàng</span>
                                                             @elseif ($order->status == 'completed')
-                                                                <span class="custom-badge badge-success">Hoàn thành</span>
+                                                                <span class="custom-badge badge-success">Đơn đã hoàn tất</span>
+                                                            @elseif ($order->status == 'delivered')
+                                                                <span class="custom-badge badge-success">Hoàn thành giao</span>
                                                             @elseif ($order->status == 'cancelled')
                                                                 <span class="custom-badge badge-danger">Đã hủy</span>
                                                             @endif
@@ -91,7 +95,9 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#orderItemsModal-{{ $order->id }}"> Xem</button>
+                                                            <button type="button" class="btn btn-info" data-toggle="modal"
+                                                                data-target="#orderItemsModal-{{ $order->id }}">
+                                                                Xem</button>
                                                         </td>
                                                         <td>
                                                             <div class="btn-group">
@@ -105,12 +111,13 @@
                                                                 <div class="dropdown-menu">
                                                                     @if ($order->status == 'pending')
                                                                         <a class="dropdown-item confirm-order"
-                                                                            href="javascript:void(0)"  
+                                                                            href="javascript:void(0)"
                                                                             data-id="{{ $order->id }}">Xác nhận</a>
                                                                     @endif
 
                                                                     <a class="dropdown-item" target="_blank"
-                                                                        href="{{ route('admin.orders-detail', ['id' => $order->id]) }}">Xem chi tiết
+                                                                        href="{{ route('admin.orders-detail', ['id' => $order->id]) }}">Xem
+                                                                        chi tiết
                                                                     </a>
 
                                                                 </div>
@@ -180,8 +187,9 @@
                                             </div>
 
                                             {{-- Modal Address --}}
-                                            <div class="modal fade" id="addressShippingModal-{{ $order->id }}" tabindex="-1"
-                                                aria-labelledby="addressShippingModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="addressShippingModal-{{ $order->id }}"
+                                                tabindex="-1" aria-labelledby="addressShippingModalLabel"
+                                                aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -191,10 +199,10 @@
                                                                 aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                           <p>Người nhận: {{ $order->shippingAddress->full_name }}</p>
-                                                           <p>Số điện thoại: {{ $order->shippingAddress->phone }}</p>
-                                                           <p>Địa chỉ: {{ $order->shippingAddress->address }}</p>
-                                                           <p>Thành phố: {{ $order->shippingAddress->city }}</p>
+                                                            <p>Người nhận: {{ $order->shippingAddress->full_name }}</p>
+                                                            <p>Số điện thoại: {{ $order->shippingAddress->phone }}</p>
+                                                            <p>Địa chỉ: {{ $order->shippingAddress->address }}</p>
+                                                            <p>Thành phố: {{ $order->shippingAddress->city }}</p>
 
                                                         </div>
 

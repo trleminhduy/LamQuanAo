@@ -94,6 +94,8 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/order/{id}', [OrderController::class, 'showOrder'])->name('order.show');
     //Huỷ đơn hàng
     Route::post('/order/{id}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
+    //Xác nhận đã nhân hàng
+    Route::post('/orders/{order}/confirm-received', [OrderController::class, 'confirmReceived'])->name('orders.confirmReceived');
 
     // Đánh giá sản phẩm
     Route::post('/review', [ReviewController::class, 'createReview']);
@@ -135,3 +137,6 @@ Route::post('/chat/send', [ChatController::class, 'sendMessage']);
 
 //REquire admin
 require __DIR__ . '/admin.php';
+
+//Require delivery
+require __DIR__ . '/delivery.php';

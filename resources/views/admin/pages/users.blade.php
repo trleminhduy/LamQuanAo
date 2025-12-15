@@ -80,8 +80,14 @@
                                                             <i class="fa fa-check"> </i> Xoá
                                                         </button>
                                                     @endif
+                                                @elseif ($user->role->name == 'staff')
+                                                    <form action="{{ route('users.setDeliveryRole', $user) }}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-info btn-sm">
+                                                            <i class="fa fa-truck"></i> Chuyển thành Shipper
+                                                        </button>
+                                                    </form>
                                                 @endif
-                                                </button>
                                             </div>
                                         </div>
                                     </div>

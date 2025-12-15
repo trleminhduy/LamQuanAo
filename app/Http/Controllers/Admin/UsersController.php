@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+
+use function Flasher\Toastr\Prime\toastr;
 
 class UsersController extends Controller
 {
@@ -43,5 +46,17 @@ class UsersController extends Controller
         $user->status = $status;
         $user->save();
         return response()->json(['status' => true, 'message' => 'Cập nhật trạng thái thành công.']);
+    }
+    public function setDeliveryRole (User $user){
+        $deliveryRole = Role::where('name', 'delivery_user')->first();
+        if (!$deliveryRole) {
+            toastr()->error('Vai trò giao hàng không tồn tại.');
+            return back();
+        }
+
+        $user->role_id = $deliveryRole->id;
+        $user->save();
+        toastr()->success('Đã set role giao hàng.');
+        return back();
     }
 }
