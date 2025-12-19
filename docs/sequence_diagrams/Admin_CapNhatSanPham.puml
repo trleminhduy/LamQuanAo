@@ -1,0 +1,36 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor Admin as Quản trị viên
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over Admin,DB: Cập nhật sản phẩm
+
+    Admin->>View: Bấm "Sửa sản phẩm"
+    View-->>Admin: Hiển thị form chỉnh sửa
+
+    Admin->>View: Sửa thông tin (tên, giá, mô tả, danh mục, ảnh)
+    View->>Ctrl: Gửi yêu cầu cập nhật
+    Ctrl->>DB: Tìm sản phẩm theo ID
+
+    alt Sản phẩm không tồn tại
+        Ctrl-->>View: "Sản phẩm không tồn tại"
+        View-->>Admin: Hiển thị lỗi
+    else Sản phẩm tồn tại
+        Ctrl->>Ctrl: Validate dữ liệu
+        alt Có ảnh mới
+            Ctrl->>Ctrl: Xóa ảnh cũ
+            Ctrl->>Ctrl: Upload ảnh mới
+        end
+        Ctrl->>Ctrl: Cập nhật slug
+        Ctrl->>DB: Lưu thông tin đã sửa
+        Ctrl->>DB: Cập nhật ảnh (nếu có)
+        Ctrl-->>View: "Cập nhật thành công"
+        View-->>Admin: Hiển thị thông báo & reload danh sách
+    end

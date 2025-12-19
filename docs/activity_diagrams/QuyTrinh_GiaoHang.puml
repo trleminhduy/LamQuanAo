@@ -1,0 +1,29 @@
+---
+config:
+  theme: default
+  look: classic
+---
+flowchart TD
+    Start([Quản trị viên]) --> A1[Chọn đơn cần phân công]
+    A1 --> A2[Chọn shipper]
+    A2 --> A3{Đơn hợp lệ?}
+    A3 -->|Không| E1[Hiển thị lỗi]
+    A3 -->|Có| A4[Cập nhật đã phân công]
+    
+    A4 --> B1([Nhân viên giao hàng])
+    B1 --> B2[Xem đơn được giao]
+    B2 --> B3[Bấm bắt đầu giao]
+    B3 --> B4[Cập nhật đang giao]
+    B4 --> B5[Bấm hoàn thành giao]
+    B5 --> B6[Cập nhật đã giao]
+    
+    B6 --> C1([Khách hàng])
+    C1 --> C2[Xem đơn hàng]
+    C2 --> C3[Bấm xác nhận nhận hàng]
+    C3 --> C4{Trạng thái đã giao?}
+    C4 -->|Không| E2[Không thể xác nhận]
+    C4 -->|Có| C5[Cập nhật hoàn thành]
+    
+    C5 --> End([Kết thúc])
+    E1 --> End
+    E2 --> End

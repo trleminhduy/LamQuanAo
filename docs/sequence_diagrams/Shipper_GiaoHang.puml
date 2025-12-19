@@ -1,0 +1,32 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor Shipper as Nhân viên giao hàng
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over Shipper,DB: Shipper giao hàng
+
+    Shipper->>View: Vào đơn của tôi
+    View->>Ctrl: Lấy đơn đã phân công
+    Ctrl->>DB: Truy vấn orders theo shipper
+    DB-->>Ctrl: Trả về danh sách
+    Ctrl-->>View: Hiển thị đơn hàng
+    View-->>Shipper: Hiển thị danh sách
+
+    Shipper->>View: Chọn đơn & bấm "Bắt đầu giao"
+    View->>Ctrl: Gửi yêu cầu bắt đầu
+    Ctrl->>DB: Cập nhật status = shipping & delivery_started_at
+    Ctrl-->>View: "Bắt đầu giao thành công"
+    View-->>Shipper: Hiển thị thông báo
+
+    Shipper->>View: Bấm "Hoàn thành giao"
+    View->>Ctrl: Gửi yêu cầu hoàn thành
+    Ctrl->>DB: Cập nhật status = delivered & delivery_completed_at
+    Ctrl-->>View: "Hoàn thành thành công"
+    View-->>Shipper: Hiển thị thông báo & reload

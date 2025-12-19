@@ -740,8 +740,8 @@ $(document).ready(function () {
             },
         });
     });
-    
-    // Quản lý contact - 
+
+    // Quản lý contact -
     $(document).on("click", ".contact-item", function (e) {
         //Đổ dữ liệu
         let contactName = $(this).data("name");
@@ -751,7 +751,9 @@ $(document).ready(function () {
         let isReply = $(this).data("is_reply");
         // tìm thẻ con
         $(".mail_view .inbox-body .sender-info strong").text(contactName);
-        $(".mail_view .inbox-body .sender-info span").text('<' + contactEmail + '>');
+        $(".mail_view .inbox-body .sender-info span").text(
+            "<" + contactEmail + ">"
+        );
         $(".mail_view .view-mail p").text(contactMessage);
 
         $(".mail_view").show();
@@ -772,13 +774,13 @@ $(document).ready(function () {
         let button = $(this);
         let email = button.data("email");
         let contactID = button.data("id");
-        let message = $("#editor-contact").val(); // Lấy giá trị từ textarea 
-        
-        if (!message || message.trim() === '') {
-            toastr.error('Vui lòng nhập nội dung phản hồi');
+        let message = $("#editor-contact").val(); // Lấy giá trị từ textarea
+
+        if (!message || message.trim() === "") {
+            toastr.error("Vui lòng nhập nội dung phản hồi");
             return;
         }
-        
+
         $.ajaxSetup({
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
@@ -792,25 +794,103 @@ $(document).ready(function () {
                 message: message,
                 contact_id: contactID,
             },
-            beforeSend: function() {
-                button.prop('disabled', true).text('Đang gửi...');
+            beforeSend: function () {
+                button.prop("disabled", true).text("Đang gửi...");
             },
             success: function (response) {
                 if (response.status) {
                     toastr.success(response.message);
-                    $('.mail_view').hide();
-                    $('#compose').hide();
-                    $('#editor-contact').val(''); // Xóa hết content của ảrea
+                    $(".mail_view").hide();
+                    $("#compose").hide();
+                    $("#editor-contact").val(""); // Xóa hết content của ảrea
                 } else {
                     toastr.error(response.message);
                 }
             },
             error: function (xhr, status, error) {
-                toastr.error("Lỗi hệ thống: " + (xhr.responseJSON?.message || "Vui lòng thử lại sau!"));
+                toastr.error(
+                    "Lỗi hệ thống: " +
+                        (xhr.responseJSON?.message || "Vui lòng thử lại sau!")
+                );
             },
-            complete: function() {
-                button.prop('disabled', false).text('Gửi');
-            }
+            complete: function () {
+                button.prop("disabled", false).text("Gửi");
+            },
         });
+    });
+
+    // Gửi đơn lên GHN
+    $(document).on("click", ".send-to-ghn", function (e) {
+        e.preventDefault();
+        let button = $(this);
+        let orderId = button.data("id");
+
+        if (!confirm("Bạn có chắc muốn gửi đơn hàng này lên GHN?")) {
+            return;
+        }
+
+        button
+            .prop("disabled", true)
+            .html('<i class="fa fa-spinner fa-spin"></i> Đang gửi...');
+
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+
+        $.ajax({
+            url: `/admin/orders/${orderId}/send-to-ghn`,
+            type: "POST",
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    button
+                        .removeClass("btn-primary")
+                        .addClass("btn-info")
+                        .html(
+                            `<i class="fa fa-check"></i> Đã gửi GHN: ${response.order_code}`
+                        );
+                } else {
+                    toastr.error(response.message);
+                    button
+                        .prop("disabled", false)
+                        .html('<i class="fa fa-truck"></i> Gửi GHN');
+                }
+            },
+            error: function (xhr) {
+                toastr.error(
+                    "Lỗi: " + (xhr.responseJSON?.message || "Có lỗi xảy ra")
+                );
+                button
+                    .prop("disabled", false)
+                    .html('<i class="fa fa-truck"></i> Gửi GHN');
+            },
+        });
+    });
+
+    //Quản lý khuyến mãi
+    // Xóa coupon
+    $(document).on("click", ".btn-delete-coupon", function () {
+        const couponId = $(this).data("id");
+
+        if (confirm("Bạn có chắc muốn xóa mã giảm giá này?")) {
+            $.ajax({
+                url: `/admin/coupons/${couponId}`,
+                type: "DELETE",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr("content"),
+                },
+                success: function (response) {
+                    if (response.status) {
+                        $(`#coupon-row-${couponId}`).fadeOut();
+                        toastr.success(response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Có lỗi xảy ra!");
+                },
+            });
+        }
     });
 });

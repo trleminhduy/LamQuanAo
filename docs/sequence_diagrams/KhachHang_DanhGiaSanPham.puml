@@ -1,0 +1,42 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor KH as Khách hàng
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over KH,DB: Đánh giá sản phẩm
+
+    KH->>View: Vào chi tiết sản phẩm
+    View->>Ctrl: Lấy thông tin sản phẩm
+    Ctrl->>DB: Truy vấn product & reviews
+    DB-->>View: Hiển thị sản phẩm & đánh giá
+
+    KH->>View: Bấm "Viết đánh giá"
+    View->>Ctrl: Kiểm tra đăng nhập
+
+    alt Chưa đăng nhập
+        Ctrl-->>View: "Vui lòng đăng nhập"
+        View-->>KH: Chuyển trang login
+    else Đã đăng nhập
+        View-->>KH: Hiển thị form đánh giá
+
+        KH->>View: Nhập rating (1-5 sao), nhận xét, ảnh
+        View->>Ctrl: Gửi yêu cầu tạo review
+        Ctrl->>Ctrl: Validate dữ liệu
+
+        alt Dữ liệu không hợp lệ
+            Ctrl-->>View: "Lỗi: rating bắt buộc"
+            View-->>KH: Hiển thị lỗi
+        else Dữ liệu hợp lệ
+            Ctrl->>Ctrl: Upload ảnh (nếu có)
+            Ctrl->>DB: Lưu review (product_id, user_id, rating, comment, images)
+            Ctrl-->>View: "Cảm ơn đánh giá của bạn"
+            View-->>KH: Hiển thị thông báo & reload
+        end
+    end

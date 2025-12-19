@@ -103,7 +103,7 @@
                                                     <tr>
                                                         <td>
                                                             <img src="{{ $item->productVariant->product->image_url }}"
-                                                                alt="{{ $item->productVariant->product->name }}" 
+                                                                alt="{{ $item->productVariant->product->name }}"
                                                                 width="80" height="80" style="object-fit: cover;">
                                                         </td>
                                                         <td>{{ $item->productVariant->product->name }}</td>
@@ -150,13 +150,14 @@
                                                 <tbody>
                                                     <tr>
                                                         <th style="width:50%">Tiền hàng:</th>
-                                                        <td>{{ number_format($order->total_price -30000, 0, ',', '.') }} đ</td>
+                                                        <td>{{ number_format($order->total_price - 30000, 0, ',', '.') }} đ
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <th>Tiền ship</th>
                                                         <td>30.000 đ</td>
                                                     </tr>
-                                                  
+
                                                     <tr>
                                                         <th>Tổng cộng:</th>
                                                         <td>{{ number_format($order->total_price, 0, ',', '.') }} đ</td>
@@ -177,8 +178,19 @@
                                                     class="fa fa-print"></i> In hoá đơn</button>
                                             <button class="btn btn-success pull-right send-invoice-mail"
                                                 data-id="{{ $order->id }}"><i class="fa fa-credit-send"></i> Gửi hoá đơn
-
                                             </button>
+
+                                            {{-- Nút gửi GHN --}}
+                                            @if (!$order->ghn_order_code && $order->status != 'cancelled')
+                                                <button class="btn btn-primary pull-right send-to-ghn"
+                                                    data-id="{{ $order->id }}" style="margin-right: 5px;">
+                                                    <i class="fa fa-truck"></i> Gửi GHN
+                                                </button>
+                                            @elseif($order->ghn_order_code)
+                                                <button class="btn btn-info pull-right" disabled style="margin-right: 5px;">
+                                                    <i class="fa fa-check"></i> Đã gửi GHN: {{ $order->ghn_order_code }}
+                                                </button>
+                                            @endif
 
                                             @if ($order->status == 'pending')
                                                 <button class="btn btn-danger pull-right cancel-order "
@@ -189,8 +201,6 @@
                                             <button class="btn btn-danger " style="cursor: not-allowed;"><i
                                                     class="fa fa-info"></i> Đơn hàng đã huỷ</button>
                                         @endif
-
-
                                     </div>
                                 </div>
                             </section>

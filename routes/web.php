@@ -15,6 +15,19 @@ use App\Http\Controllers\Clients\ReviewController;
 use App\Http\Controllers\Clients\SearchController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\GHNController;
+use App\Http\Controllers\GHNWebhookController;
+
+// Webhook GHN nhận cập nhật trạng thái đơn hàng từ GHN
+Route::post('/webhook/ghn', [GHNWebhookController::class, 'handle']);
+
+// api  - lấy ds tỉnh xã
+Route::prefix('api/ghn')->group(function () {
+    Route::get('/provinces', [GHNController::class, 'getProvinces']);
+    Route::post('/districts', [GHNController::class, 'getDistricts']);
+    Route::post('/wards', [GHNController::class, 'getWards']);
+});
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/about', function () {
@@ -108,6 +121,9 @@ Route::post('/checkout/momo/notify', [CheckoutController::class, 'momoNotify'])-
 
 // Routes VNPay
 Route::get('/checkout/vnpay/return', [CheckoutController::class, 'vnpayReturn'])->name('checkout.vnpay.return');
+
+// Test-only: đơn giản hoá JMeter (không login, không CSRF) - chỉ dùng trên môi trường dev
+Route::get('/test/checkout', [CheckoutController::class, 'placeOrderTest'])->name('test.checkout');
 
 // Giỏ hàng - ko cần đăng nhập (lưu vào session nếu chưa login)
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');

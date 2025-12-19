@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Use Case - Quản lý Giao hàng</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
+        h1 { text-align: center; font-size: 20pt; }
+        h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #000; }
+        h3 { font-size: 12pt; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        table, th, td { border: 1px solid #000; }
+        th, td { padding: 8px; text-align: left; }
+        ul, ol { margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Use Case - Quản lý Giao hàng</h1>
+
+<h2>1. Thông tin Use Case chính</h2>
+<table>
+    <tr><th style="width:30%">Tên Use Case</th><td>Quản lý Giao hàng</td></tr>
+    <tr><th>Actor</th><td>Quản trị viên (Admin), Nhân viên giao hàng (Shipper), Khách hàng</td></tr>
+    <tr><th>Mô tả</th><td>Quản lý quy trình giao hàng từ khi Admin phân công shipper, shipper thực hiện giao hàng, đến khi khách hàng xác nhận đã nhận. Hệ thống tự động hoàn tất đơn sau 3 ngày nếu khách chưa xác nhận.</td></tr>
+    <tr><th>Pre-conditions</th><td>- Đã đăng nhập hệ thống<br/>- Đơn hàng ở trạng thái <code>processing</code> (Admin)<br/>- Có nhân viên có role <code>delivery_user</code></td></tr>
+    <tr><th>Post-conditions</th><td><b>Success:</b> Đơn hàng chuyển trạng thái lần lượt: assigned → shipping → delivered → completed<br/><b>Fail:</b> Thông báo lỗi trạng thái không hợp lệ</td></tr>
+</table>
+
+<h2>2. Luồng sự kiện chính</h2>
+<ol>
+    <li>Admin truy cập trang quản lý giao hàng</li>
+    <li>Hệ thống hiển thị danh sách đơn hàng ở trạng thái <code>processing</code></li>
+    <li>Admin có thể thực hiện:
+        <ul>
+            <li>Extend Use Case: Phân công shipper</li>
+        </ul>
+    </li>
+    <li>Shipper truy cập trang đơn hàng của tôi</li>
+    <li>Hệ thống hiển thị đơn đã được phân công</li>
+    <li>Shipper có thể thực hiện:
+        <ul>
+            <li>Extend Use Case: Bắt đầu giao hàng</li>
+            <li>Extend Use Case: Hoàn thành giao hàng</li>
+        </ul>
+    </li>
+    <li>Khách hàng xem đơn hàng ở trạng thái <code>delivered</code></li>
+    <li>Khách hàng có thể thực hiện:
+        <ul>
+            <li>Extend Use Case: Xác nhận đã nhận hàng</li>
+        </ul>
+    </li>
+</ol>
+
+<h2>3. Luồng sự kiện phụ</h2>
+<p>Nếu khách hàng không xác nhận trong 3 ngày kể từ khi giao thành công → Hệ thống tự động chuyển trạng thái sang <code>completed</code> (chạy command hàng ngày lúc 02:00).</p>
+
+<h2>4. Extend Use Case: Phân công shipper</h2>
+<h3>Mô tả</h3>
+<p>Quản trị viên phân công nhân viên giao hàng cho đơn hàng.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Admin chọn đơn hàng cần phân công, nhấn <b>Phân công</b>.</li>
+    <li>Hệ thống hiển thị form chọn shipper và nhập ghi chú (optional).</li>
+    <li>Admin chọn shipper từ danh sách nhân viên có role <code>delivery_user</code>, nhấn <b>Xác nhận phân công</b>.</li>
+    <li>Hệ thống kiểm tra thông tin.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Đơn hàng không ở trạng thái <code>processing</code> hoặc chưa chọn shipper
+                <ul>
+                    <li>Hệ thống thông báo lỗi: "Không thể phân công (trạng thái không hợp lệ hoặc chưa chọn shipper)".</li>
+                    <li>Admin thực hiện lại bước 3.</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Dữ liệu hợp lệ
+                <ul>
+                    <li>Hệ thống cập nhật <code>delivery_user_id</code>, <code>status = assigned</code>.</li>
+                    <li>Thông báo "Phân công thành công".</li>
+                    <li>Reload trang danh sách đơn hàng.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>5. Extend Use Case: Bắt đầu giao hàng</h2>
+<h3>Mô tả</h3>
+<p>Nhân viên giao hàng bắt đầu quá trình giao hàng.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Shipper xem danh sách đơn đã được phân công (status = <code>assigned</code>).</li>
+    <li>Shipper chọn đơn, nhấn <b>Bắt đầu giao</b>.</li>
+    <li>Hệ thống kiểm tra thông tin.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Đơn hàng không ở trạng thái <code>assigned</code>
+                <ul>
+                    <li>Hệ thống thông báo lỗi: "Không thể bắt đầu giao (trạng thái không hợp lệ)".</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Dữ liệu hợp lệ
+                <ul>
+                    <li>Hệ thống cập nhật <code>status = shipping</code>, <code>delivery_started_at = now()</code>.</li>
+                    <li>Thông báo "Bắt đầu giao thành công".</li>
+                    <li>Reload trang cập nhật trạng thái.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>6. Extend Use Case: Hoàn thành giao hàng</h2>
+<h3>Mô tả</h3>
+<p>Nhân viên giao hàng xác nhận đã giao hàng thành công.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Shipper xem đơn đang giao (status = <code>shipping</code>).</li>
+    <li>Shipper nhấn <b>Hoàn thành giao</b>.</li>
+    <li>Hệ thống kiểm tra thông tin.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Đơn hàng không ở trạng thái <code>shipping</code>
+                <ul>
+                    <li>Hệ thống thông báo lỗi: "Không thể hoàn thành (trạng thái không hợp lệ)".</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Dữ liệu hợp lệ
+                <ul>
+                    <li>Hệ thống cập nhật <code>status = delivered</code>, <code>delivery_completed_at = now()</code>.</li>
+                    <li>Thông báo "Hoàn thành giao thành công".</li>
+                    <li>Reload trang cập nhật trạng thái.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h2>7. Extend Use Case: Xác nhận đã nhận hàng</h2>
+<h3>Mô tả</h3>
+<p>Khách hàng xác nhận đã nhận được hàng.</p>
+
+<h3>Luồng sự kiện chính</h3>
+<ol>
+    <li>Khách hàng xem đơn hàng (status = <code>delivered</code>).</li>
+    <li>Khách hàng nhấn <b>Đã nhận hàng</b>.</li>
+    <li>Hệ thống kiểm tra thông tin.
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Đơn hàng không ở trạng thái <code>delivered</code>
+                <ul>
+                    <li>Hệ thống thông báo lỗi: "Không thể xác nhận (đơn chưa giao)".</li>
+                </ul>
+            </li>
+            <li><b>Rẽ nhánh 2:</b> Dữ liệu hợp lệ
+                <ul>
+                    <li>Hệ thống cập nhật <code>status = completed</code>.</li>
+                    <li>Cập nhật <code>payment.status = completed</code> (nếu có payment).</li>
+                    <li>Thông báo "Cảm ơn bạn đã xác nhận".</li>
+                    <li>Reload trang cập nhật trạng thái.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ol>
+
+<h3>Dữ liệu liên quan</h3>
+<table>
+    <tr><th>Bảng</th><th>Trường</th></tr>
+    <tr><td>orders</td><td>id, user_id, delivery_user_id, status (pending/processing/assigned/shipping/delivered/completed/cancelled), delivery_started_at, delivery_completed_at</td></tr>
+    <tr><td>users</td><td>id, name, email, role (admin/staff/delivery_user/customer)</td></tr>
+    <tr><td>payments</td><td>id, order_id, status (pending/completed/failed/refunded)</td></tr>
+</table>
+
+<h3>Quy tắc nghiệp vụ</h3>
+<ul>
+    <li>Chỉ phân công được đơn ở trạng thái <code>processing</code></li>
+    <li>Chỉ shipper được phân công mới thấy đơn đó trong "Đơn của tôi"</li>
+    <li>Bắt đầu giao: chỉ khi <code>assigned</code></li>
+    <li>Hoàn thành giao: chỉ khi <code>shipping</code></li>
+    <li>Khách xác nhận: chỉ khi <code>delivered</code></li>
+    <li>Auto-complete: Command <code>orders:auto-complete</code> chạy hàng ngày lúc 02:00, chuyển <code>delivered</code> → <code>completed</code> nếu <code>delivery_completed_at <= now()-3days</code></li>
+</ul>
+
+</body>
+</html>

@@ -107,7 +107,8 @@ class AccountController extends Controller
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:100',
-
+            'district_id' => 'nullable|integer',
+            'ward_code' => 'nullable|string',
         ]);
 
         // nếu người dùng set địa chỉ mặc định mới thì địa chỉ khác sẽ is_default = 0
@@ -122,6 +123,8 @@ class AccountController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'city' => $request->city,
+            'district_id' => $request->district_id,
+            'ward_code' => $request->ward_code,
             'is_default' => $request->has('default') ? 1 : 0
 
         ]);

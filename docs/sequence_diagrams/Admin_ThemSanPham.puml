@@ -1,0 +1,32 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor Admin as Quản trị viên
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over Admin,DB: Thêm sản phẩm
+
+    Admin->>View: Bấm "Thêm sản phẩm"
+    View-->>Admin: Hiển thị form
+
+    Admin->>View: Nhập thông tin (tên, giá, mô tả, danh mục, ảnh)
+    View->>Ctrl: Gửi yêu cầu tạo sản phẩm
+    Ctrl->>Ctrl: Validate dữ liệu
+
+    alt Dữ liệu không hợp lệ
+        Ctrl-->>View: Thông báo lỗi
+        View-->>Admin: Hiển thị lỗi
+    else Dữ liệu hợp lệ
+        Ctrl->>Ctrl: Upload ảnh
+        Ctrl->>Ctrl: Tạo slug
+        Ctrl->>DB: Lưu sản phẩm
+        Ctrl->>DB: Lưu ảnh sản phẩm
+        Ctrl-->>View: "Thêm sản phẩm thành công"
+        View-->>Admin: Hiển thị thông báo & reload danh sách
+    end

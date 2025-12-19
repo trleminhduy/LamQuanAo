@@ -1,0 +1,44 @@
+    ---
+    config:
+    theme: default
+    look: classic
+    ---
+    sequenceDiagram
+        autonumber
+        actor Admin as Quản trị viên
+        participant View
+        participant Ctrl as Controller
+        participant DB as Database
+
+        Note over Admin,DB: Cập nhật đơn hàng
+
+        Admin->>View: Vào danh sách đơn hàng
+        View->>Ctrl: Lấy danh sách đơn
+        Ctrl->>DB: Truy vấn orders
+        DB-->>Ctrl: Trả về danh sách
+        Ctrl-->>View: Hiển thị danh sách
+        View-->>Admin: Hiển thị đơn hàng
+
+        Admin->>View: Chọn đơn & bấm thao tác
+        View->>Ctrl: Gửi yêu cầu cập nhật
+        Ctrl->>DB: Tìm đơn hàng theo ID
+
+        alt Đơn không tồn tại
+            Ctrl-->>View: "Đơn hàng không tồn tại"
+            View-->>Admin: Hiển thị lỗi
+        else Đơn tồn tại
+            Ctrl->>Ctrl: Kiểm tra trạng thái
+            alt Xác nhận đơn (pending → processing)
+                Ctrl->>DB: Cập nhật status = processing
+                Ctrl-->>View: "Xác nhận thành công"
+            else Gửi hoá đơn (delivered/completed)
+                Ctrl->>Ctrl: Tạo PDF hoá đơn
+                Ctrl->>Ctrl: Gửi email kèm hoá đơn
+                Ctrl-->>View: "Gửi hoá đơn thành công"
+            else Huỷ đơn (pending/processing)
+                Ctrl->>DB: Cập nhật status = cancelled
+                Ctrl->>Ctrl: Gửi email thông báo khách
+                Ctrl-->>View: "Huỷ đơn thành công"
+            end
+            View-->>Admin: Hiển thị thông báo & reload
+        end

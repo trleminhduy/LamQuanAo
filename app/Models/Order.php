@@ -18,7 +18,12 @@ class Order extends Model
         'delivery_completed_at',
         'shipping_address_id',
         'total_price',
-        'status'
+        'status',
+        'shipping_method',
+        'ghn_order_code',
+        'ghn_shipping_fee',
+        'ghn_expected_delivery',
+        'ghn_status',
     ];
 
     protected $casts = [

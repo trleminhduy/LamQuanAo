@@ -77,10 +77,14 @@
                                                             @elseif ($order->status == 'processing')
                                                                 <span class="custom-badge badge-info">Đang tiến hành giao
                                                                     hàng</span>
+                                                            @elseif ($order->ghn_status == 'delivering')
+                                                                <span class="custom-badge badge-info">GHN đang tiến hành giao</span>
                                                             @elseif ($order->status == 'completed')
-                                                                <span class="custom-badge badge-success">Đơn đã hoàn tất</span>
+                                                                <span class="custom-badge badge-success">Đơn đã hoàn
+                                                                    tất</span>
                                                             @elseif ($order->status == 'delivered')
-                                                                <span class="custom-badge badge-success">Hoàn thành giao</span>
+                                                                <span class="custom-badge badge-success">Hoàn thành
+                                                                    giao</span>
                                                             @elseif ($order->status == 'cancelled')
                                                                 <span class="custom-badge badge-danger">Đã hủy</span>
                                                             @endif

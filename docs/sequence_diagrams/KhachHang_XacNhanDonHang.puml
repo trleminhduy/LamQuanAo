@@ -1,0 +1,34 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor KH as Khách hàng
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over KH,DB: Khách xác nhận đã nhận hàng
+
+    KH->>View: Vào đơn hàng của tôi
+    View->>Ctrl: Lấy danh sách đơn
+    Ctrl->>DB: Truy vấn orders theo user
+    DB-->>Ctrl: Trả về đơn hàng
+    Ctrl-->>View: Hiển thị danh sách
+    View-->>KH: Hiển thị đơn hàng
+
+    KH->>View: Chọn đơn (delivered) & bấm "Đã nhận hàng"
+    View->>Ctrl: Gửi xác nhận đã nhận
+    Ctrl->>DB: Tìm đơn hàng theo ID
+
+    alt Đơn không ở trạng thái delivered
+        Ctrl-->>View: "Không thể xác nhận"
+        View-->>KH: Hiển thị lỗi
+    else Đơn đã delivered
+        Ctrl->>DB: Cập nhật status = completed
+        Ctrl->>DB: Cập nhật payment status = completed (nếu có)
+        Ctrl-->>View: "Cảm ơn bạn đã xác nhận"
+        View-->>KH: Hiển thị thông báo & reload
+    end

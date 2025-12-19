@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DeliveryController;
 use App\Http\Controllers\Admin\OrderController;
@@ -26,7 +27,7 @@ Route::prefix('admin')->group(function () {
 
 
     Route::middleware(['auth.custom'])->group(function () {
-        Route::get('/dashboard', [DashboardController::class,'index'])->name('admin.dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     });
 
     Route::middleware(['permission:manage_users'])->group(function () {
@@ -34,7 +35,6 @@ Route::prefix('admin')->group(function () {
         Route::post('/user/upgrade', [UsersController::class, 'upgrade']);
         Route::post('/user/updateStatus', [UsersController::class, 'updateStatus']);
         Route::post('/users/{user}/set-delivery', [UsersController::class, 'setDeliveryRole'])->name('users.setDeliveryRole');
-        
     });
 
     Route::middleware(['permission:manage_categories'])->group(function () {
@@ -76,6 +76,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/orders-detail/{id}', [OrderController::class, 'showOrderDetail'])->name('admin.orders-detail');
         Route::post('/orders-detail/send-invoice', [OrderController::class, 'sendMailInvoice']);
         Route::post('/orders-detail/cancel-order', [OrderController::class, 'cancelOrder']);
+
+        //ghn
+        Route::post('/orders/{id}/send-to-ghn', [OrderController::class, 'sendToGHN'])->name('admin.orders.sendToGHN');
     });
 
     // Quản lý giao hàng
@@ -99,4 +102,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/assign/{order}', [DeliveryController::class, 'assignForm'])->name('assignForm');
         Route::post('/assign/{order}', [DeliveryController::class, 'assign'])->name('assign');
     });
+
+
+    //Quản lý khuyến mãi
+   
+    Route::resource('coupons', CouponController::class);
 });

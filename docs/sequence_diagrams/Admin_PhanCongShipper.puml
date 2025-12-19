@@ -1,0 +1,33 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor Admin as Quản trị viên
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over Admin,DB: Phân công shipper
+
+    Admin->>View: Vào quản lý giao hàng
+    View->>Ctrl: Lấy danh sách đơn
+    Ctrl->>DB: Truy vấn orders (processing)
+    DB-->>Ctrl: Trả về danh sách
+    Ctrl-->>View: Hiển thị danh sách
+    View-->>Admin: Hiển thị đơn hàng
+    
+    Admin->>View: Chọn đơn & chọn shipper
+    View->>Ctrl: Gửi yêu cầu phân công
+    Ctrl->>DB: Tìm đơn hàng theo ID
+
+    alt Đơn không hợp lệ
+        Ctrl-->>View: "Đơn không tồn tại hoặc đã giao"
+        View-->>Admin: Hiển thị lỗi
+    else Đơn hợp lệ
+        Ctrl->>DB: Cập nhật delivery_user_id & status = assigned
+        Ctrl-->>View: "Phân công thành công"
+        View-->>Admin: Hiển thị thông báo & reload
+    end

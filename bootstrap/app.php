@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
 
         ]);
+        
+        // Bỏ qua CSRF 
+        $middleware->validateCsrfTokens(except: [
+            'webhook/ghn',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

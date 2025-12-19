@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Use Case - Xác nhận Nhận hàng</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
+        h1 { text-align: center; font-size: 20pt; }
+        h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #000; }
+        h3 { font-size: 12pt; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        table, th, td { border: 1px solid #000; }
+        th, td { padding: 8px; text-align: left; }
+        ul, ol { margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Use Case - Xác nhận Nhận hàng</h1>
+
+<h2>1. Thông tin Use Case</h2>
+<table>
+    <tr><th style="width:30%">Tên Use Case</th><td>Xác nhận Nhận hàng</td></tr>
+    <tr><th>Actor</th><td>Khách hàng</td></tr>
+    <tr><th>Mô tả</th><td>Khách hàng xác nhận đã nhận được hàng sau khi shipper giao thành công.</td></tr>
+    <tr><th>Pre-conditions</th><td>- Đã đăng nhập<br/>- Đơn hàng ở trạng thái <code>delivered</code></td></tr>
+    <tr><th>Post-conditions</th><td><b>Success:</b> Đơn hàng chuyển sang trạng thái <code>completed</code>, thanh toán hoàn tất<br/><b>Fail:</b> Thông báo lỗi không thể xác nhận</td></tr>
+</table>
+
+<h2>2. Luồng sự kiện chính</h2>
+<ol>
+    <li>Khách hàng đăng nhập vào hệ thống</li>
+    <li>Khách hàng truy cập trang đơn hàng của tôi</li>
+    <li>Hệ thống hiển thị danh sách đơn hàng</li>
+    <li>Khách hàng chọn đơn đã giao, xem chi tiết</li>
+    <li>Hệ thống hiển thị thông tin đơn và nút <b>Đã nhận hàng</b></li>
+    <li>Khách hàng nhấn <b>Đã nhận hàng</b></li>
+    <li>Hệ thống hiển thị xác nhận</li>
+    <li>Khách hàng xác nhận</li>
+    <li>Hệ thống kiểm tra:
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Đơn chưa giao → Thông báo lỗi</li>
+            <li><b>Rẽ nhánh 2:</b> Đơn hợp lệ → Cập nhật hoàn thành, thông báo thành công</li>
+        </ul>
+    </li>
+</ol>
+
+<h2>3. Luồng sự kiện phụ</h2>
+<p><b>Auto-complete:</b> Nếu khách hàng không xác nhận trong 3 ngày kể từ <code>delivery_completed_at</code>, hệ thống tự động chuyển <code>status = completed</code> qua command <code>orders:auto-complete</code> chạy hàng ngày lúc 02:00.</p>
+
+<h3>Dữ liệu liên quan</h3>
+<table>
+    <tr><th>Bảng</th><th>Trường</th></tr>
+    <tr><td>orders</td><td>id, user_id, status, delivery_completed_at</td></tr>
+    <tr><td>payments</td><td>id, order_id, status</td></tr>
+</table>
+
+<h3>Quy tắc nghiệp vụ</h3>
+<ul>
+    <li>Khách hàng chỉ xác nhận được đơn ở trạng thái <code>delivered</code></li>
+    <li>Sau khi xác nhận, không thể hủy hoặc thay đổi đơn</li>
+    <li>Sau khi hoàn thành, khách có thể đánh giá sản phẩm</li>
+    <li>Nếu không xác nhận sau 3 ngày → tự động completed</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Use Case - Admin Phân công Giao hàng</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; margin: 40px; }
+        h1 { text-align: center; font-size: 20pt; }
+        h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #000; }
+        h3 { font-size: 12pt; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        table, th, td { border: 1px solid #000; }
+        th, td { padding: 8px; text-align: left; }
+        ul, ol { margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Use Case - Phân công Shipper</h1>
+
+<h2>1. Thông tin Use Case</h2>
+<table>
+    <tr><th style="width:30%">Tên Use Case</th><td>Phân công Shipper</td></tr>
+    <tr><th>Actor</th><td>Quản trị viên (Admin)</td></tr>
+    <tr><th>Mô tả</th><td>Quản trị viên phân công nhân viên giao hàng cho các đơn hàng đang ở trạng thái xử lý.</td></tr>
+    <tr><th>Pre-conditions</th><td>- Đã đăng nhập với role Admin<br/>- Có quyền quản lý giao hàng<br/>- Đơn hàng ở trạng thái <code>processing</code><br/>- Có ít nhất 1 nhân viên có role <code>delivery_user</code></td></tr>
+    <tr><th>Post-conditions</th><td><b>Success:</b> Đơn hàng chuyển sang trạng thái <code>assigned</code>, shipper nhận được đơn<br/><b>Fail:</b> Thông báo lỗi không thể phân công</td></tr>
+</table>
+
+<h2>2. Luồng sự kiện chính</h2>
+<ol>
+    <li>Admin truy cập trang quản lý giao hàng</li>
+    <li>Hệ thống hiển thị danh sách đơn hàng đang xử lý</li>
+    <li>Admin chọn đơn cần phân công, nhấn <b>Phân công</b></li>
+    <li>Hệ thống hiển thị form chọn shipper và nhập ghi chú</li>
+    <li>Admin chọn shipper, nhấn <b>Xác nhận</b></li>
+    <li>Hệ thống kiểm tra:
+        <ul>
+            <li><b>Rẽ nhánh 1:</b> Chưa chọn shipper → Thông báo lỗi</li>
+            <li><b>Rẽ nhánh 2:</b> Đơn không hợp lệ → Thông báo lỗi</li>
+            <li><b>Rẽ nhánh 3:</b> Hợp lệ → Cập nhật phân công, thông báo thành công</li>
+        </ul>
+    </li>
+</ol>
+
+<h2>3. Luồng sự kiện phụ</h2>
+<p>Nếu không có nhân viên giao hàng nào → Hệ thống thông báo "Chưa có nhân viên giao hàng, vui lòng tạo tài khoản shipper trước".</p>
+
+<h3>Dữ liệu liên quan</h3>
+<table>
+    <tr><th>Bảng</th><th>Trường</th></tr>
+    <tr><td>orders</td><td>id, delivery_user_id, delivery_note, status</td></tr>
+    <tr><td>users</td><td>id, name, email, role (delivery_user)</td></tr>
+</table>
+
+<h3>Quy tắc nghiệp vụ</h3>
+<ul>
+    <li>Chỉ phân công được đơn ở trạng thái <code>processing</code></li>
+    <li>Một đơn chỉ có thể phân công cho 1 shipper</li>
+    <li>Có thể phân công lại nếu shipper chưa bắt đầu giao (status vẫn = <code>assigned</code>)</li>
+</ul>
+
+</body>
+</html>

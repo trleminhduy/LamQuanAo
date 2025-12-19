@@ -1,0 +1,37 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor Admin as Quản trị viên
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over Admin,DB: Xóa sản phẩm
+
+    Admin->>View: Bấm "Xóa sản phẩm"
+    View-->>Admin: Hiển thị dialog xác nhận
+
+    Admin->>View: Xác nhận xóa
+    View->>Ctrl: Gửi yêu cầu xóa
+    Ctrl->>DB: Tìm sản phẩm theo ID
+
+    alt Sản phẩm không tồn tại
+        Ctrl-->>View: "Sản phẩm không tồn tại"
+        View-->>Admin: Hiển thị lỗi
+    else Sản phẩm tồn tại
+        Ctrl->>DB: Kiểm tra có đơn hàng liên quan
+        alt Có đơn hàng
+            Ctrl-->>View: "Không thể xóa (có đơn hàng)"
+            View-->>Admin: Hiển thị lỗi
+        else Không có đơn hàng
+            Ctrl->>Ctrl: Xóa ảnh sản phẩm
+            Ctrl->>DB: Xóa biến thể (nếu có)
+            Ctrl->>DB: Xóa sản phẩm
+            Ctrl-->>View: "Xóa thành công"
+            View-->>Admin: Hiển thị thông báo & reload danh sách
+        end
+    end

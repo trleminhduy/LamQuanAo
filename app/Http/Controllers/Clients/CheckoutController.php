@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
 use function Flasher\Toastr\Prime\toastr;
 
@@ -201,6 +202,79 @@ class CheckoutController extends Controller
                 'success' => false,
                 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
             ]);
+        }
+    }
+
+    // Test-only: Đặt hàng không cần đăng nhập, không CSRF, dùng GET/POST
+    // Mục đích: đơn giản hoá kịch bản JMeter cho người mới bắt đầu
+    public function placeOrderTest(Request $request)
+    {
+        // Lấy user theo email (đã được seed sẵn jm_user_*), và dùng giỏ của user đó
+        $email = $request->input('email');
+        $addressId = $request->input('address_id');
+        $paymentMethod = $request->input('payment_method', 'cod');
+
+        if (!$email || !$addressId) {
+            return response()->json(['success' => false, 'message' => 'Thiếu email hoặc address_id'], 400);
+        }
+
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy user'], 404);
+        }
+
+        $cartItems = CartItem::where('user_id', $user->id)->get();
+        if ($cartItems->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'Giỏ hàng trống'], 400);
+        }
+
+        DB::beginTransaction();
+        try {
+            $subtotal = $cartItems->sum(function ($item) {
+                return $item->productVariant->price * $item->quantity;
+            });
+            $shippingFee = 30000;
+            $totalPrice = $subtotal + $shippingFee;
+
+            $order = new Order();
+            $order->user_id = $user->id;
+            $order->shipping_address_id = $addressId;
+            $order->total_price = $totalPrice;
+            $order->status = 'pending';
+            $order->coupon_id = null;
+            $order->save();
+
+            foreach ($cartItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_variant_id' => $item->product_variant_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->productVariant->price
+                ]);
+
+                $variant = $item->productVariant;
+                if ($variant->stock < $item->quantity) {
+                    throw new \Exception('Sản phẩm ' . $variant->product->name . ' không đủ số lượng trong kho.');
+                }
+                $variant->stock -= $item->quantity;
+                $variant->save();
+            }
+
+            Payment::create([
+                'order_id' => $order->id,
+                'payment_method' => $paymentMethod,
+                'amount' => $order->total_price,
+                'status' => 'pending',
+                'paid_at' => null
+            ]);
+
+            CartItem::where('user_id', $user->id)->delete();
+            DB::commit();
+
+            return response()->json(['success' => true, 'order_id' => $order->id]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 

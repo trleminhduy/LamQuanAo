@@ -1,0 +1,38 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor KH as Khách hàng
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+    participant VNPay
+
+    Note over KH,VNPay: Quy trình thanh toán
+
+    KH->>View: Bấm "Thanh toán"
+    View->>Ctrl: Gửi thông tin đơn hàng
+    Ctrl->>Ctrl: Validate giỏ hàng & địa chỉ
+
+    alt VNPay
+        Ctrl->>DB: Tạo Order (pending)
+        Ctrl->>DB: Tạo Payment (pending)
+        Ctrl-->>View: Trả URL VNPay
+        View-->>KH: Chuyển VNPay
+        KH->>VNPay: Thanh toán
+        VNPay-->>Ctrl: Callback kết quả
+        Ctrl->>DB: Cập nhật Payment (completed)
+        Ctrl->>DB: Xóa giỏ hàng
+        Ctrl-->>View: "Thanh toán thành công"
+        View-->>KH: Hiển thị thông báo
+    else COD
+        Ctrl->>DB: Tạo Order (pending)
+        Ctrl->>DB: Tạo Order Items
+        Ctrl->>DB: Xóa giỏ hàng
+        Ctrl->>Ctrl: Gửi email xác nhận
+        Ctrl-->>View: "Đặt hàng thành công"
+        View-->>KH: Hiển thị thông báo
+    end

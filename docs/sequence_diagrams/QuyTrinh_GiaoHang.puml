@@ -1,0 +1,53 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor Admin as Quản trị viên
+    actor Shipper as Nhân viên giao hàng
+    actor KH as Khách hàng
+    participant View
+    participant Ctrl as Controller
+    participant DB as Database
+
+    Note over Admin,DB: Phân công giao hàng
+
+    Admin->>View: Vào quản lý giao hàng
+    View->>Ctrl: Lấy danh sách đơn
+    Ctrl->>DB: Truy vấn orders (processing)
+    DB-->>View: Hiển thị danh sách
+    
+    Admin->>View: Chọn đơn & chọn shipper
+    View->>Ctrl: Gửi yêu cầu phân công
+    Ctrl->>DB: Cập nhật delivery_user_id & status = assigned
+    Ctrl-->>View: "Phân công thành công"
+    View-->>Admin: Hiển thị thông báo
+
+    Note over Shipper,DB: Shipper giao hàng
+
+    Shipper->>View: Vào đơn của tôi
+    View->>Ctrl: Lấy đơn đã phân công
+    Ctrl->>DB: Truy vấn orders theo shipper
+    DB-->>View: Hiển thị đơn hàng
+
+    Shipper->>View: Bấm "Bắt đầu giao"
+    View->>Ctrl: Gửi yêu cầu bắt đầu
+    Ctrl->>DB: Cập nhật status = shipping
+    Ctrl-->>View: "Bắt đầu giao thành công"
+
+    Shipper->>View: Bấm "Hoàn thành giao"
+    View->>Ctrl: Gửi yêu cầu hoàn thành
+    Ctrl->>DB: Cập nhật status = delivered & delivery_completed_at
+    Ctrl-->>View: "Hoàn thành thành công"
+
+    Note over KH,DB: Khách xác nhận
+
+    KH->>View: Xem đơn hàng (delivered)
+    KH->>View: Bấm "Đã nhận hàng"
+    View->>Ctrl: Xác nhận đã nhận
+    Ctrl->>DB: Cập nhật status = completed
+    Ctrl->>DB: Cập nhật payment status (nếu có)
+    Ctrl-->>View: "Cảm ơn xác nhận"
+    View-->>KH: Hiển thị thông báo

@@ -80,7 +80,7 @@
                                                         <span class="badge bg-warning"> Chờ xác nhận </span>
                                                     @elseif($order->status == 'processing')
                                                         <span class="badge bg-primary"> Đang xử lý </span>
-                                                         @elseif($order->status == 'delivered')
+                                                    @elseif($order->status == 'delivered')
                                                         <span class="badge bg-success"> Đã giao hàng </span>
                                                     @elseif($order->status == 'completed')
                                                         <span class="badge bg-success"> Hoàn thành </span>
@@ -279,9 +279,27 @@
                             <input type="text" class="form-control" name="address" id="address" required>
                         </div>
                         <div class="mb-3">
-                            <label for="city" class="form-label">Thành phố: *</label>
-                            <input type="text" class="form-control" name="city" id="city" required>
+                            <label class="form-label">Tỉnh/Thành phố: *</label>
+                            <select name="province_id" id="province" class="form-control custom-select" required>
+                                <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                            </select>
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Quận/Huyện: *</label>
+                            <select name="district_id" id="district" class="form-control custom-select" disabled>
+                                <option value="">-- Chọn Quận/Huyện --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Phường/Xã: *</label>
+                            <select name="ward_code" id="ward" class="form-control custom-select" disabled>
+                                <option value="">-- Chọn Phường/Xã --</option>
+                            </select>
+                        </div>
+
+                        <input type="hidden" name="city" id="city_name">
                         <div class="mb-3">
                             <label for="phone" class="form-label">Số điện thoại: *</label>
                             <input type="text" class="form-control" name="phone" id="phone" required>
@@ -340,6 +358,11 @@
         // Modal functions
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('show');
+
+            // Load danh sách tỉnh khi mở modal thêm địa chỉ
+            if (modalId === 'addAddressModal') {
+                loadProvinces();
+            }
         }
 
         function closeModal(modalId) {
@@ -351,6 +374,138 @@
             if (e.target.classList.contains('modal')) {
                 e.target.classList.remove('show');
             }
+        });
+
+        // === GHN DROPDOWN LOGIC ===
+
+        // Load danh sách Tỉnh/Thành phố
+        function loadProvinces() {
+            console.log('Loading provinces...');
+            fetch('/api/ghn/provinces')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Provinces data:', data);
+                    if (data.status || data.success) {
+                        const provinceSelect = document.getElementById('province');
+                        provinceSelect.innerHTML = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
+
+                        data.data.forEach(province => {
+                            provinceSelect.innerHTML +=
+                                `<option value="${province.ProvinceID}" data-name="${province.ProvinceName}">${province.ProvinceName}</option>`;
+                        });
+                        // If nice-select is active, refresh it
+                        if (window.jQuery && typeof jQuery.fn.niceSelect === 'function') {
+
+                        }
+                        console.log('Provinces loaded successfully!');
+                    } else {
+                        console.error('Data success/status false');
+                    }
+                })
+                .catch(error => console.error('Lỗi load tỉnh:', error));
+        }
+
+        // Khi chọn Tỉnh → Load Quận
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const province = document.getElementById('province');
+            const district = document.getElementById('district');
+            const ward = document.getElementById('ward');
+            const cityNameInput = document.getElementById('city_name');
+
+            // ===== LOAD TỈNH =====
+            function loadProvinces() {
+                fetch('/api/ghn/provinces')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status || data.success) {
+                            province.innerHTML = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
+                            data.data.forEach(p => {
+                                province.innerHTML += `
+                            <option value="${p.ProvinceID}" data-name="${p.ProvinceName}">
+                                ${p.ProvinceName}
+                            </option>`;
+                            });
+                        }
+                    })
+                    .catch(err => console.error('Load province error:', err));
+            }
+
+            loadProvinces();
+
+            // ===== CHỌN TỈNH → LOAD QUẬN =====
+            province.addEventListener('change', function() {
+                const provinceId = this.value;
+                const provinceName = this.options[this.selectedIndex]?.dataset.name || '';
+
+                cityNameInput.value = provinceName;
+
+                district.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+                district.disabled = true;
+                ward.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                ward.disabled = true;
+
+                if (!provinceId) return;
+
+                fetch('/api/ghn/districts', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            province_id: provinceId
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status || data.success) {
+                            data.data.forEach(d => {
+                                district.innerHTML += `
+                        <option value="${d.DistrictID}">
+                            ${d.DistrictName}
+                        </option>`;
+                            });
+                            district.disabled = false;
+                        }
+                    })
+                    .catch(err => console.error('Load district error:', err));
+            });
+
+            // ===== CHỌN QUẬN → LOAD XÃ =====
+            district.addEventListener('change', function() {
+                const districtId = this.value;
+
+                ward.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                ward.disabled = true;
+
+                if (!districtId) return;
+
+                fetch('/api/ghn/wards', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            district_id: districtId
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status || data.success) {
+                            data.data.forEach(w => {
+                                ward.innerHTML += `
+                        <option value="${w.WardCode}">
+                            ${w.WardName}
+                        </option>`;
+                            });
+                            ward.disabled = false;
+                        }
+                    })
+                    .catch(err => console.error('Load ward error:', err));
+            });
+
         });
     </script>
 
