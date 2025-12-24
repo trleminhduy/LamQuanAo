@@ -1,0 +1,37 @@
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+    autonumber
+    actor Admin as Quản trị viên
+    participant View
+    participant Ctrl as Controller
+    participant GHN as GHN API
+    participant DB as Database
+
+    Note over Admin,DB: Gửi đơn đến GHN
+
+    Admin->>View: Vào chi tiết đơn hàng
+    Admin->>View: Bấm "Gửi GHN"
+    View->>Ctrl: Gửi yêu cầu tạo vận đơn
+    Ctrl->>GHN: Gọi API tạo đơn
+    GHN-->>Ctrl: Trả về order_code
+    Ctrl->>DB: Cập nhật ghn_order_code & status
+    Ctrl-->>View: "Gửi thành công"
+
+    Note over GHN,DB: Webhook tự động
+
+    GHN->>Ctrl: Gửi webhook cập nhật trạng thái
+    Ctrl->>DB: Cập nhật ghn_status & status
+    Ctrl-->>GHN: Trả về 200 OK
+
+    Note over Admin,DB: Hủy đơn (nếu cần)
+
+    Admin->>View: Bấm "Hủy đơn"
+    View->>Ctrl: Yêu cầu hủy
+    Ctrl->>GHN: Gọi API hủy đơn
+    GHN-->>Ctrl: Xác nhận hủy
+    Ctrl->>DB: Cập nhật status = cancelled
+    Ctrl-->>View: "Hủy thành công"

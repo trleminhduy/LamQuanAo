@@ -13,16 +13,39 @@ class CartController extends Controller
     // Hiển thị giỏ hàng
     public function index()
     {
-        $cartItems = CartItem::with(['productVariant.product.firstImage', 'productVariant.size', 'productVariant.color'])
-            ->where('user_id', Auth::id())
-            ->get();
+        if (Auth::check()) {
+
+            //Đẫ đăng nhập - lấy từ DB
+            $cartItems = CartItem::with(['productVariant.product.firstImage', 'productVariant.size', 'productVariant.color'])
+                ->where('user_id', Auth::id())
+                ->get();
+        } else {
+
+            //khách vãng lai, lấy từ session
+            $cart = session()->get('cart', []);
+            $cartItems = collect();
+
+            foreach ($cart as $item) {
+                $variant = ProductVariant::with(['product.firstImage', 'size', 'color'])
+                    ->find($item['product_variant_id']);
+
+                if ($variant) {
+
+                    //tạo đối tượng tạm cartitem để chung trong view
+                    $cartItems->push((object) [
+                        'id' => $item['product_variant_id'],
+                        'quantity' => $item['quantity'],
+                        'productVariant' => $variant,
+                    ]);
+                }
+            }
+        }
 
         // Tính tổng tiền
         $total = 0;
         foreach ($cartItems as $item) {
             $total += $item->productVariant->price * $item->quantity;
         }
-
         return view('clients.pages.cart', compact('cartItems', 'total'));
     }
 
@@ -48,20 +71,20 @@ class CartController extends Controller
         if (!Auth::check()) {
             // Lấy giỏ hàng từ session (nếu chưa có thì tạo mảng rỗng)
             $cart = session()->get('cart', []);
-            
+
             $variantId = $request->product_variant_id;
-            
+
             // Nếu sản phẩm đã có trong giỏ - cộng thêm số lượng
             if (isset($cart[$variantId])) {
                 $newQuantity = $cart[$variantId]['quantity'] + $request->quantity;
-                
+
                 if ($newQuantity > $variant->stock) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Vượt quá số lượng tồn kho!'
                     ]);
                 }
-                
+
                 $cart[$variantId]['quantity'] = $newQuantity;
             } else {
                 // Thêm sản phẩm mới vào giỏ
@@ -70,13 +93,13 @@ class CartController extends Controller
                     'quantity' => $request->quantity
                 ];
             }
-            
+
             // Lưu lại vào session
             session()->put('cart', $cart);
-            
+
             // Đếm tổng số lượng
             $cartCount = array_sum(array_column($cart, 'quantity'));
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Đã thêm sản phẩm vào giỏ hàng!',
@@ -92,14 +115,14 @@ class CartController extends Controller
         if ($cartItem) {
             // Cộng thêm số lượng
             $newQuantity = $cartItem->quantity + $request->quantity;
-            
+
             if ($newQuantity > $variant->stock) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Vượt quá số lượng tồn kho!'
                 ]);
             }
-            
+
             $cartItem->quantity = $newQuantity;
             $cartItem->save();
         } else {
@@ -143,7 +166,7 @@ class CartController extends Controller
 
         // Tính lại tổng tiền
         $itemTotal = $variant->price * $cartItem->quantity;
-        
+
         $cartItems = CartItem::with('productVariant')->where('user_id', Auth::id())->get();
         $grandTotal = 0;
         foreach ($cartItems as $item) {
@@ -224,7 +247,7 @@ class CartController extends Controller
         // Nếu CHƯA đăng nhập - đọc từ SESSION
         if (!Auth::check()) {
             $cart = session()->get('cart', []);
-            
+
             if (empty($cart)) {
                 return response()->json([
                     'count' => 0,
@@ -232,28 +255,28 @@ class CartController extends Controller
                     'total' => 0
                 ]);
             }
-            
+
             // Lấy thông tin variant (tối đa 5 sản phẩm)
             $variantIds = array_keys($cart);
             $variants = ProductVariant::with(['product.firstImage', 'size', 'color'])
                 ->whereIn('id', array_slice($variantIds, 0, 5))
                 ->get()
                 ->keyBy('id');
-            
+
             $items = [];
             $totalPrice = 0;
             $totalQuantity = 0;
-            
+
             foreach ($cart as $variantId => $cartData) {
                 if (!isset($variants[$variantId])) continue;
-                
+
                 $variant = $variants[$variantId];
                 $quantity = $cartData['quantity'];
                 $subtotal = $variant->price * $quantity;
-                
+
                 $totalQuantity += $quantity;
                 $totalPrice += $subtotal;
-                
+
                 // Chỉ lấy 5 sản phẩm đầu để hiển thị
                 if (count($items) < 5) {
                     $items[] = [
@@ -268,7 +291,7 @@ class CartController extends Controller
                     ];
                 }
             }
-            
+
             return response()->json([
                 'count' => $totalQuantity,
                 'items' => $items,
@@ -276,7 +299,7 @@ class CartController extends Controller
                 'formatted_total' => number_format($totalPrice, 0, ',', '.') . ' VNĐ'
             ]);
         }
-        
+
         // Nếu ĐÃ đăng nhập - đọc từ DATABASE
         $cartItems = CartItem::with(['productVariant.product.firstImage', 'productVariant.size', 'productVariant.color'])
             ->where('user_id', Auth::id())
@@ -289,7 +312,7 @@ class CartController extends Controller
         $items = [];
         foreach ($cartItems as $item) {
             $totalPrice += $item->productVariant->price * $item->quantity;
-            
+
             $items[] = [
                 'id' => $item->id,
                 'name' => $item->productVariant->product->name,
@@ -307,6 +330,82 @@ class CartController extends Controller
             'items' => $items,
             'total' => $totalPrice,
             'formatted_total' => number_format($totalPrice, 0, ',', '.') . ' VNĐ'
+        ]);
+    }
+
+    //update cart cho guest
+
+
+    public function updateGuest(Request $request)
+    {
+        $request->validate([
+            'product_variant_id' => 'required|exists:product_variants,id',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        $cart = session()->get('cart', []);
+        $variantId = $request->product_variant_id;
+
+        if (isset($cart[$variantId])) {
+            $variant = ProductVariant::find($variantId);
+
+            if ($request->quantity > $variant->stock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vượt quá số lượng tồn kho!'
+                ]);
+            }
+
+            $cart[$variantId]['quantity'] = $request->quantity;
+            session()->put('cart', $cart);
+
+            $itemTotal = $variant->price * $request->quantity;
+
+            // Tính tổng toàn bộ giỏ
+            $grandTotal = 0;
+            foreach ($cart as $item) {
+                $v = ProductVariant::find($item['product_variant_id']);
+                $grandTotal += $v->price * $item['quantity'];
+            }
+
+            return response()->json([
+                'success' => true,
+                'itemTotal' => number_format($itemTotal, 0, ',', '.'),
+                'grandTotal' => number_format($grandTotal, 0, ',', '.')
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Không tìm thấy sản phẩm trong giỏ hàng'
+        ]);
+    }
+
+    //xoá cart guest
+
+
+
+    public function removeGuest(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        $variantId = $request->product_variant_id;
+
+        if (isset($cart[$variantId])) {
+            unset($cart[$variantId]);
+            session()->put('cart', $cart);
+
+            $cartCount = array_sum(array_column($cart, 'quantity'));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa sản phẩm khỏi giỏ hàng',
+                'cartCount' => $cartCount
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Không tìm thấy sản phẩm'
         ]);
     }
 }

@@ -28,7 +28,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('admin.coupons.update', $coupon->id) }}" method="POST" class="form-horizontal">
+                        <form action="{{ route('coupons.update', $coupon->id) }}" method="POST" class="form-horizontal">
                             @csrf
                             @method('PUT')
 
@@ -36,7 +36,7 @@
                                 <label class="col-md-3 col-form-label">Mã coupon <span class="required">*</span></label>
                                 <div class="col-md-6">
                                     <input type="text" name="code" class="form-control" value="{{ $coupon->code }}" required>
-                                    <small class="text-muted">Mã sẽ tự động viết HOA</small>
+                                    
                                 </div>
                             </div>
 
@@ -56,7 +56,7 @@
                                 <label class="col-md-3 col-form-label">Giá trị giảm <span class="required">*</span></label>
                                 <div class="col-md-6">
                                     <input type="number" name="discount_value" class="form-control" step="0.01" min="0" value="{{ $coupon->discount_value }}" required>
-                                    <small class="text-muted">Nhập 50 cho 50% hoặc 50000 cho 50,000đ</small>
+                                    
                                 </div>
                             </div>
 
@@ -87,7 +87,7 @@
 
                             <div class="form-group row">
                                 <div class="col-md-6 offset-md-3">
-                                    <a href="{{ route('admin.coupons.index') }}" class="btn btn-secondary">Hủy</a>
+                                    <a href="{{ route('coupons.index') }}" class="btn btn-secondary">Hủy</a>
                                     <button type="submit" class="btn btn-success">Cập nhật</button>
                                 </div>
                             </div>

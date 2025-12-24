@@ -55,7 +55,8 @@ class GHNWebhookController extends Controller
                 break;
 
             case 'delivered':
-                $order->status = 'completed'; 
+                $order->status = 'delivered'; 
+                $order->delivery_completed_at = now();
                 break;
 
             case 'return':

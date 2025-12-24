@@ -21,7 +21,7 @@ class AutoCompleteOrders extends Command
      *
      * @var string
      */
-    protected $description = 'Tự động hoàn tất đơn sau 7 ngày nếu khách hàng không phản hồi';
+    protected $description = 'Tự động hoàn tất đơn sau 3 ngày nếu khách hàng không phản hồi';
 
     /**
      * Execute the console command.

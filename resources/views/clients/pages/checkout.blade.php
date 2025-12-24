@@ -78,6 +78,8 @@
                             @csrf
                             <div id="checkout_payment">
                                 <input type="hidden" name="address_id" value="{{ $defaultAddress->id }}">
+                                <input type="hidden" name="coupon_code" id="coupon_code_hidden" value="">
+                                <input type="hidden" name="discount_amount" id="discount_amount_hidden" value="0">
 
                                 <div class="card">
                                     <h5 class="ltn__card-title">
@@ -87,20 +89,7 @@
                                 </div>
 
 
-                                <div class="card">
-                                    <h5 class="collapsed ltn__card-title">
-                                        <input type="radio" name="payment_method" value="paypal" id="payment_paypal">
-                                        <label for="payment_paypal">PayPal</label>
-                                    </h5>
-                                </div>
-
-
-                                <div class="card">
-                                    <h5 class="collapsed ltn__card-title">
-                                        <input type="radio" name="payment_method" value="momo" id="payment_momo">
-                                        <label for="payment_momo">Momo</label>
-                                    </h5>
-                                </div>
+                              
                                 <div class="card">
                                     <h5 class="collapsed ltn__card-title">
                                         <input type="radio" name="payment_method" value="vnpay" id="payment_vnpay">
@@ -113,14 +102,6 @@
                             <div id="paypal-button-container"></div>
                         </form>
 
-                        <form action="{{ route('checkout.momo_payment') }}" method="POST" id="momo-form"
-                            style="display: none;">
-                            @csrf
-                            <input type="hidden" name="address_id" value="{{ $defaultAddress->id }}">
-                            <input type="hidden" name="amount" value="{{ $total }}">
-                            <button type="submit" class="btn theme-btn-1 btn-effect-1 text-uppercase"
-                                id="order_button_momo">Thanh toán MoMo</button>
-                        </form>
                         
                         <form action="{{ route('checkout.vnpay_payment') }}" method="POST" id="vnpay-form"
                             style="display: none;">
@@ -150,6 +131,21 @@
                                 <tr>
                                     <td>Phí vận chuyển</td>
                                     <td>{{ number_format($shippingFee) }}đ</td>
+                                </tr>
+
+                                {{-- cp --}}
+                                <tr>
+                                    <td> Mã giảm giá</td>
+                                    <td>
+                                        <input type="text" id="coupon_code" placeholder="Nhập mã giảm giá" style="width:100%;display:inline-block;">
+                                        <button type="button" id="apply_coupon" class="btn btn-sm btn-success" >Áp dụng</button>
+                                        <div id="coupon_message"></div>
+                                    </td>
+                                </tr>
+
+                                <tr id="discount-row" style="display: none;">
+                                    <td>Giảm giá</td>
+                                    <td class="text-success">-<span id="discount-amount">0</span>đ</td>
                                 </tr>
 
                                 <tr>

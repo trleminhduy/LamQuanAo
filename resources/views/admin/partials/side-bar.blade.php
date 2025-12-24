@@ -8,7 +8,7 @@
 
          <!-- menu profile quick info -->
          <div class="profile clearfix">
-             
+
              <div class="profile_info">
                  <span>Xin chào,</span>
                  <h2></h2>
@@ -30,7 +30,8 @@
 
                      </li>
                      @if ($adminUser->role->permissions->contains('name', 'manage_users'))
-                         <li><a href="{{ route('admin.users.index') }}"><i class="fa fa-edit"></i> Quản lý người dùng </a>
+                         <li><a href="{{ route('admin.users.index') }}"><i class="fa fa-edit"></i> Quản lý người dùng
+                             </a>
 
                          </li>
                      @endif
@@ -80,10 +81,14 @@
                      @endif
 
                      @if ($adminUser->role->permissions->contains('name', 'manage_orders'))
-                         <li><a href="{{ route('admin.orders.index') }}"><i class="fa fa-edit"></i> Quản lý đơn hàng </a>
+                         <li><a href="{{ route('admin.orders.index') }}"><i class="fa fa-edit"></i> Quản lý đơn hàng
+                             </a>
 
                          </li>
                      @endif
+
+                     {{-- Quản lý khuyến mãi --}}
+                     <li><a href="{{ route('coupons.index') }}"><i class="fa fa-gift"></i> Quản lý khuyến mãi </a></li>
 
                      {{-- contact --}}
 
@@ -94,17 +99,25 @@
                          </li>
                      @endif
 
-                      @if ($adminUser->role->permissions->contains('name', 'manage_deliveries'))
-                         <li><a href="#"><i class="fa fa-truck"></i> Giao hàng <span class="fa fa-chevron-down"></span></a>
+                     @if ($adminUser->role->permissions->contains('name', 'manage_deliveries'))
+                         <li><a href="#"><i class="fa fa-truck"></i> Giao hàng <span
+                                     class="fa fa-chevron-down"></span></a>
                              <ul class="nav child_menu">
                                  <li><a href="{{ route('admin.deliveries.dashboard') }}">Dashboard</a></li>
                                  <li><a href="{{ route('admin.deliveries.myOrders') }}">Đơn hàng của tôi</a></li>
-                                 @if($adminUser->role->name === 'admin')
+                                 @if ($adminUser->role->name === 'admin')
                                      <li><a href="{{ route('admin.deliveries.index') }}">Phân công giao hàng</a></li>
                                  @endif
                              </ul>
                          </li>
                      @endif
+                     {{-- QUản lý hoàn trả --}}
+                     <li class="nav-item">
+                         <a class="nav-link" href="{{ route('admin.refunds.index') }}">
+                             <i class="fas fa-undo"></i>
+                             <span>Yêu cầu hoàn trả</span>
+                         </a>
+                     </li>
 
                  </ul>
              </div>

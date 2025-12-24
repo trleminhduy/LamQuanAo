@@ -28,15 +28,14 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('admin.coupons.store') }}" method="POST" class="form-horizontal">
+                        <form action="{{ route('coupons.store') }}" method="POST" class="form-horizontal">
                             @csrf
 
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label">Mã coupon <span class="required">*</span></label>
                                 <div class="col-md-6">
-                                    <input type="text" name="code" class="form-control" placeholder="VD: GIAM50K"
-                                        required>
-                                    <small class="text-muted">Mã sẽ tự động viết HOA</small>
+                                    <input type="text" name="code" class="form-control" required>
+                                    
                                 </div>
                             </div>
 
@@ -56,8 +55,8 @@
                                 <label class="col-md-3 col-form-label">Giá trị giảm <span class="required">*</span></label>
                                 <div class="col-md-6">
                                     <input type="number" name="discount_value" class="form-control" step="0.01"
-                                        min="0" placeholder="VD: 50" required>
-                                    <small class="text-muted">Nhập 50 cho 50% hoặc 50000 cho 50,000đ</small>
+                                        min="0"  required>
+                                    
                                 </div>
                             </div>
 
@@ -88,7 +87,7 @@
 
                             <div class="form-group row">
                                 <div class="col-md-6 offset-md-3">
-                                    <a href="{{ route('admin.coupons.index') }}" class="btn btn-secondary">Hủy</a>
+                                    <a href="{{ route('coupons.index') }}" class="btn btn-secondary">Hủy</a>
                                     <button type="submit" class="btn btn-success">Lưu mã giảm giá</button>
                                 </div>
                             </div>

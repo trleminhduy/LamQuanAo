@@ -75,41 +75,7 @@
     </div>
 </div>
 
-{{-- <!-- Tin tức -->
-<div class="home-container">
-    <div class="home-section-title">
-        <h2>Tin tức mới nhất</h2>
-    </div>
-    <div class="home-blog-items">
-        <div class="home-blog-item">
-            <img src="{{ asset('assets/clients/img/blog/blog1.jpg') }}" alt="Blog">
-            <div class="home-blog-content">
-                <p class="blog-meta">bởi: Admin • Thời trang • 24 Tháng 6, 2025</p>
-                <h4>Xu hướng thời trang mùa thu đông 2025</h4>
-                <p>Khám phá những xu hướng thời trang hot nhất...</p>
-                <a href="#">Đọc thêm →</a>
-            </div>
-        </div>
-        <div class="home-blog-item">
-            <img src="{{ asset('assets/clients/img/blog/blog1.jpg') }}" alt="Blog">
-            <div class="home-blog-content">
-                <p class="blog-meta">bởi: Admin • Thời trang • 23 Tháng 10, 2025</p>
-                <h4>Cách phối đồ đẹp cho mùa hè</h4>
-                <p>Bí quyết mix & match trang phục...</p>
-                <a href="#">Đọc thêm →</a>
-            </div>
-        </div>
-        <div class="home-blog-item">
-            <img src="{{ asset('assets/clients/img/blog/blog1.jpg') }}" alt="Blog">
-            <div class="home-blog-content">
-                <p class="blog-meta">bởi: Admin • Thời trang • 14 Tháng 11, 2025</p>
-                <h4>Bí quyết chọn quần áo phù hợp với dáng người</h4>
-                <p>Hướng dẫn chọn trang phục theo từng vóc dáng...</p>
-                <a href="#">Đọc thêm →</a>
-            </div>
-        </div>
-    </div>
-</div> --}}
+
 
 <script>
 // JavaScript đơn giản cho tabs

@@ -24,6 +24,9 @@ class Order extends Model
         'ghn_shipping_fee',
         'ghn_expected_delivery',
         'ghn_status',
+        'guest_name',
+        'guest_phone',
+        'guest_email',
     ];
 
     protected $casts = [

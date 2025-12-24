@@ -9,7 +9,7 @@
                 <h3>Danh sách mã giảm giá</h3>
             </div>
             <div class="title_right">
-                <a href="{{ route('admin.coupons.create') }}" class="btn btn-success">
+                <a href="{{ route('coupons.create') }}" class="btn btn-success">
                     <i class="fa fa-plus"></i> Thêm mã mới
                 </a>
             </div>
@@ -58,7 +58,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.coupons.edit', $coupon->id) }}"
+                                            <a href="{{ route('coupons.edit', $coupon->id) }}"
                                                 class="btn btn-sm btn-primary">
                                                 <i class="fa fa-pencil"></i>
                                             </a>

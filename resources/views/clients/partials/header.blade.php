@@ -1,48 +1,7 @@
-     <!-- HEADER AREA START (header-5) -->
-     <header class="ltn__header-area ltn__header-5 ltn__header-transparent gradient-color-2">
-         <!-- ltn__header-top-area start -->
-         <div class="ltn__header-top-area d-none">
-             <div class="container">
-                 <div class="row">
-                     <div class="col-md-7">
-                         <div class="ltn__top-bar-menu">
-                             <ul>
-                                 <li><a href="locations.html"><i class="icon-placeholder"></i> PHAM THE HIEN</a></li>
-                                 <li><a href="mailto:minhdien.dev@gmail.com?Subject=Contact%20with%20to%20you"><i
-                                             class="icon-mail"></i> trleminhduy@gmail.com</a></li>
-                             </ul>
-                         </div>
-                     </div>
-                     <div class="col-md-5">
-                         <div class="top-bar-right text-right text-end">
-                             <div class="ltn__top-bar-menu">
-                                 <ul>
-                                     <li>
-                                         <!-- ltn__social-media -->
-                                         <div class="ltn__social-media">
-                                             <ul>
-                                                 <li><a href="#" title="Facebook"><i
-                                                             class="fab fa-facebook-f"></i></a></li>
-                                                 <li><a href="#" title="Twitter"><i
-                                                             class="fab fa-twitter"></i></a>
-                                                 </li>
 
-                                                 <li><a href="#" title="Instagram"><i
-                                                             class="fab fa-instagram"></i></a></li>
-                                                 <li><a href="#" title="Dribbble"><i
-                                                             class="fab fa-dribbble"></i></a>
-                                                 </li>
-                                             </ul>
-                                         </div>
-                                     </li>
-                                 </ul>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
-         <!-- ltn__header-top-area end -->
+     <header class="ltn__header-area ltn__header-5 ltn__header-transparent gradient-color-2">
+  
+     
 
          <!-- ltn__header-middle-area start -->
          <div
@@ -75,6 +34,15 @@
                                          </li>
                                          <li class="menu-icon"><a href="{{ route('products.index') }}">Sản phẩm</a>
                                          </li>
+                                          <li><a
+                                            href="@if (Auth::check()) {{ route('cart.index') }} @else {{ route('guest.cart.index') }} @endif">
+                                            Giỏ hàng
+                                            @if (Auth::check())
+                                                ({{ \App\Models\CartItem::where('user_id', Auth::id())->sum('quantity') }})
+                                            @else
+                                                ({{ session('cart') ? array_sum(array_column(session('cart'), 'quantity')) : 0 }})
+                                            @endif
+                                        </a></li>
                                          <li><a href="{{ route('contact.index') }}">Liên hệ</a></li>
                                          
                                      </ul>
@@ -119,12 +87,12 @@
                              </ul>
                          </div>
                          <!-- mini-cart -->
-                         <div class="mini-cart-icon">
+                         {{-- <div class="mini-cart-icon">
                              <a href="#ltn__utilize-cart-menu" class="ltn__utilize-toggle">
                                  <i class="icon-shopping-cart"></i>
                                  <sup class="cart-count">0</sup>
                              </a>
-                         </div>
+                         </div> --}}
                          <!-- mini-cart -->
                          <!-- Mobile Menu Button -->
                          <div class="mobile-menu-toggle d-xl-none">

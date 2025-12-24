@@ -18,7 +18,7 @@ class CheckPermission
     {
         // Phân biệt admin/delivery vs user guard
         if ($request->is('admin') || $request->is('admin/*') || $request->is('delivery') || $request->is('delivery/*')) {
-            // Admin & Delivery routes - dùng guard admin
+            // Admin & Delivery  - dùng guard admin
             if (!Auth::guard('admin')->check()) {
                 return redirect()->route('admin.login');
             }

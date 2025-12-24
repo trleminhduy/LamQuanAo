@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.custom' => \App\Http\Middleware\RedirectIfNotAuthenticated::class,
             'check.auth.admin' => \App\Http\Middleware\RedirectIfAuthenticatedAdmin::class,
             'permission' => \App\Http\Middleware\CheckPermission::class,
+            'auth.client' => \App\Http\Middleware\RedirectIfAuthenticatedClient::class,
 
 
         ]);

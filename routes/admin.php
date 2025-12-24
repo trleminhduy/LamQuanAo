@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DeliveryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
+use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\UsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -105,6 +106,12 @@ Route::prefix('admin')->group(function () {
 
 
     //Quản lý khuyến mãi
-   
+
     Route::resource('coupons', CouponController::class);
+
+
+    // Quản lý hoàn trả
+    Route::get('/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
+    Route::post('/refunds/approve', [RefundController::class, 'approve'])->name('admin.refunds.approve');
+    Route::post('/refunds/reject', [RefundController::class, 'reject'])->name('admin.refunds.reject');
 });

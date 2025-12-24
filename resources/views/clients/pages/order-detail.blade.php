@@ -55,6 +55,7 @@
                             <th>Thành tiền</th>
                         </tr>
                     </thead>
+                    {{-- đơn từ đây --}}
                     <tbody>
                         @foreach ($order->items as $item)
                             <tr>
@@ -62,11 +63,40 @@
                                     <img src="{{ asset('storage/' . $item->productVariant->product->image) }}"
                                         alt="" width="50">
                                 </td>
-                                <td>{{ $item->productVariant->product->name }}</td>
+                                <td>
+                                    {{ $item->productVariant->product->name }}
+                                    <br>
+                                    <small class="text-muted">
+                                        Size: {{ $item->productVariant->size->name ?? 'N/A' }} -
+                                        Màu: {{ $item->productVariant->color->name ?? 'N/A' }}
+                                    </small>
+
+                                    {{-- Hiển thị trạng thái refund nếu có --}}
+                                    @if ($item->refund)
+                                        <br>
+                                        @if ($item->refund->status == 'pending')
+                                            <span class="badge bg-warning">Đang chờ duyệt hoàn trả</span>
+                                        @elseif($item->refund->status == 'approved')
+                                            <span class="badge bg-success">Đã duyệt hoàn trả</span>
+                                        @elseif($item->refund->status == 'rejected')
+                                            <span class="badge bg-danger">Từ chối hoàn trả</span>
+                                        @endif
+                                    @endif
+                                </td>
                                 <td>{{ number_format($item->productVariant->price, 0, ',', '.') }} đ</td>
                                 <td>{{ $item->quantity }}</td>
-                                <td>{{ number_format($item->productVariant->price * $item->quantity, 0, ',', '.') }} đ</td>
-                            </tr>
+                                <td>
+                                    {{ number_format($item->productVariant->price * $item->quantity, 0, ',', '.') }} đ
+
+                                    {{-- Button yêu cầu hoàn trả --}}
+                                    @if ($order->status == 'delivered' && !$item->refund)
+                                        <br>
+                                        <button class="btn btn-sm btn-outline-danger mt-2"
+                                            onclick="openRefundModal({{ $item->id }}, '{{ $item->productVariant->product->name }}', {{ $item->quantity }})">
+                                            <i class="fas fa-undo"></i> Hoàn trả
+                                        </button>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -88,16 +118,29 @@
                 @endif
 
                 @if ($order->status == 'delivered')
-                    <div class="alert alert-success mt-3">
-                        <i class="fas fa-truck"></i> Đơn hàng đã được giao! Vui lòng xác nhận đã nhận hàng.
-                    </div>
-                    <form action="{{ route('orders.confirmReceived', $order->id) }}" method="POST"
-                        onsubmit="return confirm('Xác nhận bạn đã nhận được hàng?')">
-                        @csrf
-                        <button type="submit" class="btn btn-success btn-lg mt-2">
-                            <i class="fas fa-check-circle"></i> Đã nhận được hàng
-                        </button>
-                    </form>
+                    @php
+                        // Kiểm tra xem có sản phẩm nào đang hoàn trả hoặc đã được duyệt hoàn trả không
+                        $hasRefund = $order->items->filter(function($item) {
+                            return $item->refund && in_array($item->refund->status, ['pending', 'approved']);
+                        })->isNotEmpty();
+                    @endphp
+
+                    @if (!$hasRefund)
+                        <div class="alert alert-success mt-3">
+                            <i class="fas fa-truck"></i> Đơn hàng đã được giao! Vui lòng xác nhận đã nhận hàng.
+                        </div>
+                        <form action="{{ route('orders.confirmReceived', $order->id) }}" method="POST"
+                            onsubmit="return confirm('Xác nhận bạn đã nhận được hàng?')">
+                            @csrf
+                            <button type="submit" class="btn btn-success btn-lg mt-2">
+                                <i class="fas fa-check-circle"></i> Đã nhận được hàng
+                            </button>
+                        </form>
+                    @else
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-info-circle"></i> Có sản phẩm đang trong quá trình hoàn trả. Vui lòng đợi xử lý hoàn tất.
+                        </div>
+                    @endif
                 @endif
 
                 @if ($order->status == 'completed')
@@ -130,6 +173,131 @@
             </div>
         </div>
     </div>
+
+
+    {{-- Modal yêu cầu hoàn trả --}}
+<div class="modal fade" id="refundModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Yêu cầu hoàn trả sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="refundForm" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" id="refund_order_item_id" name="order_item_id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Sản phẩm:</strong></label>
+                        <p id="refund_product_name"></p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Số lượng hoàn trả <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="quantity" id="refund_quantity" min="1" required>
+                        <small class="text-muted">Tối đa: <span id="max_quantity"></span></small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Lý do hoàn trả <span class="text-danger">*</span></label>
+                        <textarea class="form-control" name="reason" rows="3" placeholder="VD: Sản phẩm bị lỗi, không đúng size..." required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Ảnh minh chứng <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" name="image" id="refund_image" accept="image/*" required>
+                        <small class="text-muted">Chụp rõ sản phẩm lỗi/hư hỏng (tối đa 2MB)</small>
+                        <div class="mt-2">
+                            <img id="image_preview" style="max-width: 200px; display: none;" class="img-thumbnail">
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <small><i class="fas fa-info-circle"></i> Chỉ được yêu cầu hoàn trả trong vòng <strong>3 ngày</strong> kể từ khi nhận hàng.</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="fas fa-paper-plane"></i> Gửi yêu cầu hoàn trả
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let refundModal;
+
+document.addEventListener('DOMContentLoaded', function() {
+    refundModal = new bootstrap.Modal(document.getElementById('refundModal'));
+    
+    // Preview ảnh khi chọn
+    document.getElementById('refund_image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('image_preview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+function openRefundModal(orderItemId, productName, maxQty) {
+    document.getElementById('refund_order_item_id').value = orderItemId;
+    document.getElementById('refund_product_name').textContent = productName;
+    document.getElementById('refund_quantity').value = 1;
+    document.getElementById('refund_quantity').max = maxQty;
+    document.getElementById('max_quantity').textContent = maxQty;
+    document.getElementById('image_preview').style.display = 'none';
+    document.getElementById('refundForm').reset();
+    refundModal.show();
+}
+
+document.getElementById('refundForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Hiển thị loading
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+    
+    fetch('{{ route('refund.store') }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+            'Accept': 'application/json'
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        
+        if(data.status) {
+            alert(data.message);
+            refundModal.hide();
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        console.error(err);
+        alert('Có lỗi xảy ra, vui lòng thử lại!');
+    });
+});
+</script>
 @endsection
 
 

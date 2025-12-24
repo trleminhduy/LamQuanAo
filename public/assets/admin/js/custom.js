@@ -885,9 +885,12 @@ $(document).ready(function () {
                     if (response.status) {
                         $(`#coupon-row-${couponId}`).fadeOut();
                         toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message || "Không thể xóa!");
                     }
                 },
-                error: function () {
+                error: function (xhr) {
+                    console.log(xhr.responseText);
                     toastr.error("Có lỗi xảy ra!");
                 },
             });

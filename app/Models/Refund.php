@@ -14,6 +14,7 @@ class Refund extends Model
         'order_item_id',
         'quantity',  
         'reason',
+        'image',
         'refund_type',
         'amount',
         'status',

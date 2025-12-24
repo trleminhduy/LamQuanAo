@@ -459,7 +459,6 @@ $(document).ready(function () {
         },
     });
 
-    
     function number_format(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
@@ -480,9 +479,6 @@ $(document).ready(function () {
         var sizeId = $("#product-size").val();
         var quantity = $("#quantity").val();
 
-      
-
-        
         if (!window.productVariants) {
             toastr.error("Không tìm thấy thông tin sản phẩm!");
             return;
@@ -606,127 +602,6 @@ $(document).ready(function () {
         }
     }
 
-    // Chỉ chạy PayPal nếu đang ở trang checkout
-    if ($("#paypal-button-container").length > 0) {
-        togglePayment();
-
-        //bắt sự kiện
-        $("input[name='payment_method']").on("change", togglePayment);
-
-        // Lấy giá trị từ data attribute thay vì parse text
-        var totalPrice = parseFloat($("#total_price").data("amount"));
-        console.log("Total Price from data-amount:", totalPrice);
-
-        var totalPriceText = $("#total_price").text().trim();
-        console.log("Total Price display text:", totalPriceText);
-
-        console.log("Total Price VNĐ:", totalPrice);
-        console.log("Total Price USD:", (totalPrice / 26000).toFixed(2));
-
-        // Kiểm tra giá trị hợp lệ
-        if (!totalPrice || totalPrice <= 0 || isNaN(totalPrice)) {
-            console.error("Invalid total price:", totalPrice);
-            alert("Lỗi: Tổng tiền không hợp lệ!");
-            return;
-        }
-
-        var usdAmount = (totalPrice / 26000).toFixed(2);
-
-        // PayPal yêu cầu tối thiểu 0.01 USD
-        if (parseFloat(usdAmount) < 0.01) {
-            console.error("Amount too small:", usdAmount);
-            alert("Số tiền quá nhỏ để thanh toán qua PayPal!");
-            return;
-        }
-
-        console.log("Initializing PayPal with amount:", usdAmount, "USD");
-
-        // Paypal thanh toán
-        paypal
-            .Buttons({
-                createOrder: function (data, actions) {
-                    console.log(
-                        "Creating PayPal order with USD amount:",
-                        usdAmount
-                    );
-                    return actions.order
-                        .create({
-                            purchase_units: [
-                                {
-                                    amount: {
-                                        value: usdAmount,
-                                        currency_code: "USD",
-                                    },
-                                },
-                            ],
-                        })
-                        .then(function (orderID) {
-                            console.log("PayPal Order Created:", orderID);
-                            return orderID;
-                        })
-                        .catch(function (error) {
-                            console.error("Error creating order:", error);
-                            alert("Lỗi tạo đơn hàng PayPal: " + error.message);
-                            throw error;
-                        });
-                },
-                onApprove: function (data, actions) {
-                    console.log("PayPal approved:", data);
-                    return actions.order.capture().then(function (details) {
-                        console.log("PayPal captured:", details);
-                        // Gửi thông tin về server
-                        return fetch("/checkout/paypal", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": $(
-                                    'meta[name="csrf-token"]'
-                                ).attr("content"),
-                            },
-                            body: JSON.stringify({
-                                orderID: data.orderID,
-                                payerID: data.payerID,
-                                transactionID: details.id,
-                                amount: details.purchase_units[0].amount.value,
-                                address_id: $("#list_address").val(),
-                            }),
-                        })
-                            .then((response) => response.json())
-                            .then((data) => {
-                                console.log("Server response:", data);
-                                if (data.success) {
-                                    toastr.success(
-                                        "Thanh toán PayPal thành công!"
-                                    );
-                                    // Delay 2 giây để hiện toastr trước khi redirect
-                                    setTimeout(function () {
-                                        window.location.href = "/account";
-                                    }, 2000);
-                                } else {
-                                    alert(
-                                        "Có lỗi xảy ra: " +
-                                            (data.message ||
-                                                "Vui lòng thử lại.")
-                                    );
-                                }
-                            })
-                            .catch(function (error) {
-                                console.error("Server error:", error);
-                                alert("Lỗi kết nối server: " + error.message);
-                            });
-                    });
-                },
-                onError: function (err) {
-                    console.error("PayPal error:", err);
-                    alert("Có lỗi xảy ra với PayPal: " + err.message);
-                },
-                onCancel: function (data) {
-                    console.log("PayPal cancelled:", data);
-                    toastr.warning("Bạn đã hủy thanh toán PayPal");
-                },
-            })
-            .render("#paypal-button-container");
-    }
     //////////// HANDLER đánh giá /////////////////
     //////////// **************** /////////////////
     let selectedRating = 0;
@@ -761,75 +636,75 @@ $(document).ready(function () {
     }
 
     //Gửi submit đánh giá với AJAX
-   // Gửi submit đánh giá với AJAX
-$("#review-form").submit(function (e) {
-    e.preventDefault();
+    // Gửi submit đánh giá với AJAX
+    $("#review-form").submit(function (e) {
+        e.preventDefault();
 
-    let productId = $(this).data("product-id");
-    let rating = $("#rating-value").val();
-    let content = $("#review-content").val().trim();
+        let productId = $(this).data("product-id");
+        let rating = $("#rating-value").val();
+        let content = $("#review-content").val().trim();
 
-    // Xóa thông báo cũ
-    $(".error-message").remove();
+        // Xóa thông báo cũ
+        $(".error-message").remove();
 
-    if (rating == 0) {
-        $(this).before(
-            '<div class="error-message text-danger">Vui lòng chọn số sao đánh giá</div>'
-        );
-        return;
-    }
+        if (rating == 0) {
+            $(this).before(
+                '<div class="error-message text-danger">Vui lòng chọn số sao đánh giá</div>'
+            );
+            return;
+        }
 
-    $.ajaxSetup({
-        headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-            
-        },
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+
+        $.ajax({
+            url: "/review",
+            type: "POST",
+            data: {
+                product_id: productId,
+                rating: rating,
+                comment: content,
+            },
+            beforeSend: function () {
+                $("#review-form button[type='submit']")
+                    .prop("disabled", true)
+                    .text("Đang gửi...");
+            },
+            success: function (response) {
+                if (response.status) {
+                    // Reset
+                    $("#review-content").val("");
+                    $("#rating-value").val(0);
+                    hightLightStars(0);
+                    selectedRating = 0;
+
+                    toastr.success(response.message || "Đánh giá thành công!");
+                    loadReviews(productId);
+                } else {
+                    toastr.error(
+                        response.message ||
+                            "Gửi đánh giá không thành công hoặc chưa đăng nhập"
+                    );
+                }
+            },
+            error: function (xhr) {
+                let msg =
+                    xhr.responseJSON?.message ||
+                    xhr.responseJSON?.error ||
+                    "Gửi đánh giá không thành công hoặc chưa đăng nhập.";
+
+                toastr.error(msg);
+            },
+            complete: function () {
+                $("#review-form button[type='submit']")
+                    .prop("disabled", false)
+                    .text("Gửi đánh giá");
+            },
+        });
     });
-
-    $.ajax({
-        url: "/review",
-        type: "POST",
-        data: {
-            product_id: productId,
-            rating: rating,
-            comment: content,
-        },
-        beforeSend: function() {
-            $("#review-form button[type='submit']")
-                .prop("disabled", true)
-                .text("Đang gửi...");
-        },
-        success: function (response) {
-            if (response.status) {
-                // Reset
-                $("#review-content").val("");
-                $("#rating-value").val(0);
-                hightLightStars(0);
-                selectedRating = 0;
-
-                toastr.success(response.message || "Đánh giá thành công!");
-                loadReviews(productId);
-            } else {
-                toastr.error(response.message || "Gửi đánh giá không thành công hoặc chưa đăng nhập");
-            }
-        },
-        error: function (xhr) {
-            let msg =
-                xhr.responseJSON?.message ||
-                xhr.responseJSON?.error ||
-                "Gửi đánh giá không thành công hoặc chưa đăng nhập.";
-
-            toastr.error(msg);
-        },
-        complete: function() {
-            $("#review-form button[type='submit']")
-                .prop("disabled", false)
-                .text("Gửi đánh giá");
-        },
-    });
-});
-
-
 
     // Hàm load lại danh sách reviews
     function loadReviews(productId) {
@@ -839,9 +714,9 @@ $("#review-form").submit(function (e) {
             success: function (html) {
                 $("#reviews-list").html(html);
             },
-            error: function() {
+            error: function () {
                 console.error("Không thể tải lại danh sách đánh giá");
-            }
+            },
         });
     }
 
@@ -930,5 +805,63 @@ $("#review-form").submit(function (e) {
             toastr.error(errorMessage, "Lỗi");
             e.preventDefault();
         }
+    });
+
+    //////////// HANDLER coupon /////////////////
+    let appliedDiscount = 0;
+    const originalTotal = $("#total_price").data("amount");
+
+    $(document).on("click", "#apply_coupon", function () {
+        const code = $("#coupon_code").val().trim();
+        if (!code) {
+            toastr.error("Vui lòng nhập mã coupon");
+            return;
+        }
+
+        $.ajax({
+            url: "/api/coupon/apply",
+            method: "POST",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr("content"),
+                code: code,
+                total: originalTotal,
+            },
+            success: function (response) {
+                //hợp lệ
+                if (response.success) {
+                    $("#discount-row").show();
+
+                    //popup số tiền giảm
+                    $("#discount-amount").text(
+                        response.discount.toLocaleString()
+                    );
+
+                    //cập nhật tổng tiền mới
+
+                    $("#total_price").text(
+                        response.new_total.toLocaleString() + " VNĐ"
+                    );
+
+                    //thông báo thánh công
+                    toastr.success("Áp dụng mã coupon thành công!");
+
+                    //lock input
+
+                    $("#coupon_code").prop("readonly", true);
+                    $("#apply_coupon")
+                        .prop("disabled", true)
+                        .text("Đã áp dụng");
+                    
+                    
+                    $("#coupon_code_hidden").val(response.coupon_code);
+                    $("#discount_amount_hidden").val(response.discount);
+                } else {
+                    toastr.error(response.message || "Mã coupon không hợp lệ");
+                }
+            },
+            error: function () {
+                toastr.error("Đã có lỗi xảy ra khi áp dụng mã coupon");
+            },
+        });
     });
 });
