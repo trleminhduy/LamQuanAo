@@ -896,4 +896,32 @@ $(document).ready(function () {
             });
         }
     });
+
+    //Xoá ncc
+    $(document).on("click", ".btn-delete-supplier", function () {
+        const supplierId = $(this).data("id");
+
+        if (confirm("Bạn có chắc muốn xóa nhà cung cấp này?")) {
+            $.ajax({
+                url: `/admin/supplier/delete`,
+                type: "POST",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr("content"),
+                    id: supplierId
+                },
+                success: function (response) {
+                    if (response.status) {
+                        $(`#supplier-row-${supplierId}`).fadeOut();
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message || "Không thể xóa!");
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                    toastr.error("Có lỗi xảy ra!");
+                },
+            });
+        }
+    });
 });

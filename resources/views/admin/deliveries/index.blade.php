@@ -59,7 +59,7 @@
                         @forelse($orders as $order)
                             <tr>
                                 <td>#{{ $order->id }}</td>
-                                <td>{{ $order->user->name }}</td>
+                                <td>{{ $order->user->name ?? 'N/A' }}</td>
                                 <td>{{ $order->shippingAddress->address ?? 'N/A' }}</td>
                                 <td>
                                     @if ($order->deliveryUser)

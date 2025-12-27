@@ -33,7 +33,9 @@
                                     <th>Giá trị</th>
                                     <th>Thời gian</th>
                                     <th>Trạng thái</th>
+                                    <th>Lượt sử dụng</th>
                                     <th>Hành động</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -56,6 +58,16 @@
                                             <span class="label label-{{ $coupon->status ? 'success' : 'default' }}">
                                                 {{ $coupon->status ? 'Hoạt động' : 'Tắt' }}
                                             </span>
+                                        </td>
+                                        <td>
+                                            @if ($coupon->usage_limit)
+                                                {{ $coupon->used_count }} / {{ $coupon->usage_limit }}
+                                                @if ($coupon->used_count >= $coupon->usage_limit)
+                                                    <span class="badge badge-danger">Hết lượt</span>
+                                                @endif
+                                            @else
+                                                Không giới hạn
+                                            @endif
                                         </td>
                                         <td>
                                             <a href="{{ route('coupons.edit', $coupon->id) }}"

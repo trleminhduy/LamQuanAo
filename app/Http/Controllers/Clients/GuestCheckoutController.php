@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Clients;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
@@ -112,6 +113,16 @@ class GuestCheckoutController extends Controller
                 'guest_name' => $request->full_name,
                 'guest_phone' => $request->phone,
                 'guest_email' => $request->email,
+            ]);
+
+            //noti cho admin
+            Notification::create([
+                'user_id' => null,
+                'type' => 'order',
+                'title' => 'Đơn hàng mới (Khách vãng lai)',
+                'message' => 'Đơn hàng #' . $order->id . ' từ khách vãng lai: ' . $request->full_name . ' - Tổng: ' . number_format($totalPrice, 0, ',', '.') . 'đ',
+                'link' => '/orders-detail/' . $order->id,
+                'is_read' => false
             ]);
 
             //tạo order items với trừ stok

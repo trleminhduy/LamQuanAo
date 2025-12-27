@@ -13,30 +13,32 @@
 
                   </li>
 
-                  <li role="presentation" class="nav-item dropdown open">
-                      <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1"
+
+                  <li  class="nav-item dropdown open">
+                      <a href="javascript:;" class="dropdown-toggle info-number" 
                           data-toggle="dropdown" aria-expanded="false">
-                          <i class="fa fa-envelope-o"></i>
-                          <span class="badge bg-green">6</span>
+                          <i class="fa fa-bell-o"></i>
+                          <span class="badge bg-green">{{ $notifications->count() }}</span>
                       </a>
                       <ul class="dropdown-menu list-unstyled msg_list" role="menu" aria-labelledby="navbarDropdown1">
-                          <li class="nav-item">
-                              <a class="dropdown-item">
-                                  <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
-                                  <span>
-                                      <span>John Smith</span>
-                                      <span class="time">3 mins ago</span>
-                                  </span>
-                                  <span class="message">
-                                      Film festivals used to be do-or-die moments for movie makers. They were where...
-                                  </span>
-                              </a>
-                          </li>
-
+                            @foreach ($notifications as $notification)
+                            <li class="nav-item">
+                                <a class="dropdown-item" href="{{ url('admin' . $notification->link) }}">
+                                 
+                                    <span>
+                                        <span>{{ $notification->title }}</span>
+                                        <span class="time">{{ \Carbon\Carbon::parse($notification->created_at)->format('d / m / Y') }}</span>
+                                    </span>
+                                    <span class="message">
+                                        {{ Str::limit( $notification->message, 50) }}
+                                    </span>
+                                </a>
+                            </li>
+                            @endforeach
                           <li class="nav-item">
                               <div class="text-center">
-                                  <a class="dropdown-item">
-                                      <strong>See All Alerts</strong>
+                                  <a class="dropdown-item" href="{{ route('admin.notifications.index') }}">
+                                      <strong>Xem tất cả thông báo</strong>
                                       <i class="fa fa-angle-right"></i>
                                   </a>
                               </div>

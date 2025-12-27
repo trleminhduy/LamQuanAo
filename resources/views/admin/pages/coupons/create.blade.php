@@ -35,7 +35,7 @@
                                 <label class="col-md-3 col-form-label">Mã coupon <span class="required">*</span></label>
                                 <div class="col-md-6">
                                     <input type="text" name="code" class="form-control" required>
-                                    
+
                                 </div>
                             </div>
 
@@ -55,8 +55,8 @@
                                 <label class="col-md-3 col-form-label">Giá trị giảm <span class="required">*</span></label>
                                 <div class="col-md-6">
                                     <input type="number" name="discount_value" class="form-control" step="0.01"
-                                        min="0"  required>
-                                    
+                                        min="0" required>
+
                                 </div>
                             </div>
 
@@ -72,6 +72,14 @@
                                 <div class="col-md-6">
                                     <input type="date" name="end_date" class="form-control" required>
                                 </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Giới hạn lượt sử dụng</label>
+                                 <div class="col-md-6">
+                                    <input type="number" name="usage_limit" class="form-control"
+                                        placeholder="Để trống = không giới hạn" min="1">
+                                 </div>
                             </div>
 
                             <div class="form-group row">

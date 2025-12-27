@@ -6,10 +6,12 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DeliveryController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\RefundController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +31,11 @@ Route::prefix('admin')->group(function () {
 
     Route::middleware(['auth.custom'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+        //Notification
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
+
+
     });
 
     Route::middleware(['permission:manage_users'])->group(function () {
@@ -57,6 +64,18 @@ Route::prefix('admin')->group(function () {
         Route::get('/products', [ProductController::class, 'index'])->name('admin.products.index');
         Route::post('/product/update', [ProductController::class, 'updateProduct']);
         Route::post('/product/delete', [ProductController::class, 'deleteProduct']);
+    });
+
+    //Nhà cung cấp
+    Route::middleware(['permission:manage_suppliers'])->group(function () {
+        Route::get('/supplier/add', [SupplierController::class, 'showFormAddSupplier'])->name('admin.supplier.add');
+        Route::post('/supplier/add', [SupplierController::class, 'addSupplier'])->name('admin.supplier.add');
+
+        //Quản lý  thêm xoas sửa
+        Route::get('/suppliers', [SupplierController::class, 'index'])->name('admin.suppliers.index');
+        Route::get('/supplier/edit/{id}', [SupplierController::class, 'edit'])->name('admin.supplier.edit');
+        Route::post('/supplier/update', [SupplierController::class, 'updateSupplier'])->name('admin.supplier.update');
+        Route::post('/supplier/delete', [SupplierController::class, 'deleteSupplier'])->name('admin.supplier.delete');
     });
 
     // Quản lý biến thể sản phẩm

@@ -74,11 +74,13 @@
                                                         <td>{{ $product->slug }}</td>
                                                         <td>{{ $product->description }}</td>
                                                         <td>{{ number_format($product->price, 0, ',', '.') }} VNĐ</td>
-                                                        <td>{{ $product->stock }} <small>({{ $product->variants->count() }} biến thể)</small></td>
+                                                        <td>{{ $product->stock }} <small>({{ $product->variants->count() }}
+                                                                biến thể)</small></td>
                                                         <td>{{ $product->status == 'in_stock' ? 'Còn hàng' : 'Hết hàng' }}
                                                         </td>
                                                         <td>
-                                                            <a href="{{ route('admin.variants.index', $product->id) }}" class="btn btn-app btn-info">
+                                                            <a href="{{ route('admin.variants.index', $product->id) }}"
+                                                                class="btn btn-app btn-info">
                                                                 <i class="fa fa-tags"> </i>Biến thể
                                                             </a>
                                                             <a class="btn btn-app btn-update-product" data-toggle="modal"
@@ -170,8 +172,8 @@
                                                                             <div class="col-md-6 col-sm-6 ">
                                                                                 <input type="text"
                                                                                     id="product-description"
-                                                                                    name="description"
-                                                                                    required="required" class="form-control"
+                                                                                    name="description" required="required"
+                                                                                    class="form-control"
                                                                                     value="{{ $product->description }}">
                                                                             </div>
                                                                         </div>
@@ -184,8 +186,7 @@
                                                                             </label>
                                                                             <div class="col-md-6 col-sm-6 ">
                                                                                 <input type="number" id="product-price"
-                                                                                    name="price"
-                                                                                    required="required"
+                                                                                    name="price" required="required"
                                                                                     class="form-control"
                                                                                     value="{{ intval($product->price) }}">
                                                                             </div>
@@ -199,8 +200,7 @@
                                                                             </label>
                                                                             <div class="col-md-6 col-sm-6 ">
                                                                                 <input type="number" id="product-stock"
-                                                                                    name="stock"
-                                                                                    required="required"
+                                                                                    name="stock" required="required"
                                                                                     class="form-control"
                                                                                     value="{{ $product->stock }}">
                                                                             </div>

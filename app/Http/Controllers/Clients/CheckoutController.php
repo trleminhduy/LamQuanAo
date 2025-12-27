@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\CartItem;
 use App\Models\Coupon;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
@@ -90,13 +91,14 @@ class CheckoutController extends Controller
 
             // Tổng đơn hàng = tổng sản phẩm + phí ship
             $totalPrice = $subtotal + $shippingFee;
-            
+
             // Xử lý coupon 
             $couponId = null;
             $discountAmount = 0;
             if ($request->coupon_code) {
                 $coupon = Coupon::where('code', $request->coupon_code)->first();
                 if ($coupon) {
+                    $coupon->increment('used_count');
                     $couponId = $coupon->id;
                     $discountAmount = $request->discount_amount ?? 0;
                     $totalPrice -= $discountAmount;
@@ -110,6 +112,16 @@ class CheckoutController extends Controller
             $order->status = 'pending';
             $order->coupon_id = $couponId;
             $order->save();
+
+            //noti cho admin
+            Notification::create([
+                'user_id' => null, 
+                'type' => 'order',
+                'title' => 'Đơn hàng mới',
+                'message' => 'Đơn hàng #' . $order->id . ' từ ' . $user->name . ' - Tổng: ' . number_format($totalPrice, 0, ',', '.') . 'đ',
+                'link' => '/orders-detail/' . $order->id,
+                'is_read' => false
+            ]);
 
             foreach ($cartItems as $item) {
                 OrderItem::create([
@@ -178,6 +190,16 @@ class CheckoutController extends Controller
             $order->status = 'pending';
             $order->coupon_id = null;
             $order->save();
+
+            //noti cho admin
+            Notification::create([
+                'user_id' => null,
+                'type' => 'order',
+                'title' => 'Đơn hàng mới (VNPay)',
+                'message' => 'Đơn hàng #' . $order->id . ' từ ' . $user->name . ' - Thanh toán VNPay - Tổng: ' . number_format($totalPrice, 0, ',', '.') . 'đ',
+                'link' => '/orders-detail/' . $order->id,
+                'is_read' => false
+            ]);
 
             // Tạo OrderItems
             foreach ($cartItems as $item) {
@@ -361,6 +383,14 @@ class CheckoutController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn'
+            ]);
+        }
+
+        //check lượt
+        if($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit){
+            return response()->json([
+                'success' => false,
+                'message' => 'Mã giảm giá đã hết lượt sử dụng'
             ]);
         }
 

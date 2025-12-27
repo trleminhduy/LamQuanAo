@@ -127,7 +127,7 @@ $(document).ready(function () {
             errorMessage += "Họ và tên phải có ít nhất 3 ký tự . <br>";
         }
 
-        let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,6}(\.[a-zA-Z]{2,3})?$/;
         if (!emailRegex.test(email)) {
             errorMessage += "Email không hợp lệ, vui lòng thử lại . <br>";
         }

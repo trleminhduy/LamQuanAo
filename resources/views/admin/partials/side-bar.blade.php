@@ -100,7 +100,8 @@
                      @endif
 
                      @if ($adminUser->role->permissions->contains('name', 'manage_deliveries'))
-                         <li><a href="#"><i class="fa fa-truck"></i> Giao hàng <span
+                         <li>
+                            <a href="#"><i class="fa fa-truck"></i> Giao hàng <span
                                      class="fa fa-chevron-down"></span></a>
                              <ul class="nav child_menu">
                                  <li><a href="{{ route('admin.deliveries.dashboard') }}">Dashboard</a></li>
@@ -114,7 +115,7 @@
                      {{-- QUản lý hoàn trả --}}
                      <li class="nav-item">
                          <a class="nav-link" href="{{ route('admin.refunds.index') }}">
-                             <i class="fas fa-undo"></i>
+                                <i class="fa fa-undo"></i>
                              <span>Yêu cầu hoàn trả</span>
                          </a>
                      </li>

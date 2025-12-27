@@ -43,29 +43,14 @@
                                     <div class="alert alert-danger">{{$message}}</div>
                                 @enderror
 
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="checkbox1" value="" required>
-                                   Tôi đồng ý cho CLOTHES STORE xử lý dữ liệu cá nhân của tôi để gửi tài liệu tiếp thị được cá nhân hoá theo mẫu đồng ý và chính sách bảo mật
-                                </label>
-                                 @error('checkbox1')
-                                    <div class="alert alert-danger">{{$message}}</div>
-                                @enderror
-
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="checkbox2" value="" required>
-                                    Khi nhấp vào "TẠO TÀI KHOẢN", tôi đồng ý với chính sách bảo mật
-                                </label>
-                                 @error('checkbox2')
-                                    <div class="alert alert-danger">{{$message}}</div>
-                                @enderror
+                               
 
                                 <div class="btn-wrapper">
                                     <button class="theme-btn-1 btn reverse-color btn-block" type="submit">TẠO TÀI KHOẢN</button>
                                 </div>
                             </form>
                             <div class="by-agree text-center">
-                                <p>Bằng cách tạo tài khoản, bạn đồng ý với:</p>
-                                <p><a href="">ĐIỀU KHOẢN VÀ ĐIỀU KIỆN &nbsp; &nbsp; | &nbsp; &nbsp; CHÍNH SÁCH BẢO MẬT</a></p>
+                               
                                 <div class="go-to-btn mt-50">
                                     <a href="{{route ('login')}}">ĐÃ CÓ TÀI KHOẢN?</a>
                                 </div>
