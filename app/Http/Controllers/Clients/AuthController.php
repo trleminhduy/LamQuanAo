@@ -164,8 +164,12 @@ class AuthController extends Controller
                 // Kiểm tra tồn kho
                 if ($newQuantity <= $variant->stock) {
                     $cartItem->quantity = $newQuantity;
-                    $cartItem->save();
+                    
+                }else{
+                    $cartItem->quantity = $variant->stock; // set về tối đa tồn kho
+                    toastr()->warning("Sản phẩm {$variant->product->name} chỉ còn {$variant->stock} trong kho");
                 }
+                $cartItem->save();
             } else {
                 // Nếu chưa có thì tạo mới
                 if ($cartData['quantity'] <= $variant->stock) {

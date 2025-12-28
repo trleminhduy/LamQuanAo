@@ -14,39 +14,79 @@ class CartController extends Controller
     // Hiển thị giỏ hàng
     public function index()
     {
-        if (Auth::check()) {
+        $stockAdjusted = false;
 
-            //Đẫ đăng nhập - lấy từ DB
+        if (Auth::check()) {
+            // User đã login: Lấy từ database
             $cartItems = CartItem::with(['productVariant.product.firstImage', 'productVariant.size', 'productVariant.color'])
                 ->where('user_id', Auth::id())
                 ->get();
+            
+            // Validate stock và tự động điều chỉnh
+            foreach ($cartItems as $item) {
+                $stock = $item->productVariant->stock;
+                
+                if ($item->quantity > $stock) {
+                    $stockAdjusted = true;
+                    
+                    if ($stock > 0) {
+                        $item->quantity = $stock; // Giảm về số lượng còn lại
+                        $item->save();
+                    } else {
+                        $item->delete(); // xoá khi hết hàng
+                    }
+                }
+            }
+            
+            // Load lại giỏ sau khi điều chỉnh
+            if ($stockAdjusted) {
+                $cartItems = $cartItems->fresh();
+            }
+            
         } else {
-
-            //khách vãng lai, lấy từ session
+            // Guest: Lấy từ session
             $cart = session()->get('cart', []);
             $cartItems = collect();
 
-            foreach ($cart as $item) {
-                $variant = ProductVariant::with(['product.firstImage', 'size', 'color'])
-                    ->find($item['product_variant_id']);
-
-                if ($variant) {
-
-                    //tạo đối tượng tạm cartitem để chung trong view
-                    $cartItems->push((object) [
-                        'id' => $item['product_variant_id'],
-                        'quantity' => $item['quantity'],
-                        'productVariant' => $variant,
-                    ]);
+            foreach ($cart as $variantId => $item) {
+                $variant = ProductVariant::with(['product.firstImage', 'size', 'color'])->find($item['product_variant_id']);
+                
+                if (!$variant) continue;
+                
+                $quantity = $item['quantity'];
+                $stock = $variant->stock;
+                
+                // Validate stock
+                if ($quantity > $stock) {
+                    $stockAdjusted = true;
+                    
+                    if ($stock > 0) {
+                        $cart[$variantId]['quantity'] = $stock; // Giảm về stock
+                        $quantity = $stock;
+                    } else {
+                        unset($cart[$variantId]); // Hết hàng → Xóa
+                        continue;
+                    }
                 }
+
+                $cartItems->push((object) [
+                    'id' => $item['product_variant_id'],
+                    'quantity' => $quantity,
+                    'productVariant' => $variant,
+                ]);
             }
+            
+            session()->put('cart', $cart); // Lưu lại session
         }
 
         // Tính tổng tiền
-        $total = 0;
-        foreach ($cartItems as $item) {
-            $total += $item->productVariant->price * $item->quantity;
+        $total = $cartItems->sum(fn($item) => $item->productVariant->price * $item->quantity);
+        
+        // Thông báo nếu có điều chỉnh
+        if ($stockAdjusted) {
+            toastr()->warning('Một số sản phẩm đã được điều chỉnh do thay đổi tồn kho');
         }
+        
         return view('clients.pages.cart', compact('cartItems', 'total'));
     }
 
@@ -193,7 +233,8 @@ class CartController extends Controller
         if ($request->quantity > $variant->stock) {
             return response()->json([
                 'success' => false,
-                'message' => 'Vượt quá số lượng tồn kho!'
+                'message' => 'Sản phẩm chỉ còn ' . $variant->stock . ' trong kho!',
+                'maxStock' => $variant->stock
             ]);
         }
 
@@ -213,7 +254,8 @@ class CartController extends Controller
             'success' => true,
             'message' => 'Đã cập nhật số lượng!',
             'itemTotal' => number_format($itemTotal, 0, ',', '.'),
-            'grandTotal' => number_format($grandTotal, 0, ',', '.')
+            'grandTotal' => number_format($grandTotal, 0, ',', '.'),
+            'maxStock' => $variant->stock
         ]);
     }
 

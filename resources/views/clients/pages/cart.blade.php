@@ -105,7 +105,7 @@
 
             if (newQty < 1) newQty = 1;
             if (newQty > max) {
-                toastr.warning('Vượt quá số lượng tồn kho!');
+                toastr.warning(`Sản phẩm chỉ còn ${max} trong kho!`);
                 return;
             }
 
@@ -132,9 +132,22 @@
                         $(`.cart-item[data-id="${cartItemId}"] .qty-display`).text(quantity);
                         // Cập nhật tổng tiền
                         $('.grand-total').text(response.grandTotal + ' VNĐ');
+                        // Cập nhật max stock (quan trọng!)
+                        if (response.maxStock) {
+                            $(`.cart-item[data-id="${cartItemId}"] .qty-input`).attr('data-max', response.maxStock);
+                        }
                         toastr.success(response.message);
                     } else {
                         toastr.error(response.message);
+                        // Nếu lỗi, cập nhật lại max stock từ response
+                        if (response.maxStock) {
+                            let row = document.querySelector(`.cart-item[data-id="${cartItemId}"]`);
+                            let input = row.querySelector('.qty-input');
+                            let display = row.querySelector('.qty-display');
+                            input.setAttribute('data-max', response.maxStock);
+                            input.value = response.maxStock;
+                            display.textContent = response.maxStock;
+                        }
                     }
                 },
                 error: function() {
