@@ -11,7 +11,9 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $categories = Category::with('products')->get();
+        $categories = Category::with(['products' => function ($query) {
+            $query->limit(4); // limit 4 sản phẩm mỗi danh mục
+        }])->paginate(3);
         foreach ($categories as $index => $category) {
             foreach ($category->products as $product) {
                 $product->image_url = $product->firstImage?->image ? asset('storage/uploads/products/' . $product->firstImage->image)
@@ -20,16 +22,16 @@ class HomeController extends Controller
         }
 
         // Sản phẩm bán chạy nhất
-            $bestSellingProducts = Product::selectRaw("products.*,
+        $bestSellingProducts = Product::selectRaw("products.*,
                 (SELECT COALESCE(SUM(oi.quantity), 0)
                  FROM order_items oi
                  JOIN product_variants pv ON pv.id = oi.product_variant_id
                  WHERE pv.product_id = products.id) as total_sold")
-                ->orderByDesc('total_sold')
-                ->limit(10)
-                ->get();
+            ->orderByDesc('total_sold')
+            ->limit(10)
+            ->get();
 
-           
+
 
         //Thêm ảnh nếu ảnh chưa có thì lấy ảnh default trong thư mục
         foreach ($bestSellingProducts as $product) {

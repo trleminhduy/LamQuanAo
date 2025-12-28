@@ -30,41 +30,7 @@
                 </div>
             </div>
 
-            <!-- Kích thước -->
-            <div class="sidebar-widget">
-                <h4>Kích thước</h4>
-                <div class="size-filter">
-                    <button class="size-btn">S</button>
-                    <button class="size-btn">M</button>
-                    <button class="size-btn">L</button>
-                    <button class="size-btn">XL</button>
-                    <button class="size-btn">XXL</button>
-                </div>
-            </div>
-
-            <!-- Màu sắc -->
-            <div class="sidebar-widget">
-                <h4>Màu sắc</h4>
-                <div class="color-filter">
-                    <span class="color-circle black"></span>
-                    <span class="color-circle white"></span>
-                    <span class="color-circle red"></span>
-                    <span class="color-circle blue"></span>
-                    <span class="color-circle green"></span>
-                    <span class="color-circle yellow"></span>
-                    <span class="color-circle pink"></span>
-                    <span class="color-circle gray"></span>
-                </div>
-            </div>
-
-            <!-- Tìm kiếm -->
-            <div class="sidebar-widget">
-                <h4>Tìm kiếm</h4>
-                <div class="search-box">
-                    <input type="text" placeholder="Nhập từ khóa...">
-                    <button>🔍</button>
-                </div>
-            </div>
+            
         </div>
 
         <!-- Danh sách sản phẩm -->
@@ -120,3 +86,8 @@
 </div>
 
 @endsection
+
+
+
+
+

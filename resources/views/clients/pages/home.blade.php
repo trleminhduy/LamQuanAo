@@ -19,10 +19,10 @@
     <div class="home-categories">
         @foreach ($categories as $category)
         <div class="home-category-item">
-            <a href="shop.html">
-                <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
+            <a href="{{ route('products.index', ['category' => $category->id]) }}">
+                <img  src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
             </a>
-            <h3><a href="shop.html">{{ $category->name }}</a></h3>
+            <h3><a href="{{  route('products.index', ['category' => $category->id]) }}">{{ $category->name }}</a></h3>
             <p>({{ $category->products->count() }} Sản phẩm)</p>
         </div>
         @endforeach

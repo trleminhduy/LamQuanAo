@@ -43,7 +43,18 @@ class ProductVariantController extends Controller
 
         $product = Product::findOrFail($productId);
 
-        // Kiểm tra variant đã tồn tại chưa (UNIQUE constraint)
+        // Kiểm tra tổng biến thể không vượt quá stock sản phẩm gốc
+        $currentTotalStock = ProductVariant::where('product_id', $productId)->sum('stock');
+        $newTotalStock = $currentTotalStock + $request->stock;
+
+        if ($newTotalStock > $product->stock) {
+            return response()->json([
+                'status' => false,
+                'message' => "Vượt quá số lượng trong kho! Hiện đã phân bổ: {$currentTotalStock}/{$product->stock}. Chỉ còn " . ($product->stock - $currentTotalStock) . " sản phẩm có thể thêm.",
+            ]);
+        }
+
+        // Kiểm tra variant đã tồn tại chưa 
         $existingVariant = ProductVariant::where('product_id', $productId)
             ->where('size_id', $request->size_id)
             ->where('color_id', $request->color_id)
@@ -65,9 +76,6 @@ class ProductVariantController extends Controller
             'stock' => $request->stock,
         ]);
 
-        // Tự động cập nhật tổng stock của product
-        $this->updateProductStock($productId);
-
         return response()->json([
             'status' => true,
             'message' => 'Thêm biến thể thành công',
@@ -84,13 +92,26 @@ class ProductVariantController extends Controller
         ]);
 
         $variant = ProductVariant::findOrFail($request->variant_id);
+        $product = Product::findOrFail($variant->product_id);
+        
+        // Tính tổng stock KHÔNG BAO GỒM variant đang sửa
+        $currentTotalStock = ProductVariant::where('product_id', $variant->product_id)
+            ->where('id', '!=', $variant->id)
+            ->sum('stock');
+        
+        $newTotalStock = $currentTotalStock + $request->stock;
+        
+        if ($newTotalStock > $product->stock) {
+            return response()->json([
+                'status' => false,
+                'message' => "Vượt quá số lượng trong kho! Tổng sẽ là: {$newTotalStock}/{$product->stock}. Vui lòng giảm số lượng.",
+            ]);
+        }
+
         $variant->update([
             'price' => $request->price,
             'stock' => $request->stock,
         ]);
-
-        // Tự động cập nhật tổng stock của product
-        $this->updateProductStock($variant->product_id);
 
         return response()->json([
             'status' => true,
@@ -131,20 +152,9 @@ class ProductVariantController extends Controller
 
         $variant->delete();
 
-        // Tự động cập nhật tổng stock của product
-        $this->updateProductStock($productId);
-
         return response()->json([
             'status' => true,
-            'message' => 'Xoá biến thể thành công',
+            'message' => 'Xoá biến thể thành công. Lưu ý: Stock sản phẩm gốc không tự động cập nhật, vui lòng kiểm tra lại nếu cần.',
         ]);
-    }
-
-    // Helper: Tự động tính tổng stock từ tất cả variants
-    private function updateProductStock($productId)
-    {
-        $product = Product::findOrFail($productId);
-        $totalStock = ProductVariant::where('product_id', $productId)->sum('stock');
-        $product->update(['stock' => $totalStock]);
     }
 }

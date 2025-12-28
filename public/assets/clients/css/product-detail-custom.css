@@ -26,7 +26,7 @@
 .main-image img {
     width: 100%;
     height: 500px;
-    object-fit: cover;
+    object-fit: contain;
     border: 1px solid #ddd;
 }
 
@@ -132,6 +132,26 @@
     cursor: pointer;
     border-radius: 50%;
 }
+
+/* tắt size khác */
+.color-item.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+    position: relative;
+}
+
+/* Thêm dấu X cho màu tắt */
+.color-item.disabled::after {
+    content: '✖';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 18px;
+}
+
 
 .color-item:hover {
     border-color: #333;

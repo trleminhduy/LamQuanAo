@@ -15,6 +15,7 @@ $(document).ready(function () {
                 console.log("Mini cart data:", data); // Debug
 
                 // Update số lượng badge
+                 $("#header-cart-count").text(data.count);
                 $(".cart-count").text(data.count);
 
                 // Nếu giỏ hàng trống
@@ -127,7 +128,8 @@ $(document).ready(function () {
             errorMessage += "Họ và tên phải có ít nhất 3 ký tự . <br>";
         }
 
-        let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,6}(\.[a-zA-Z]{2,3})?$/;
+        let emailRegex =
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,6}(\.[a-zA-Z]{2,3})?$/;
         if (!emailRegex.test(email)) {
             errorMessage += "Email không hợp lệ, vui lòng thử lại . <br>";
         }
@@ -364,9 +366,9 @@ $(document).ready(function () {
     //Phân trang sản phẩm
     let currentPage = 1;
     $(document).on("click", ".pagination-link", function (e) {
-        // Chỉ dùng AJAX cho trang products (có filter), các trang khác để mặc định
+        // Chỉ dùng AJAX cho trang products (có filter),
         if (!$(".products-sidebar").length) {
-            return; // Không có sidebar = không phải trang products, cho phép link bình thường
+            return; // Không có sidebar = không phải trang products không dùng
         }
 
         e.preventDefault();
@@ -376,7 +378,7 @@ $(document).ready(function () {
         fetchProducts();
     });
 
-    //Hàm ajax load sản phẩm (kết hợp fiter + phân trang)
+    //Hàm ajax load sản phẩm kết hợp fiter + phân trang
     function fetchProducts() {
         let category_id = $(".category-filter.active").data("id") || "";
         let min_price = $(".slider-range").slider("values", 0);
@@ -546,6 +548,189 @@ $(document).ready(function () {
             },
         });
     });
+
+    /////// MÀU SẮC //////////
+
+    /////// PRODUCT DETAIL - MÀU & SIZE ///////
+    
+    
+    function changeMainImage(src) {
+        document.getElementById("mainProductImage").src = src;
+    }
+
+    function increaseQty() {
+        var input = document.getElementById("quantity");
+        var display = document.getElementById("quantity-display");
+        var currentValue = parseInt(input.value);
+        input.value = currentValue + 1;
+        display.textContent = input.value;
+    }
+
+    function decreaseQty() {
+        var input = document.getElementById("quantity");
+        var display = document.getElementById("quantity-display");
+        var currentValue = parseInt(input.value);
+        if (currentValue > 1) {
+            input.value = currentValue - 1;
+            display.textContent = input.value;
+        }
+    }
+
+    function showTab(tabName) {
+        
+        document.querySelectorAll(".tab-content").forEach(function (tab) {
+            tab.classList.remove("active");
+        });
+        document.querySelectorAll(".tab-btn").forEach(function (btn) {
+            btn.classList.remove("active");
+        });
+
+       
+        document.getElementById(tabName).classList.add("active");
+        event.target.classList.add("active");
+    }
+
+   
+    var colorItems = document.querySelectorAll(".color-item");
+    var sizeSelect = document.getElementById("product-size");
+
+    
+    if (colorItems.length === 0 || !sizeSelect) {
+         console.log('Lỗi lỗi ');
+        
+    } else {
+        // Hàm lọc màu theo size
+        function filterAvailableColors(sizeId) {
+            if (!window.productVariants || !sizeId) return;
+
+            
+            var availableColors = [];
+            window.productVariants.forEach(function (variant) {
+                if (variant.size_id == sizeId && variant.stock > 0) {
+                    availableColors.push(String(variant.color_id));
+                }
+            });
+
+           
+            colorItems.forEach(function (item) {
+                var colorId = String(item.dataset.colorId);
+                var isAvailable = availableColors.includes(colorId);
+
+                if (isAvailable) {
+                    item.classList.remove("disabled");
+                } else {
+                    item.classList.add("disabled");
+                    // Nếu đang chọn màu này thì bỏ chọn
+                    if (item.classList.contains("selected")) {
+                        item.classList.remove("selected");
+                    }
+                }
+            });
+
+            // tự động chọn màu đầu tiên còn available
+            var hasSelected = document.querySelector(
+                ".color-item.selected:not(.disabled)"
+            );
+            if (!hasSelected) {
+                var firstAvailable = document.querySelector(
+                    ".color-item:not(.disabled)"
+                );
+                if (firstAvailable) {
+                    firstAvailable.classList.add("selected");
+                }
+            }
+        }
+
+        // cập nhật stock
+        function updateStockQuantity() {
+            var selectedColor = document.querySelector(".color-item.selected");
+            if (!selectedColor) return;
+
+            var colorId = selectedColor.dataset.colorId;
+            var sizeId = sizeSelect.value;
+
+            if (!colorId || !sizeId || !window.productVariants) return;
+
+            // Tìm variant khớp
+            var variant = null;
+            for (var i = 0; i < window.productVariants.length; i++) {
+                var v = window.productVariants[i];
+                if (v.color_id == colorId && v.size_id == sizeId) {
+                    variant = v;
+                    break;
+                }
+            }
+
+            
+            var stockElement = document.getElementById("stock-quantity");
+            if (variant) {
+                stockElement.textContent = variant.stock; //hiện 10
+
+                // Kiểm tra số lượng 
+                var qtyInput = document.getElementById("quantity");
+                var qtyDisplay = document.getElementById("quantity-display");
+                if (parseInt(qtyInput.value) > variant.stock) {
+                    qtyInput.value = 1;
+                    qtyDisplay.textContent = 1;
+                }
+            } else {
+                stockElement.textContent = "0";
+            }
+        }
+
+      
+
+        // click vào màu
+        colorItems.forEach(function (item) {
+            item.addEventListener("click", function () {
+                // 0 cho click vào màu disabled
+                if (this.classList.contains("disabled")) {
+                    return;
+                }
+
+                // Bỏ select
+                colorItems.forEach(function (c) {
+                    c.classList.remove("selected");
+                });
+
+                // Thêm selected 
+                this.classList.add("selected");
+
+               
+                updateStockQuantity();
+            });
+        });
+
+        // 
+        sizeSelect.addEventListener("change", function () {
+            filterAvailableColors(this.value);
+            updateStockQuantity();
+        });
+
+        
+        window.addEventListener("load", function () {
+            if (colorItems.length > 0) {
+                var firstSize = sizeSelect.value;
+                filterAvailableColors(firstSize);
+                updateStockQuantity();
+
+               
+                setTimeout(function () {
+                    colorItems.forEach(function (item) {
+                        if (item.classList.contains("disabled")) {
+                            item.style.display = "inline-block";
+                        }
+                    });
+                }, 50);
+            }
+        });
+    }
+
+   
+    window.changeMainImage = changeMainImage;
+    window.increaseQty = increaseQty;
+    window.decreaseQty = decreaseQty;
+    window.showTab = showTab;
 
     //////////// MINI CART Ở TRÊN HEADER /////////////////
     //////////// **************** /////////////////
@@ -851,8 +1036,7 @@ $(document).ready(function () {
                     $("#apply_coupon")
                         .prop("disabled", true)
                         .text("Đã áp dụng");
-                    
-                    
+
                     $("#coupon_code_hidden").val(response.coupon_code);
                     $("#discount_amount_hidden").val(response.discount);
                 } else {

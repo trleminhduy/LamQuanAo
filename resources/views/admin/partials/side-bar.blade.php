@@ -88,7 +88,10 @@
                      @endif
 
                      {{-- Quản lý khuyến mãi --}}
-                     <li><a href="{{ route('coupons.index') }}"><i class="fa fa-gift"></i> Quản lý khuyến mãi </a></li>
+                     @if ($adminUser->role->permissions->contains('name', 'manage_coupons'))
+                         <li><a href="{{ route('coupons.index') }}"><i class="fa fa-gift"></i> Quản lý khuyến mãi </a>
+                         </li>
+                     @endif
 
                      {{-- contact --}}
 
@@ -101,7 +104,7 @@
 
                      @if ($adminUser->role->permissions->contains('name', 'manage_deliveries'))
                          <li>
-                            <a href="#"><i class="fa fa-truck"></i> Giao hàng <span
+                             <a href="#"><i class="fa fa-truck"></i> Giao hàng <span
                                      class="fa fa-chevron-down"></span></a>
                              <ul class="nav child_menu">
                                  <li><a href="{{ route('admin.deliveries.dashboard') }}">Dashboard</a></li>
@@ -113,12 +116,16 @@
                          </li>
                      @endif
                      {{-- QUản lý hoàn trả --}}
-                     <li class="nav-item">
-                         <a class="nav-link" href="{{ route('admin.refunds.index') }}">
-                                <i class="fa fa-undo"></i>
-                             <span>Yêu cầu hoàn trả</span>
-                         </a>
-                     </li>
+
+                     {{-- Quản lý hoàn trả --}}
+                     @if ($adminUser->role->permissions->contains('name', 'manage_refunds'))
+                         <li class="nav-item">
+                             <a class="nav-link" href="{{ route('admin.refunds.index') }}">
+                                 <i class="fa fa-undo"></i>
+                                 <span>Yêu cầu hoàn trả</span>
+                             </a>
+                         </li>
+                     @endif
 
                  </ul>
              </div>

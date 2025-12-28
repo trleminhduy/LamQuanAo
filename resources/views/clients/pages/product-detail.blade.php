@@ -127,7 +127,7 @@
                 <h3>Mô tả</h3>
                 <p>{{ $product->description }}</p>
             </div>
-            
+
             <div id="reviews" class="tab-content">
                 <div id="reviews-list">
                     @include('clients.components.includes.review-list', ['product' => $product])
@@ -182,96 +182,7 @@
         </div>
     </div>
 
-    <script>
-        // Thay đổi ảnh chính
-        function changeMainImage(src) {
-            document.getElementById('mainProductImage').src = src;
-        }
 
-        // Tăng giảm số lượng
-        function increaseQty() {
-            var hiddenInput = document.getElementById('quantity');
-            var displaySpan = document.getElementById('quantity-display');
-            var current = parseInt(hiddenInput.value);
-            hiddenInput.value = current + 1;
-            displaySpan.textContent = hiddenInput.value;
-        }
-
-        function decreaseQty() {
-            var hiddenInput = document.getElementById('quantity');
-            var displaySpan = document.getElementById('quantity-display');
-            var current = parseInt(hiddenInput.value);
-            if (current > 1) {
-                hiddenInput.value = current - 1;
-                displaySpan.textContent = hiddenInput.value;
-            }
-        }
-
-        // Chọn màu
-        var colorItems = document.querySelectorAll('.color-item');
-        colorItems.forEach(function(item) {
-            item.addEventListener('click', function() {
-                colorItems.forEach(function(c) {
-                    c.classList.remove('selected');
-                });
-                this.classList.add('selected');
-                updateStockQuantity(); // Cập nhật tồn kho khi chọn màu
-            });
-        });
-
-        // Cập nhật tồn kho khi chọn size
-        document.getElementById('product-size').addEventListener('change', function() {
-            updateStockQuantity();
-        });
-
-        // Hàm cập nhật số lượng tồn kho theo variant được chọn
-        function updateStockQuantity() {
-            var colorId = document.querySelector('.color-item.selected')?.dataset.colorId;
-            var sizeId = document.getElementById('product-size').value;
-
-            if (!colorId || !sizeId || !window.productVariants) {
-                return;
-            }
-
-            // Tìm variant khớp với màu và size
-            var selectedVariant = window.productVariants.find(
-                v => v.color_id == colorId && v.size_id == sizeId
-            );
-
-            if (selectedVariant) {
-                document.getElementById('stock-quantity').textContent = selectedVariant.stock;
-
-                // Reset số lượng về 1 nếu vượt quá tồn kho
-                var currentQty = parseInt(document.getElementById('quantity').value);
-                if (currentQty > selectedVariant.stock) {
-                    document.getElementById('quantity').value = 1;
-                    document.getElementById('quantity-display').textContent = 1;
-                }
-            }
-        }
-
-        // Tabs
-        function showTab(tabName) {
-            var tabs = document.querySelectorAll('.tab-content');
-            var buttons = document.querySelectorAll('.tab-btn');
-
-            tabs.forEach(function(tab) {
-                tab.classList.remove('active');
-            });
-            buttons.forEach(function(btn) {
-                btn.classList.remove('active');
-            });
-
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // Tự động chọn màu đầu tiên và cập nhật tồn kho
-        if (colorItems.length > 0) {
-            colorItems[0].classList.add('selected');
-            updateStockQuantity(); // Cập nhật tồn kho ngay khi load trang
-        }
-    </script>
 
     <script>
         // Truyền data từ PHP sang JS
@@ -280,6 +191,9 @@
         window.loginUrl = '{{ route('login') }}';
     </script>
 
+    @push('scripts')
+        <script src="{{ asset('assets/clients/js/product-detail.js') }}"></script>
+    @endpush
 @endsection
 
 

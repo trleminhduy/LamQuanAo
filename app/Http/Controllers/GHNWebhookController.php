@@ -22,6 +22,7 @@ class GHNWebhookController extends Controller
             Log::warning('GHN Webhook: Thiếu OrderCode hoặc Status');
             return response()->json(['success' => false, 'message' => 'Missing data'], 400);
         }
+        
 
         // tìm đơn hàng theo mã GHN
         $order = Order::where('ghn_order_code', $orderCode)->first();
@@ -29,6 +30,12 @@ class GHNWebhookController extends Controller
         if (!$order) {
             Log::warning("GHN Webhook: Không tìm thấy đơn hàng với mã $orderCode");
             return response()->json(['success' => false, 'message' => 'Order not found'], 404);
+        }
+
+        if ($order->delivery_user_id) {
+            
+            Log::info("GHN Webhook: Đơn $orderCode đang giao nội bộ");
+            return response()->json(['success' => true, 'message' => 'Internal delivery'], 200);
         }
 
         // cập nhật status 

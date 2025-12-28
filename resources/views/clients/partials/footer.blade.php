@@ -35,7 +35,7 @@
                                            <i class="icon-mail"></i>
                                        </div>
                                        <div class="footer-address-info">
-                                           <p><a href="mailto:minhdien.dev@gmail.com">trleminhduy@gmail.com</a>
+                                           <p><a href="mailto:trleminhduy@gmail.com">trleminhduy@gmail.com</a>
                                            </p>
                                        </div>
                                    </li>
@@ -96,20 +96,10 @@
                    </div>
                    <div class="col-xl-3 col-md-6 col-sm-12 col-12">
                        <div class="footer-widget footer-newsletter-widget">
-                           <h4 class="footer-title">Bảng tin</h4>
-                           <p>Đăng ký nhận Bản tin hàng tuần của chúng tôi và nhận thông tin cập nhật qua email.
-                           </p>
-                           <div class="footer-newsletter">
-                               <form action="#">
-                                   <input type="email" name="email" placeholder="Email*">
-                                   <div class="btn-wrapper">
-                                       <button class="theme-btn-1 btn" type="submit"><i
-                                               class="fas fa-location-arrow"></i></button>
-                                   </div>
-                               </form>
-                           </div>
+                           <h4 class="footer-title"></h4>
+                          
                            <h5 class="mt-30">Chúng tôi chấp nhận</h5>
-                           <img src="{{asset('assets/clients/img/icons/MoMo_Logo.png')}}" alt="Payment Image" style="width:20%">
+                           <img src="{{asset('assets/clients/img/icons/VNPAY.jpg')}}" alt="Payment Image" style="width:20%">
                        </div>
                    </div>
                </div>
