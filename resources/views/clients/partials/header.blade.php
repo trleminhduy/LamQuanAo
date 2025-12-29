@@ -81,6 +81,8 @@
                                         <li><a href="{{ route('logout') }}">Đăng xuất</a></li>
                                     @else
                                         <li><a href="{{ route('login') }}">Đăng nhập</a></li>
+                                        <li><a href="#" data-bs-toggle="modal"
+                                                data-bs-target="#trackOrderModal">Tra cứu đơn hàng</a></li>
                                     @endif
                                 </ul>
                             </li>

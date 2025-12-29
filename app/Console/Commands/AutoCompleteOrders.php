@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 class AutoCompleteOrders extends Command
 {
     /**
-     * The name and signature of the console command.
+     *
      *
      * @var string
      */
@@ -17,7 +17,7 @@ class AutoCompleteOrders extends Command
     
 
     /**
-     * The console command description.
+     * 
      *
      * @var string
      */

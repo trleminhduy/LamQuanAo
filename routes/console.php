@@ -8,5 +8,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-// Tự động hoàn tất sau 3 ngày
+// Tự động hoàn tất sau 3 ngày vào 2 giờ sáng
 Schedule::command('orders:auto-complete')->dailyAt('02:00');

@@ -15,14 +15,21 @@ class SearchController extends Controller
             return redirect()->back()->with('error', 'Vui lòng nhập từ khóa tìm kiếm');
         }
         
-        // Tìm kiếm tên sản phẩm bắt đầu bằng keyword hoặc có keyword là từ riêng 
-        $products = Product::where(function($query) use ($keyword) {
-            $query->where('name', 'LIKE', "$keyword%")  // Bắt đầu bằng keyword
-                  ->orWhere('name', 'LIKE', "% $keyword%"); // keyword là từ riêng 
-        })
-        ->paginate(12)
-        ->appends(['keyword' => $keyword]);
+        // Xử lý keyword từ voice search: loại bỏ dấu câu, khoảng trắng thừa
+        $keyword = trim($keyword); // Xóa khoảng trắng 2 đầu
+        $keyword = rtrim($keyword, '.,!?;:'); // Xóa dấu câu cuối
+        $keyword = preg_replace('/\s+/', ' ', $keyword); // Xóa khoảng trắng thừa giữa các từ
+        
+    
+        $products = Product::where('name', 'LIKE', "%$keyword%")
+            ->paginate(12)
+            ->appends(['keyword' => $keyword]);
             
+             
+        // $products = Product::where('id', $keyword)
+        //     ->orWhere('name', 'LIKE', "%$keyword%")
+        //     ->paginate(12)
+        //     ->appends(['keyword' => $keyword]);
         return view('clients.pages.products-search', compact('keyword', 'products'));
     }
 }

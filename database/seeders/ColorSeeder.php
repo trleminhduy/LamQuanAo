@@ -28,4 +28,6 @@ class ColorSeeder extends Seeder
 
         DB::table('colors')->upsert($colors, ['name']);
     }
+
+    //php artisan db:seed --class=ColorSeeder
 }

@@ -56,6 +56,7 @@
                                                     <th>Trạng thái</th>
                                                     <th>Hành động</th>
                                                     <th> Hành động</th>
+                                                    <th>Lượt bán biến thể</th>
                                                 </tr>
                                             </thead>
 
@@ -93,6 +94,9 @@
                                                                 data-id="{{ $product->id }}">
                                                                 <i class="fa fa-trash"> </i>Xóa
                                                             </a>
+                                                        </td>
+                                                        <td>
+                                                            {{ $totalSold[$product->id] ?? 0 }} 
                                                         </td>
                                                     </tr>
                                                     <!-- Modal -->

@@ -24,8 +24,10 @@ class GHNWebhookController extends Controller
         }
         
 
-        // tìm đơn hàng theo mã GHN
-        $order = Order::where('ghn_order_code', $orderCode)->first();
+        // tìm đơn hàng theo mã GHN (eager load items + variant để cộng stock)
+        $order = Order::with('items.productVariant')
+            ->where('ghn_order_code', $orderCode)
+            ->first();
 
         if (!$order) {
             Log::warning("GHN Webhook: Không tìm thấy đơn hàng với mã $orderCode");
@@ -68,12 +70,16 @@ class GHNWebhookController extends Controller
 
             case 'return':
             case 'returned':
-                $order->status = 'cancelled'; 
+                $order->status = 'cancelled';
+                
+                $this->restoreStock($order);
                 break;
 
             case 'cancel':
             case 'exception':
-                $order->status = 'cancelled'; 
+                $order->status = 'cancelled';
+            
+                $this->restoreStock($order);
                 break;
 
             default:
@@ -90,5 +96,19 @@ class GHNWebhookController extends Controller
             'success' => true,
             'message' => 'Webhook processed successfully'
         ], 200);
+    }
+
+    
+    private function restoreStock(Order $order)
+    {
+        foreach ($order->items as $item) {
+            $variant = $item->productVariant;
+            if ($variant) {
+                $variant->stock += $item->quantity;
+                $variant->save();
+                
+                Log::info("GHN Webhook: Restored stock for variant #{$variant->id} (+{$item->quantity})");
+            }
+        }
     }
 }

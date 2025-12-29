@@ -525,6 +525,7 @@ $(document).ready(function () {
                 console.log("Response:", response);
                 if (response.success) {
                     toastr.success(response.message);
+                    
                     // Reload mini cart
                     if (typeof window.loadMiniCart === "function") {
                         window.loadMiniCart();
@@ -623,9 +624,18 @@ $(document).ready(function () {
     function increaseQty() {
         var input = document.getElementById("quantity");
         var display = document.getElementById("quantity-display");
+        var stockElement = document.getElementById("stock-quantity");
+
         var currentValue = parseInt(input.value);
-        input.value = currentValue + 1;
-        display.textContent = input.value;
+        var maxStock = parseInt(stockElement.textContent);
+        
+        if(currentValue < maxStock){
+            input.value = currentValue + 1;
+            display.textContent = input.value;
+        }else{
+            toastr.error("Đạt tối đa số lượng");
+        }
+       
     }
 
     function decreaseQty() {
@@ -637,6 +647,8 @@ $(document).ready(function () {
             display.textContent = input.value;
         }
     }
+
+
 
     function showTab(tabName) {
         document.querySelectorAll(".tab-content").forEach(function (tab) {

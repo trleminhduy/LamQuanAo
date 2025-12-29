@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -75,7 +76,16 @@ class ProductController extends Controller
       $products = Product::with('category', 'supplier', 'images')->get();
       $suppliers = Supplier::all();
       $categories = Category::all();
-      return view('admin.pages.products', compact('products', 'suppliers', 'categories'));
+      $totalSold = Product::select(
+         'products.id',
+         DB::raw('SUM(COALESCE(order_items.quantity, 0)) as sold_quantity')
+      )
+         ->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+         ->leftJoin('order_items', 'product_variants.id', '=', 'order_items.product_variant_id')
+         ->groupBy('products.id')
+         ->pluck('sold_quantity', 'products.id')
+         ->toArray();
+      return view('admin.pages.products', compact('products', 'suppliers', 'categories', 'totalSold', ));
    }
 
    public function updateProduct(Request $request)
@@ -148,12 +158,12 @@ class ProductController extends Controller
       $request->validate([
          'product_id' => 'required|exists:products,id',
       ]);
-      
+
       $product = Product::findOrFail($request->product_id);
-      
+
       // Kiểm tra biến thể có trong cart
       $variants = $product->variants;
-      
+
       foreach ($variants as $variant) {
          // Kiểm tra trong cart
          if ($variant->cartItems()->count() > 0) {
@@ -162,7 +172,7 @@ class ProductController extends Controller
                'message' => 'Không thể xoá sản phẩm vì đang có biến thể đã được thêm vào giỏ hàng',
             ]);
          }
-         
+
          // Kiểm tra trong đơn hàng
          if ($variant->orderItems()->count() > 0) {
             return response()->json([
@@ -171,20 +181,20 @@ class ProductController extends Controller
             ]);
          }
       }
-      
+
       // Xoá tất cả variants của sản phẩm
       $product->variants()->delete();
-      
+
       // Xoá ảnh cũ
       $oldImages = ProductImage::where('product_id', $product->id)->get();
       foreach ($oldImages as $oldImage) {
          Storage::disk('public')->delete($oldImage->image);
       }
       ProductImage::where('product_id', $product->id)->delete();
-      
+
       // Xoá sản phẩm
       $product->delete();
-      
+
       return response()->json([
          'status' => true,
          'message' => 'Xoá sản phẩm thành công',

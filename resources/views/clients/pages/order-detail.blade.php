@@ -60,8 +60,8 @@
                         @foreach ($order->items as $item)
                             <tr>
                                 <td>
-                                    <img src="{{ asset('storage/' . $item->productVariant->product->image) }}"
-                                        alt="" width="50">
+                                    <img src="{{ $item->productVariant->product->firstImage?->image ? asset('storage/' . $item->productVariant->product->firstImage->image) : asset('storage/uploads/products/default-product.png') }}"
+                                        alt="{{ $item->productVariant->product->name }}" width="50">
                                 </td>
                                 <td>
                                     {{ $item->productVariant->product->name }}
@@ -72,7 +72,7 @@
                                     </small>
 
                                     {{-- Hiển thị trạng thái refund nếu có --}}
-                                    @if ($item->refund)
+                                    {{-- @if ($item->refund)
                                         <br>
                                         @if ($item->refund->status == 'pending')
                                             <span class="badge bg-warning">Đang chờ duyệt hoàn trả</span>
@@ -81,7 +81,7 @@
                                         @elseif($item->refund->status == 'rejected')
                                             <span class="badge bg-danger">Từ chối hoàn trả</span>
                                         @endif
-                                    @endif
+                                    {{-- @endif --}}
                                 </td>
                                 <td>{{ number_format($item->productVariant->price, 0, ',', '.') }} đ</td>
                                 <td>{{ $item->quantity }}</td>
@@ -89,13 +89,13 @@
                                     {{ number_format($item->productVariant->price * $item->quantity, 0, ',', '.') }} đ
 
                                     {{-- Button yêu cầu hoàn trả --}}
-                                    @if ($order->status == 'delivered' && !$item->refund)
+                                    {{-- @if ($order->status == 'delivered' && !$item->refund)
                                         <br>
                                         <button class="btn btn-sm btn-outline-danger mt-2"
                                             onclick="openRefundModal({{ $item->id }}, '{{ $item->productVariant->product->name }}', {{ $item->quantity }})">
                                             <i class="fas fa-undo"></i> Hoàn trả
                                         </button>
-                                    @endif
+                                    {{-- @endif --}}
                                 </td>
                             </tr>
                         @endforeach
@@ -130,7 +130,7 @@
                             <i class="fas fa-truck"></i> Đơn hàng đã được giao! Vui lòng xác nhận đã nhận hàng.
                         </div>
                         <form action="{{ route('orders.confirmReceived', $order->id) }}" method="POST"
-                            onsubmit="return confirm('Xác nhận bạn đã nhận được hàng?')">
+                            onsubmit="return confirm('Xác nhận bạn đã nhận được hàng? Sẽ không thể hoàn trả sau khi bấm')">
                             @csrf
                             <button type="submit" class="btn btn-success btn-lg mt-2">
                                 <i class="fas fa-check-circle"></i> Đã nhận được hàng

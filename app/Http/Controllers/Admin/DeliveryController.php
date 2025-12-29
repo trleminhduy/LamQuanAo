@@ -60,7 +60,7 @@ class DeliveryController extends Controller
         ]);
 
         //check trạng thái đơn
-        $validateStatuses = ['pending', 'processing', 'confirmed'];
+        $validateStatuses = [ 'processing', 'confirmed'];
         if (!in_array($order->status, $validateStatuses)) {
             toastr()->error('Đơn hàng không hợp lệ để phân công giao hàng.');
             return redirect()->route('admin.deliveries.index');

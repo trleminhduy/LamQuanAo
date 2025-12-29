@@ -228,7 +228,7 @@
                                 @for ($i = 0; $i < min(3, $orders->count()); $i++)
                                     <tr>
                                         <td scope="row">{{ $orders[$i]->id }}</td>
-                                        <td>{{ $orders[$i]->shippingAddress->full_name }}</td>
+                                        <td>{{ $orders[$i]->shippingAddress->full_name ?? 'N/A' }}</td>
                                         <td>{{ number_format($orders[$i]->total_price, 0, ',', '.') }} đ</td>
                                         <td>
                                             @if ($orders[$i]->status == 'pending')

@@ -67,7 +67,7 @@
                                                         <td>{{ $order->user->name ?? 'N/A' }}</td>
 
                                                         <td><a href="javascript:void(0)" data-toggle="modal"
-                                                                data-target="#addressShippingModal-{{ $order->id }}">{{ $order->shippingAddress->full_name }}</a>
+                                                                data-target="#addressShippingModal-{{ $order->id }}">{{ $order->shippingAddress->full_name ?? 'N/A' }}</a>
                                                         </td>
                                                         <td>{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</td>
 
@@ -203,10 +203,10 @@
                                                                 aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Người nhận: {{ $order->shippingAddress->full_name }}</p>
-                                                            <p>Số điện thoại: {{ $order->shippingAddress->phone }}</p>
-                                                            <p>Địa chỉ: {{ $order->shippingAddress->address }}</p>
-                                                            <p>Thành phố: {{ $order->shippingAddress->city }}</p>
+                                                            <p>Người nhận: {{ $order->shippingAddress->full_name ?? 'N/A' }} </p>
+                                                            <p>Số điện thoại: {{ $order->shippingAddress->phone ?? 'N/A' }}</p>
+                                                            <p>Địa chỉ: {{ $order->shippingAddress->address ?? 'N/A' }}</p>
+                                                            <p>Thành phố: {{ $order->shippingAddress->city ?? 'N/A' }}</p>
 
                                                         </div>
 
