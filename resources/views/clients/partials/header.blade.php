@@ -36,7 +36,7 @@
                                             href="@if (Auth::check()) {{ route('cart.index') }} @else {{ route('guest.cart.index') }} @endif">
                                             Giỏ hàng
                                             (<span id="header-cart-count">
-                                                @if (Auth::check())
+                                            @if (Auth::check())
                                                     {{ \App\Models\CartItem::where('user_id', Auth::id())->sum('quantity') }}
                                                 @else
                                                     {{ session('cart') ? array_sum(array_column(session('cart'), 'quantity')) : 0 }}
@@ -77,7 +77,7 @@
                                 <ul>
                                     @if (Auth::check())
                                         <li><a href="{{ route('account') }}">Tài khoản</a></li>
-                                        <li><a href="{{ route('about') }}">Yêu thích</a></li>
+                                        <li><a href="{{ route('wishlist') }}">Yêu thích</a></li>
                                         <li><a href="{{ route('logout') }}">Đăng xuất</a></li>
                                     @else
                                         <li><a href="{{ route('login') }}">Đăng nhập</a></li>

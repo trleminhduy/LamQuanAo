@@ -88,7 +88,7 @@ class RefundController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Gửi yêu cầu hoàn trả thành công! Chúng tôi sẽ xử lý trong 24-48h.'
+            'message' => 'Gửi yêu cầu hoàn trả thành công! Chúng tôi sẽ xử lý sớm nhất có thể.'
         ]);
     }
 }

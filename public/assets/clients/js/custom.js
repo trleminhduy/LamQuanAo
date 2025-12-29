@@ -549,6 +549,69 @@ $(document).ready(function () {
         });
     });
 
+    ////// YÊU THÍCH/////// //
+
+    // Thêm vào wishlist (trang product detail)
+    if(document.querySelector('.btn-wishlist')) {
+        document.querySelector('.btn-wishlist').addEventListener('click', function() {
+            const productId = this.dataset.productId;
+
+            fetch('/wishlist/add',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ product_id: productId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    toastr.success(data.message || 'Đã thêm vào danh sách yêu thích!');
+                } else {
+                    toastr.error(data.message || 'Đã có lỗi xảy ra!');
+                }
+            })
+            .catch(error => {
+                toastr.error('Có lỗi xảy ra!');
+                console.error('Error:', error);
+            });
+        });
+    }
+
+    // Xóa khỏi wishlist (trang wishlist)
+    window.removeFromWishlist = function(productId) {
+        if (!confirm('Bạn muốn xóa sản phẩm này khỏi danh sách yêu thích?')) return;
+        
+        fetch('/wishlist/remove', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ product_id: productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success(data.message || 'Đã xóa khỏi danh sách yêu thích!');
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);
+            } else {
+                toastr.error(data.message || 'Có lỗi xảy ra!');
+            }
+        })
+        .catch(error => {
+            toastr.error('Có lỗi xảy ra!');
+            console.error('Error:', error);
+        });
+    };
+
+
+
+
+
     /////// MÀU SẮC ////////////////////////////////////////
 
     /////// PRODUCT DETAIL - MÀU & SIZE ///////

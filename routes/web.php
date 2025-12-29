@@ -20,6 +20,7 @@ use App\Http\Controllers\GHNWebhookController;
 
 use App\Http\Controllers\Clients\GuestCheckoutController;
 use App\Http\Controllers\Clients\RefundController;
+use App\Http\Controllers\Clients\WishController;
 
 // Webhook ghn 
 Route::post('/webhook/ghn', [GHNWebhookController::class, 'handle']);
@@ -125,7 +126,11 @@ Route::middleware(['auth.custom'])->group(function () {
     //Yêu cầu hoàn trả
 
     Route::post('/refund/request', [RefundController::class, 'store'])->name('refund.store');
-    
+
+    //wishlist
+    Route::get('/wishlist', [WishController::class, 'index'])->name('wishlist');
+    Route::post('/wishlist/add', [WishController::class, 'add'])->name('wishlist.add');
+    Route::post('/wishlist/remove', [WishController::class, 'remove'])->name('wishlist.remove');
 });
 
 // Routes momo

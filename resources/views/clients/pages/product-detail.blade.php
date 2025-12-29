@@ -109,7 +109,9 @@
                 <!-- Nút hành động -->
                 <div class="product-actions">
                     <button class="btn-add-cart">Thêm vào giỏ hàng</button>
-                    <button class="btn-wishlist">♡ Yêu thích</button>
+                    <button class="btn-wishlist" data-product-id="{{ $product->id }}">
+                        Yêu thích
+                    </button>
                 </div>
 
                 <!-- Chia sẻ -->
