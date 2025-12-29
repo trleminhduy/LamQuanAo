@@ -14,6 +14,7 @@ class ProductController extends Controller
         $categories = Category::with('products')->get();
 
         $products = Product::with('firstImage')->where('status', 'in_stock')->paginate(9);
+        
 
 
         //Thêm ảnh nếu ảnh chưa có thì lấy ảnh default trong thư mục
@@ -77,7 +78,7 @@ class ProductController extends Controller
 
     //Trang chi tiết sản phẩm
     public function detail($slug){
-        $product = Product::with(['category','images','variants.size','variants.color','reviews.user'])
+        $product = Product::with(['category','images','variants.size','variants.color','reviews.user',])
             ->where('slug', $slug)
             ->firstOrFail();
 

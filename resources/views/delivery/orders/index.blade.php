@@ -39,8 +39,8 @@
                                         <tr>
                                             <td>#{{ $order->id }}</td>
                                             <td>
-                                                {{ $order->user->name }}<br>
-                                                <small class="text-muted">{{ $order->user->phone_number }}</small>
+                                                {{ $order->user?->name ?? 'N/A' }}<br>
+                                                <small class="text-muted">{{ $order->user?->phone_number ?? 'N/A' }}</small>
                                             </td>
                                             <td>
                                                 {{ $order->shippingAddress->address }}, 

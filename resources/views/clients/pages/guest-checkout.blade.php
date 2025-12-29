@@ -15,7 +15,7 @@
                             <h4 class="title-2">Thông tin người nhận</h4>
                             <div class="ltn__checkout-single-content-info">
                                 <input type="text" name="full_name" placeholder="Họ tên *" required>
-                                <input type="tel" name="phone" placeholder="Số điện thoại *" pattern="0[0-9]{9}"
+                                <input type="text" name="phone" placeholder="Số điện thoại *" pattern="0[0-9]{9}"
                                     title="Số điện thoại phải là 10 chữ số và bắt đầu bằng 0" maxlength="10" required>
                                 <input type="email" name="email" placeholder="Email (không bắt buộc)">
                             </div>

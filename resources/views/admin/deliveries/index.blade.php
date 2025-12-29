@@ -59,8 +59,8 @@
                         @forelse($orders as $order)
                             <tr>
                                 <td>#{{ $order->id }}</td>
-                                <td>{{ $order->user->name ?? 'N/A' }}</td>
-                                <td>{{ $order->shippingAddress->address ?? 'N/A' }}</td>
+                                <td>{{ $order->user?->name ?? 'N/A' }}</td>
+                                <td>{{ $order->shippingAddress?->address ?? 'N/A' }}</td>
                                 <td>
                                     @if ($order->deliveryUser)
                                         <span class="custom-badge badge-info">{{ $order->deliveryUser->name }}</span>
@@ -80,7 +80,7 @@
                                     @endif
                                 </td>
                                 <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
-                                <td>{{ $order->shippingAddress->phone ?? 'N/A' }}</td>
+                                <td>{{ $order->shippingAddress?->phone ?? 'N/A' }}</td>
                                 <td>
                                     <a href="{{ route('admin.deliveries.assignForm', $order) }}"
                                         class="btn btn-sm btn-primary">

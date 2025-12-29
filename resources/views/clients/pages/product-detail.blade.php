@@ -38,7 +38,13 @@
                 </div>
 
                 <div class="product-price-detail">
-                    <span>{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                    <span id="product-price">
+                        @if ($product->variants && $product->variants->count() > 0)
+                            {{ number_format($product->variants->first()->price, 0, ',', '.') }} VNĐ
+                        @else
+                            {{ number_format($product->price, 0, ',', '.') }} VNĐ
+                        @endif
+                    </span>
                 </div>
 
                 <div class="product-category">

@@ -43,7 +43,7 @@ class CheckoutController extends Controller
             $subtotal += $price * $item->quantity;
         }
 
-        // Phí vận chuyển (có thể tùy chỉnh)
+        
         $shippingFee = 30000; // 30k
 
         // Tổng cộng

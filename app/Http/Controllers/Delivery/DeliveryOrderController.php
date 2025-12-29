@@ -92,4 +92,32 @@ class DeliveryOrderController extends Controller
         toastr()->success('Hoàn thành giao');
         return back();
     }
+
+     public function customerRejected(Request $request, Order $order){
+
+        if($order->delivery_user_id !== Auth::guard('admin')->id()){
+            abort(403);
+        }
+
+        if($order->status !='shipping'){
+            toastr()->error('Đơn hàng chưa được giao.');
+            return back();
+        }
+
+        $request->validate([
+            'reason' => 'required|string|max:1000',
+        ]);
+
+        //cập nhật trạng thái
+        $order->update([
+            'status'=>'processing',
+            'delivery_note'=>'Khách từ chối nhận hàng: '.$request->reason,
+            'delivery_user_id'=>null, //kh gán lại
+        ]);
+        toastr()->success('Đã báo cáo khách từ chối nhận hàng.');
+        return redirect()->route('delivery.orders.index');
+
+
+
+    }
 }

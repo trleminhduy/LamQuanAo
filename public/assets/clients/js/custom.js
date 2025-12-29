@@ -15,7 +15,7 @@ $(document).ready(function () {
                 console.log("Mini cart data:", data); // Debug
 
                 // Update số lượng badge
-                 $("#header-cart-count").text(data.count);
+                $("#header-cart-count").text(data.count);
                 $(".cart-count").text(data.count);
 
                 // Nếu giỏ hàng trống
@@ -549,11 +549,10 @@ $(document).ready(function () {
         });
     });
 
-    /////// MÀU SẮC //////////
+    /////// MÀU SẮC ////////////////////////////////////////
 
     /////// PRODUCT DETAIL - MÀU & SIZE ///////
-    
-    
+
     function changeMainImage(src) {
         document.getElementById("mainProductImage").src = src;
     }
@@ -577,7 +576,6 @@ $(document).ready(function () {
     }
 
     function showTab(tabName) {
-        
         document.querySelectorAll(".tab-content").forEach(function (tab) {
             tab.classList.remove("active");
         });
@@ -585,25 +583,20 @@ $(document).ready(function () {
             btn.classList.remove("active");
         });
 
-       
         document.getElementById(tabName).classList.add("active");
         event.target.classList.add("active");
     }
 
-   
     var colorItems = document.querySelectorAll(".color-item");
     var sizeSelect = document.getElementById("product-size");
 
-    
     if (colorItems.length === 0 || !sizeSelect) {
-         console.log('Lỗi lỗi ');
-        
+        console.log("Lỗi lỗi ");
     } else {
         // Hàm lọc màu theo size
         function filterAvailableColors(sizeId) {
             if (!window.productVariants || !sizeId) return;
 
-            
             var availableColors = [];
             window.productVariants.forEach(function (variant) {
                 if (variant.size_id == sizeId && variant.stock > 0) {
@@ -611,7 +604,6 @@ $(document).ready(function () {
                 }
             });
 
-           
             colorItems.forEach(function (item) {
                 var colorId = String(item.dataset.colorId);
                 var isAvailable = availableColors.includes(colorId);
@@ -620,7 +612,7 @@ $(document).ready(function () {
                     item.classList.remove("disabled");
                 } else {
                     item.classList.add("disabled");
-                    // Nếu đang chọn màu này thì bỏ chọn
+                    
                     if (item.classList.contains("selected")) {
                         item.classList.remove("selected");
                     }
@@ -661,14 +653,23 @@ $(document).ready(function () {
                 }
             }
 
-            
             var stockElement = document.getElementById("stock-quantity");
+            var priceElement = document.getElementById("product-price");
+
             if (variant) {
                 stockElement.textContent = variant.stock; //hiện 10
 
-                // Kiểm tra số lượng 
+                if (priceElement && variant.price) {
+                    var formattedPrice = new Intl.NumberFormat("vi-VN").format(
+                        variant.price
+                    );
+
+                    priceElement.textContent = formattedPrice + " VNĐ";
+                }
+
                 var qtyInput = document.getElementById("quantity");
                 var qtyDisplay = document.getElementById("quantity-display");
+
                 if (parseInt(qtyInput.value) > variant.stock) {
                     qtyInput.value = 1;
                     qtyDisplay.textContent = 1;
@@ -677,8 +678,6 @@ $(document).ready(function () {
                 stockElement.textContent = "0";
             }
         }
-
-      
 
         // click vào màu
         colorItems.forEach(function (item) {
@@ -693,28 +692,25 @@ $(document).ready(function () {
                     c.classList.remove("selected");
                 });
 
-                // Thêm selected 
+                // Thêm selected
                 this.classList.add("selected");
 
-               
                 updateStockQuantity();
             });
         });
 
-        // 
+        //
         sizeSelect.addEventListener("change", function () {
             filterAvailableColors(this.value);
             updateStockQuantity();
         });
 
-        
         window.addEventListener("load", function () {
             if (colorItems.length > 0) {
                 var firstSize = sizeSelect.value;
                 filterAvailableColors(firstSize);
                 updateStockQuantity();
 
-               
                 setTimeout(function () {
                     colorItems.forEach(function (item) {
                         if (item.classList.contains("disabled")) {
@@ -726,7 +722,6 @@ $(document).ready(function () {
         });
     }
 
-   
     window.changeMainImage = changeMainImage;
     window.increaseQty = increaseQty;
     window.decreaseQty = decreaseQty;

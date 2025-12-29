@@ -9857,8 +9857,9 @@ input.cart-plus-minus-box {
   vertical-align: middle; }
 
 .cart-product-image img {
-  max-width: 100px; }
-
+  max-width: 100px; 
+  
+}
 .cart-product-remove {
   cursor: pointer; }
 

@@ -99,10 +99,29 @@
                                     </button>
                                 </form>
                             @elseif($order->status == 'shipping')
+                                <!-- Nút hoàn thành giao hàng -->
                                 <form method="POST" action="{{ route('admin.deliveries.complete', $order) }}" style="display:inline;">
                                     @csrf
-                                    <button type="submit" class="btn btn-primary" onclick="return confirm('Xác nhận đã giao hàng thành công?')">
+                                    <button type="submit" class="btn btn-success" onclick="return confirm('Xác nhận đã giao hàng thành công?')">
                                         <i class="fa fa-check-circle"></i> Hoàn thành giao hàng
+                                    </button>
+                                </form>
+                                
+                                <span class="mx-2">hoặc</span>
+                                
+                                <!-- Form báo khách không nhận -->
+                                <form method="POST" action="{{ route('delivery.orders.customerRejected', $order) }}" style="display:inline;">
+                                    @csrf
+                                    <select name="reason" class="form-control" style="display:inline-block; width:auto;" required>
+                                        <option value="">-- Chọn lý do không giao được --</option>
+                                        <option value="Không nghe máy">Không nghe máy</option>
+                                        <option value="Khách không có nhà">Khách không có nhà</option>
+                                        <option value="Từ chối nhận hàng">Từ chối nhận hàng</option>
+                                        <option value="Sai địa chỉ">Sai địa chỉ</option>
+                                        <option value="Đổi ý không mua">Đổi ý không mua</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Xác nhận khách không nhận hàng?')">
+                                        <i class="fa fa-times-circle"></i> Khách không nhận
                                     </button>
                                 </form>
                             @else
@@ -124,4 +143,5 @@
         </div>
     </div>
 </div>
+
 @endsection

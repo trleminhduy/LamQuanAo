@@ -74,8 +74,8 @@
                          <li><a href="#"><i class="fa fa-truck"></i> Quản lý nhà cung cấp <span
                                      class="fa fa-chevron-down"></span></a>
                              <ul class="nav child_menu">
-                                 <li><a href="general_elements.html">Thêm nhà cung cấp</a></li>
-                                 <li><a href="media_gallery.html">Danh sách nhà cung cấp</a></li>
+                                 <li><a href="{{ route('admin.supplier.add') }}">Thêm nhà cung cấp</a></li>
+                                 <li><a href="{{ route('admin.suppliers.index') }}">Danh sách nhà cung cấp</a></li>
                              </ul>
                          </li>
                      @endif

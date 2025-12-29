@@ -19,8 +19,8 @@ class RedirectIfNotAuthenticated
     public function handle(Request $request, Closure $next): Response
     {
         // Nếu chưa đăng nhập bằng guard web
-        //Admin
-        if ($request->is('admin') || $request->is('admin/*')) {
+        //Admin hoặc Delivery
+        if ($request->is('admin') || $request->is('admin/*') || $request->is('delivery') || $request->is('delivery/*')) {
             if (!Auth::guard('admin')->check()) {
                 toastr()->error('Vui lòng đăng nhập để truy cập trang này');
                 return redirect()->route('admin.login');

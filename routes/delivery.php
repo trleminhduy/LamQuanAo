@@ -9,4 +9,10 @@ Route::prefix('delivery')->middleware(['auth.custom', 'permission:manage_deliver
     Route::get('/orders/{order}', [DeliveryOrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{order}/start', [DeliveryOrderController::class, 'start'])->name('orders.start');
     Route::post('/orders/{order}/complete', [DeliveryOrderController::class, 'complete'])->name('orders.complete');
+
+    //toute reject
+
+
+    Route::post('/orders/{order}/customer-rejected', [DeliveryOrderController::class, 'customerRejected'])
+        ->name('orders.customerRejected');
 });

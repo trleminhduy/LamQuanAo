@@ -57,9 +57,9 @@
                             @forelse($recentOrders as $order)
                             <tr>
                                 <td>#{{ $order->id }}</td>
-                                <td>{{ $order->user->name }}</td>
-                                <td>{{ Str::limit($order->shippingAddress->address, 40) }}</td>
-                                <td>{{ $order->shippingAddress->phone }}</td>
+                                <td>{{ $order->user?->name ?? 'N/A' }}</td>
+                                <td>{{ Str::limit($order->shippingAddress?->address ?? 'N/A', 40) }}</td>
+                                <td>{{ $order->shippingAddress?->phone ?? 'N/A' }}</td>
                                 <td>
                                     @if($order->status == 'assigned')
                                         <span class="badge badge-primary">Chờ giao</span>
