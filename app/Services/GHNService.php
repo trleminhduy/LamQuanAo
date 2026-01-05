@@ -235,4 +235,68 @@ class GHNService
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
+
+    
+    /*
+    public function getOrderTracking($orderCode)
+    {
+        
+        if (env('APP_ENV') === 'local' || $orderCode === 'DEMO') {
+            return [
+                'success' => true,
+                'status' => 'delivering',
+                'current_status' => 'Shipper đang giao hàng đến bạn',
+                'log' => [
+                    [
+                        'status' => 'Shipper đang giao hàng',
+                        'updated_date' => now()->format('Y-m-d H:i:s'),
+                        'location' => 'Đang giao tại Quận 3, TP. Hồ Chí Minh'
+                    ],
+                    [
+                        'status' => 'Đã đến trạm giao hàng',
+                        'updated_date' => now()->subHour()->format('Y-m-d H:i:s'),
+                        'location' => 'Trạm C - Bưu cục Quận 3, TP.HCM'
+                    ],
+                    [
+                        'status' => 'Đã đến trạm phân loại',
+                        'updated_date' => now()->subHours(3)->format('Y-m-d H:i:s'),
+                        'location' => 'Trạm B - Hub Tân Bình, TP.HCM'
+                    ],
+                    [
+                        'status' => 'Đã lấy hàng từ người gửi',
+                        'updated_date' => now()->subHours(5)->format('Y-m-d H:i:s'),
+                        'location' => 'Trạm A - Bưu cục Quận 1, TP.HCM'
+                    ]
+                ],
+                'expected_delivery_time' => now()->addHours(2)->format('Y-m-d H:i:s'),
+            ];
+        }
+        
+        try {
+            $response = Http::withHeaders([
+                'Token' => $this->token,
+            ])->post("{$this->apiUrl}/v2/shipping-order/detail", [
+                'order_code' => $orderCode,
+            ]);
+            
+            if ($response->successful()) {
+                $data = $response->json()['data'];
+                return [
+                    'success' => true,
+                    'status' => $data['status'] ?? '',
+                    'current_status' => $data['current_status'] ?? '',
+                    'log' => $data['log'] ?? [],
+                    'expected_delivery_time' => $data['expected_delivery_time'] ?? null,
+                ];
+            }
+            return [
+                'success' => false,
+                'message' => 'Không thể lấy thông tin tracking đơn hàng GHN'
+            ];
+        } catch (\Exception $e) {
+            Log::error('Lỗi lấy thông tin tracking GHN', ['error' => $e->getMessage()]);
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+    */
 }

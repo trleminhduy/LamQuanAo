@@ -189,6 +189,13 @@
                                                 <button class="btn btn-info pull-right" disabled style="margin-right: 5px;">
                                                     <i class="fa fa-check"></i> Đã gửi GHN: {{ $order->ghn_order_code }}
                                                 </button>
+
+                                                {{-- 
+                                                <button class="btn btn-warning pull-right view-tracking"
+                                                    data-id="{{ $order->id }}" style="margin-right: 5px;">
+                                                    <i class="fa fa-map-marker"></i> Tracking
+                                                </button>
+                                                --}}
                                             @endif
 
                                             @if ($order->status == 'pending')
@@ -210,6 +217,102 @@
         </div>
     </div>
     <!-- /page content -->
+
+    {{-- 
+    <div class="modal fade" id="trackingModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fa fa-truck"></i> Tracking Đơn Hàng</h4>
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <div class="modal-body" id="tracking-content">
+                    <div class="text-center">
+                        <i class="fa fa-spinner fa-spin fa-3x"></i>
+                        <p>Đang tải thông tin tracking</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    --}}
+
 @endsection
 
 {{-- bất kỳ file nào cũng cần phải có @extends --}}
+
+{{-- 
+<script>
+(function() {
+    'use strict';
+    
+    // Đợi cả window và jQuery load xong
+    function initTracking() {
+        if (typeof jQuery === 'undefined') {
+            console.log('jQuery chưa load, đợi...');
+            setTimeout(initTracking, 100);
+            return;
+        }
+        
+        console.log('jQuery loaded, init tracking...');
+        
+        jQuery(document).ready(function($) {
+            console.log('Document ready, binding events...');
+            
+            // Handle tracking button click
+            $(document).on('click', '.view-tracking', function(e) {
+                e.preventDefault();
+                var orderId = $(this).data('id');
+                console.log('Tracking button clicked, Order ID:', orderId);
+                
+                $('#trackingModal').modal('show');
+                
+                $.ajax({
+                    url: '/admin/api/orders/' + orderId + '/tracking',
+                    method: 'GET',
+                    success: function(response) {
+                        console.log('Response received:', response);
+                        
+                        if (response.success) {
+                            var html = '<div class="alert alert-info">';
+                            html += '<h5><strong>Trạng thái:</strong> ' + (response.current_status || 'N/A') + '</h5>';
+                            html += '<p><strong>Dự kiến giao:</strong> ' + (response.expected_delivery_time || 'Chưa có') + '</p>';
+                            html += '</div><h5 class="mt-3">Lịch sử vận chuyển:</h5><div style="padding-left: 20px; border-left: 2px solid #ddd;">';
+                            
+                            if (response.log && response.log.length > 0) {
+                                response.log.forEach(function(log, i) {
+                                    html += '<div style="margin-bottom: 20px; position: relative;">';
+                                    html += '<div style="position: absolute; left: -27px; width: 12px; height: 12px; border-radius: 50%; background: ' + (i === 0 ? '#28a745' : '#6c757d') + '; border: 2px solid white;"></div>';
+                                    html += '<div style="padding-left: 15px;"><strong>' + (log.status || 'N/A') + '</strong><br>';
+                                    html += '<small class="text-muted">' + (log.updated_date || '') + '</small><br>';
+                                    if (log.location) html += '<span class="text-info">📍 ' + log.location + '</span>';
+                                    html += '</div></div>';
+                                });
+                            } else {
+                                html += '<p class="text-muted">Chưa có thông tin vận chuyển</p>';
+                            }
+                            
+                            html += '</div>';
+                            $('#tracking-content').html(html);
+                        } else {
+                            $('#tracking-content').html('<div class="alert alert-warning">' + response.message + '</div>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                        $('#tracking-content').html('<div class="alert alert-danger">Lỗi khi tải tracking: ' + error + '</div>');
+                    }
+                });
+            });
+        });
+    }
+    
+    // Bắt đầu init
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTracking);
+    } else {
+        initTracking();
+    }
+})();
+</script>
+--}}

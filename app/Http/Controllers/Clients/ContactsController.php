@@ -24,7 +24,7 @@ class ContactsController extends Controller
             'message' => 'required|string',
         ]);
 
-        // Xử lý lưu liên hệ hoặc gửi email ở đây
+        // Xử lý lưu liên hệ
         Contact::create([
             'full_name' => $request->name,
             'phone_number' => $request->phone,

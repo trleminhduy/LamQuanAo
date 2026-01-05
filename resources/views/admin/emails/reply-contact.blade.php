@@ -8,7 +8,7 @@
 </head>
 <body>
     <div>
-        <h2>Phản hồi từ quản trị viên</h2>
+        <h2>Phản hồi từ quản trị viên shop </h2>
         <p> 
             {!! $messageContent !!}
         </p>

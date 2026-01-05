@@ -34,8 +34,6 @@ Route::prefix('admin')->group(function () {
 
         //Notification
         Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
-
-
     });
 
     Route::middleware(['permission:manage_users'])->group(function () {
@@ -99,6 +97,13 @@ Route::prefix('admin')->group(function () {
 
         //ghn
         Route::post('/orders/{id}/send-to-ghn', [OrderController::class, 'sendToGHN'])->name('admin.orders.sendToGHN');
+        
+        
+        /*
+        Route::get('/api/orders/{id}/tracking', [OrderController::class, 'getTracking'])
+            ->name('admin.api.orders.tracking')
+            ->withoutMiddleware(['auth.custom', 'permission:manage_orders']);
+        */
     });
 
     // Quản lý giao hàng

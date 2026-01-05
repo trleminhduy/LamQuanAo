@@ -7,6 +7,8 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
+use App\Services\GHNService;
+
 class OrderController extends Controller
 {
     public function index()
@@ -132,7 +134,7 @@ class OrderController extends Controller
         }
 
         try {
-            $ghnService = new \App\Services\GHNService();
+            $ghnService = new GHNService();
 
             //Tính cân
 
@@ -140,7 +142,7 @@ class OrderController extends Controller
 
 
             //cbi data đơn ghn
-            
+
             $orderData = [
                 'from_district_id' => (int)config('ghn.from_district_id'),
                 'to_district_id' => (int)$address->district_id,
@@ -187,8 +189,6 @@ class OrderController extends Controller
                 'order_code' => $result['order_code'],
                 'total_fee' => number_format($result['total_fee']) . 'đ'
             ]);
-
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -196,4 +196,27 @@ class OrderController extends Controller
             ]);
         }
     }
+    protected $ghnService;
+    public function __construct(GHNService $ghnService)
+    {
+        $this->ghnService = $ghnService;
+    }
+
+    
+    /*
+    public function getTracking($id){
+        $order = Order::findOrFail($id);
+
+        if(!$order->ghn_order_code){
+            return response()->json([
+                'success' => false,
+                'message' => 'Đơn hàng chưa có mã vận đơn GHN',
+            ]);
+        }
+        
+        return response()->json(
+            $this->ghnService->getOrderTracking($order->ghn_order_code)
+        );
+    }
+    */
 }

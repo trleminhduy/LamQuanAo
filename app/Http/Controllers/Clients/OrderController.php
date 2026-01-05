@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\GHNService;
 
 class OrderController extends Controller
 {
@@ -59,5 +60,29 @@ class OrderController extends Controller
         }
         toastr()->success('Cảm ơn bạn đã xác nhân đơn hàng');
         return back();
+    }
+
+    protected $ghnService;
+    public function __construct(GHNService $ghnService)
+    {
+        $this->ghnService = $ghnService;
+    }
+
+    public function getTracking($id)
+    {
+        $order = Order::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        if (!$order->ghn_order_code) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Đơn hàng chưa được giao cho đơn vị vận chuyển'
+            ]);
+        }
+
+        return response()->json(
+            $this->ghnService->getOrderTracking($order->ghn_order_code)
+        );
     }
 }

@@ -131,6 +131,9 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/wishlist', [WishController::class, 'index'])->name('wishlist');
     Route::post('/wishlist/add', [WishController::class, 'add'])->name('wishlist.add');
     Route::post('/wishlist/remove', [WishController::class, 'remove'])->name('wishlist.remove');
+
+    Route::get('/api/orders/{id}/tracking', [OrderController::class, 'getTracking'])
+        ->name('api.orders.tracking');
 });
 
 // Routes momo

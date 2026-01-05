@@ -37,6 +37,14 @@
                     <span class="badge bg-primary"> Thanh toán qua PayPal </span>
                 @endif
             </p>
+
+
+            @if ($order->ghn_order_code)
+                <button class="btn btn-sm btn-info ms-2" onclick="showTrackingModal()">
+                    <i class="fas fa-map-marked-alt"></i> Xem vị trí đơn hàng
+                </button>
+            @endif
+
             <p> Tổng tiền (bao gồm phí vận chuyển):
                 {{ number_format($order->total_price, 0, ',', '.') }} đ
 
@@ -120,9 +128,11 @@
                 @if ($order->status == 'delivered')
                     @php
                         // Kiểm tra xem có sản phẩm nào đang hoàn trả hoặc đã được duyệt hoàn trả không
-                        $hasRefund = $order->items->filter(function($item) {
-                            return $item->refund && in_array($item->refund->status, ['pending', 'approved']);
-                        })->isNotEmpty();
+                        $hasRefund = $order->items
+                            ->filter(function ($item) {
+                                return $item->refund && in_array($item->refund->status, ['pending', 'approved']);
+                            })
+                            ->isNotEmpty();
                     @endphp
 
                     @if (!$hasRefund)
@@ -138,7 +148,8 @@
                         </form>
                     @else
                         <div class="alert alert-warning mt-3">
-                            <i class="fas fa-info-circle"></i> Có sản phẩm đang trong quá trình hoàn trả. Vui lòng đợi xử lý hoàn tất.
+                            <i class="fas fa-info-circle"></i> Có sản phẩm đang trong quá trình hoàn trả. Vui lòng đợi xử lý
+                            hoàn tất.
                         </div>
                     @endif
                 @endif
@@ -176,128 +187,206 @@
 
 
     {{-- Modal yêu cầu hoàn trả --}}
-<div class="modal fade" id="refundModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Yêu cầu hoàn trả sản phẩm</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="refundForm" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" id="refund_order_item_id" name="order_item_id">
-                    
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Sản phẩm:</strong></label>
-                        <p id="refund_product_name"></p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Số lượng hoàn trả <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" name="quantity" id="refund_quantity" min="1" required>
-                        <small class="text-muted">Tối đa: <span id="max_quantity"></span></small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Lý do hoàn trả <span class="text-danger">*</span></label>
-                        <textarea class="form-control" name="reason" rows="3" placeholder="VD: Sản phẩm bị lỗi, không đúng size..." required></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Ảnh minh chứng <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" name="image" id="refund_image" accept="image/*" required>
-                        <small class="text-muted">Chụp rõ sản phẩm lỗi/hư hỏng (tối đa 2MB)</small>
-                        <div class="mt-2">
-                            <img id="image_preview" style="max-width: 200px; display: none;" class="img-thumbnail">
+    <div class="modal fade" id="refundModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yêu cầu hoàn trả sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="refundForm" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" id="refund_order_item_id" name="order_item_id">
+
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Sản phẩm:</strong></label>
+                            <p id="refund_product_name"></p>
                         </div>
-                    </div>
-                    
-                    <div class="alert alert-warning">
-                        <small><i class="fas fa-info-circle"></i> Chỉ được yêu cầu hoàn trả trong vòng <strong>3 ngày</strong> kể từ khi nhận hàng.</small>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-danger w-100">
-                        <i class="fas fa-paper-plane"></i> Gửi yêu cầu hoàn trả
-                    </button>
-                </form>
+
+                        <div class="mb-3">
+                            <label class="form-label">Số lượng hoàn trả <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" name="quantity" id="refund_quantity" min="1"
+                                required>
+                            <small class="text-muted">Tối đa: <span id="max_quantity"></span></small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Lý do hoàn trả <span class="text-danger">*</span></label>
+                            <textarea class="form-control" name="reason" rows="3" placeholder="VD: Sản phẩm bị lỗi, không đúng size..."
+                                required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ảnh minh chứng <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" name="image" id="refund_image" accept="image/*"
+                                required>
+                            <small class="text-muted">Chụp rõ sản phẩm lỗi/hư hỏng (tối đa 2MB)</small>
+                            <div class="mt-2">
+                                <img id="image_preview" style="max-width: 200px; display: none;" class="img-thumbnail">
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <small><i class="fas fa-info-circle"></i> Chỉ được yêu cầu hoàn trả trong vòng <strong>3
+                                    ngày</strong> kể từ khi nhận hàng.</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="fas fa-paper-plane"></i> Gửi yêu cầu hoàn trả
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-let refundModal;
+    {{-- modal track --}}
+    <!-- Modal Tracking -->
+    <div class="modal fade" id="userTrackingModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-shipping-fast"></i> Theo dõi đơn hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="user-tracking-content">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary"></div>
+                        <p class="mt-2">Đang tải...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-document.addEventListener('DOMContentLoaded', function() {
-    refundModal = new bootstrap.Modal(document.getElementById('refundModal'));
-    
-    // Preview ảnh khi chọn
-    document.getElementById('refund_image').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.getElementById('image_preview');
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-            reader.readAsDataURL(file);
+    <script>
+        function showTrackingModal() {
+            $('#userTrackingModal').modal('show');
+
+            $.ajax({
+                url: '/api/orders/{{ $order->id }}/tracking',
+                method: 'GET',
+                success: function(res) {
+                    if (res.success) {
+                        var html =
+                            '<div class="alert alert-success mb-3"><h6><i class="fas fa-info-circle"></i> Trạng thái: <strong>' +
+                            (res.current_status || 'N/A') + '</strong></h6>';
+                        html += '<p class="mb-0"><i class="far fa-clock"></i> Dự kiến giao: <strong>' + (res
+                            .expected_delivery_time || 'N/A') + '</strong></p></div>';
+                        html += '<h6 class="mb-3"><i class="fas fa-route"></i> Hành trình đơn hàng</h6><div>';
+
+                        if (res.log && res.log.length > 0) {
+                            res.log.forEach(function(log, i) {
+                                html +=
+                                    '<div class="d-flex mb-3" style="position: relative; padding-left: 40px;">';
+                                html +=
+                                    '<div style="position: absolute; left: 0; width: 30px; height: 30px; border-radius: 50%; background: ' +
+                                    (i === 0 ? '#28a745' : '#6c757d') +
+                                    '; color: white; display: flex; align-items: center; justify-content: center;">';
+                                html += '<i class="fas ' + (i === 0 ? 'fa-truck' : 'fa-check') +
+                                    ' fa-sm"></i></div>';
+                                if (i < res.log.length - 1) html +=
+                                    '<div style="position: absolute; left: 14px; top: 30px; bottom: -15px; width: 2px; background: #ddd;"></div>';
+                                html += '<div><h6 class="mb-1">' + (log.status || 'N/A') + '</h6>';
+                                html += '<p class="text-muted small mb-0">' + (log.updated_date || '') +
+                                    '</p>';
+                                if (log.location) html +=
+                                    '<p class="text-info mb-0"><i class="fas fa-map-marker-alt"></i> ' +
+                                    log.location + '</p>';
+                                html += '</div></div>';
+                            });
+                        } else {
+                            html += '<p class="text-center text-muted">Chưa có thông tin</p>';
+                        }
+
+                        html += '</div>';
+                        $('#user-tracking-content').html(html);
+                    } else {
+                        $('#user-tracking-content').html('<div class="alert alert-warning">' + res.message +
+                            '</div>');
+                    }
+                },
+                error: function() {
+                    $('#user-tracking-content').html(
+                        '<div class="alert alert-danger">Lỗi khi tải tracking</div>');
+                }
+            });
         }
-    });
-});
+    </script>
 
-function openRefundModal(orderItemId, productName, maxQty) {
-    document.getElementById('refund_order_item_id').value = orderItemId;
-    document.getElementById('refund_product_name').textContent = productName;
-    document.getElementById('refund_quantity').value = 1;
-    document.getElementById('refund_quantity').max = maxQty;
-    document.getElementById('max_quantity').textContent = maxQty;
-    document.getElementById('image_preview').style.display = 'none';
-    document.getElementById('refundForm').reset();
-    refundModal.show();
-}
+    <script>
+        let refundModal;
 
-document.getElementById('refundForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    
-    // Hiển thị loading
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
-    
-    fetch('{{ route('refund.store') }}', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-            'Accept': 'application/json'
-        },
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        
-        if(data.status) {
-            alert(data.message);
-            refundModal.hide();
-            location.reload();
-        } else {
-            alert(data.message);
+        document.addEventListener('DOMContentLoaded', function() {
+            refundModal = new bootstrap.Modal(document.getElementById('refundModal'));
+
+            // Preview ảnh khi chọn
+            document.getElementById('refund_image').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.getElementById('image_preview');
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        function openRefundModal(orderItemId, productName, maxQty) {
+            document.getElementById('refund_order_item_id').value = orderItemId;
+            document.getElementById('refund_product_name').textContent = productName;
+            document.getElementById('refund_quantity').value = 1;
+            document.getElementById('refund_quantity').max = maxQty;
+            document.getElementById('max_quantity').textContent = maxQty;
+            document.getElementById('image_preview').style.display = 'none';
+            document.getElementById('refundForm').reset();
+            refundModal.show();
         }
-    })
-    .catch(err => {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        console.error(err);
-        alert('Có lỗi xảy ra, vui lòng thử lại!');
-    });
-});
-</script>
+
+        document.getElementById('refundForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            // Hiển thị loading
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+
+            fetch('{{ route('refund.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+
+                    if (data.status) {
+                        alert(data.message);
+                        refundModal.hide();
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(err => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    console.error(err);
+                    alert('Có lỗi xảy ra, vui lòng thử lại!');
+                });
+        });
+    </script>
 @endsection
 
 
